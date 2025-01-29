@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>My Website</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="icon" href="./favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+  <header></header>
+  <nav></nav>
+
+  <main>
+    <h1>Welcome to My Website</h1>
+  </main>
+
+  <form id='myform' name="myform" method="post">
+    <input type="hidden" name="uno" value="9999" disabled="disabled" />
+    姓名:<input type="text" id="uname" name="uname" /><br />
+    密码:<input type="password" id="upwd" name="upwd" value="123456" /><br />
+    年龄:<input type="radio" name="uage" value="0" checked="checked" />小屁孩
+    <input type="radio" name="uage" value="1" />你懂得 <br />
+    爱好:<input type="checkbox" name="ufav" value="篮球" />篮球
+    <input type="checkbox" name="ufav" value="爬床" />爬床
+    <input type="checkbox" name="ufav" value="代码" />代码<br />
+    来自:<select id="ufrom" name="ufrom">
+      <option value="-1" selected="selected">请选择</option>
+      <option value="0">北京</option>
+      <option value="1">上海</option>
+    </select><br />
+    简介:<textarea rows="10" cols="30" name="uintro"></textarea><br />
+    头像:<input type="file" /><br />
+    <input type="image" src="" width="20" height="20" />
+    <button type="submit" onclick="return checkForm();">提交</button>
+    <button type="reset">重置</button>
+  </form>
+  <input type="search" id="site-search" name="q" />
+
+  <a href="">Website</a>
+  <div>块级元素</div>
+  <p>块级元素</p>
+  <span>行级元素</span>
+  <img src="" alt="" />
+  <article></article>
+  <ul>
+    <li>Milk</li>
+    <li>
+      Cheese
+      <ul>
+        <li>Blue cheese</li>
+        <li>Feta</li>
+      </ul>
+    </li>
+  </ul>
+
+  <footer></footer>
+
+  <script src="js/jquery-3.7.1.js" type="text/JavaScript" charset="UTF-8"></script>
+  <script type="text/JavaScript">
+    alert(document.getElementById().innerHTML);
+    alert(document.getElementsByClassName().innerHTML);
+    alert(document.getElementsByTagName().innerHTML);
+
+    $(document).ready(function () { });
+    $(function () { });
+
+    $("TagName")
+    $(".Class")
+    $("#Id")
+    $("*")
+    $("TagName,.Class,#Id")
+    $("#Id TagName")
+    $("#Id>TagName")
+    $(".Class~TagName")
+    $(".Class+TagName")
+    $(":radio")
+    $(":checkbox")
+
+
+</script>
+
+</body>
+
+</html>
