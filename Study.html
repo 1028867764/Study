@@ -58,9 +58,22 @@
   </ul>
 
   <footer></footer>
+  <!--
+操作元素的属性
+属性的分类:
+*固有属性:元素本身就有的属性(id、name、class、style、type)
+*返回值是boolean的属性:checked、selected、disabled
+*自定义属性:用户自己定义的属性
 
-  <script src="js/jquery-3.7.1.js" type="text/JavaScript" charset="UTF-8"></script>
-  <script type="text/JavaScript">
+
+  -->
+</body>
+
+<script src="js/jquery-3.7.1.js" type="text/JavaScript" charset="UTF-8"></script>
+<script type="text/JavaScript">
+
+   console.log();
+
     alert(document.getElementById().innerHTML);
     alert(document.getElementsByClassName().innerHTML);
     alert(document.getElementsByTagName().innerHTML);
@@ -68,21 +81,24 @@
     $(document).ready(function () { });
     $(function () { });
 
-    $("TagName")
-    $(".Class")
-    $("#Id")
-    $("*")
-    $("TagName,.Class,#Id")
-    $("#Id TagName")
-    $("#Id>TagName")
-    $(".Class~TagName")
-    $(".Class+TagName")
-    $(":radio")
-    $(":checkbox")
-
-
+    $("TagName");
+    $(".Class");
+    $("#Id");
+    $("*");
+    $("TagName,.Class,#Id");
+    $("#Id TagName");
+    $("#Id>TagName");
+    $(".Class~TagName");
+    $(".Class+TagName");
+    $(":radio");
+    $(":checkbox");
+    $("#Id").attr("name");
+    $("#Id").attr("value","1");
+    $("#Id").removeAttr("value");
+    var ck2 = $("#Id").prop("checked");//true、false
+    
 </script>
 
-</body>
+
 
 </html>
