@@ -1358,10 +1358,9 @@ int add(int a, int b) {
 // 箭头函数（单行，自动返回）
 int multiply(int a, int b) => a * b;
 
-void printMessage() {
-  print('Hello, Dart!');
-  // 这里不能使用箭头语法，因为没有返回值
-}
+// print 函数返回 void
+void printMessage() => print('Hello, Dart!');
+
 ```
 
 ### **3.1.2 函数类型**
