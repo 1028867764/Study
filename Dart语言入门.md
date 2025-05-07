@@ -1357,6 +1357,11 @@ int add(int a, int b) {
 
 // 箭头函数（单行，自动返回）
 int multiply(int a, int b) => a * b;
+
+void printMessage() {
+  print('Hello, Dart!');
+  // 这里不能使用箭头语法，因为没有返回值
+}
 ```
 
 ### **3.1.2 函数类型**
@@ -1434,13 +1439,112 @@ int multiply(int a, int b) => a * b;
   list.forEach((item) => print(item)); // 输出 1, 2, 3
   ```
 
-### **3.3.3 闭包（Closure）**
-- 函数可捕获外部变量：
-  ```dart
-  int factor = 2;
-  var multiplier = (int x) => x * factor;
-  print(multiplier(5)); // 输出 10
-  ```
+### **3.3.3 作用域**
+
+#### 3.3.3.1 变量作用域
+在Dart中，变量作用域指变量在代码里可访问的范围，其作用域规则遵循块级作用域，即由代码块 `{}` 的位置决定。主要有以下四种作用域：
+1. **全局作用域**：程序中任何地方都能访问，通常在文件顶部声明的变量处于全局作用域，全局变量在整个程序生命周期内都有效。不过要慎用全局变量，过度使用会导致命名冲突和内存浪费。
+```dart
+int globalVar = 100; // 全局变量
+void main() {
+  print(globalVar); // 访问全局变量
+}
+```
+2. **函数作用域**：在函数内部声明的变量，仅在该函数内部可访问，这类变量具有局部作用域，在函数执行时创建，执行结束后销毁。
+```dart
+void myFunction() {
+  int localVar = 200; // 局部变量
+  print(localVar); // 只能在函数内部访问
+}
+void main() {
+  myFunction();
+  // print(localVar); // 错误：无法访问函数外部的 localVar
+}
+```
+3. **块级作用域**：Dart中被大括号 `{}` 包围的代码块会创建新的作用域，像控制语句 `if`、`for` 和 `while` 等都会创建新作用域。
+```dart
+void main() {
+  if (true) {
+    var blockVar = 300; // 块级变量
+    print(blockVar); // 仅在该块内部访问
+  }
+  // print(blockVar); // 错误：无法在块外部访问 blockVar
+}
+```
+```dart
+for (var i = 0; i < 3; i++) {
+  print(i); // 输出0,1,2
+}
+// print(i); // 报错，Dart的for循环计数器变量作用域仅限于for循环的代码块内部
+```
+4. **闭包作用域**：闭包是Dart的特殊功能，一个函数能“记住”并访问它创建时的外部作用域中的变量，即便外部函数已执行完毕，闭包仍可访问外部函数的局部变量。但要注意，被捕获的变量会一直存在内存中，可能导致内存泄漏。
+```dart
+Function createClosure() {
+  int outerVar = 400; // 外部变量
+  return () {
+    print(outerVar); // 闭包可以访问外部变量
+  };
+}
+void main() {
+  var closure = createClosure();
+  closure(); // 输出外部变量的值
+}
+```
+5. **作用域优先级**：当变量名冲突时，遵循就近原则，优先访问最近作用域的变量。若局部变量和全局变量同名，局部变量会覆盖全局变量，局部变量的作用域优先于全局变量，直到局部作用域结束。
+```dart
+int x = 500; // 全局变量
+void main() {
+  int x = 600; // 局部变量，覆盖了全局变量
+  print(x); // 输出局部变量的值
+}
+```
+#### 3.3.3.2 函数访问范围
+
+在Dart语言里，公共函数和私有函数是控制函数访问范围的重要概念，以下为你详细介绍：
+
+##### 公共函数
+在Dart中，默认情况下，所有未加下划线的标识符都是公共的（Public），公共函数的作用范围是可以从任何地方访问，等价于其他语言中的`public`。定义公共函数时，只需使用普通的命名方式，无需前缀。以下是一个示例：
+```dart
+class MyClass {
+  // 公共函数
+  void publicMethod() {
+    print('This is a public method');
+  }
+}
+
+void main() {
+  var obj = MyClass();
+  obj.publicMethod(); // 可以正常调用公共函数
+}
+```
+上述代码中，`publicMethod`就是一个公共函数，在`main`函数里可以正常调用它。
+
+##### 私有函数
+Dart使用下划线`_`前缀来表示私有成员，私有函数只能在定义它们的库（library）内访问，不会对其他库公开，等价于其他语言中的`private`。以下是私有函数的示例：
+```dart
+class MyClass {
+  // 私有函数
+  void _privateMethod() {
+    print('This is a private method');
+  }
+
+  // 公共函数调用私有函数
+  void callPrivateMethod() {
+    _privateMethod();
+  }
+}
+
+void main() {
+  var obj = MyClass();
+  obj._privateMethod(); // 错误，无法直接访问私有函数
+  obj.callPrivateMethod(); // 可以通过公共函数间接调用私有函数
+}
+```
+在这个例子中，`_privateMethod`是私有函数，不能直接在`main`函数中访问，但可以通过类中的公共函数`callPrivateMethod`间接调用它。
+
+##### 总结
+- **公共函数**：默认情况下，未加下划线的函数就是公共函数，作用范围是全局可访问。
+- **私有函数**：以`_`开头的函数为私有函数，只能在定义它的库内访问。
 
 ---
 
