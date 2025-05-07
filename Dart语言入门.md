@@ -312,7 +312,16 @@ print(isEmpty);  // 输出: false
 String str2 = '';
 bool isEmpty2 = str2.isEmpty;  // 检查是否为空字符串
 print(isEmpty2);  // 输出: true
+
+String? str = 'Hello';
+if (str?.isNotEmpty == true) {
+   print('字符串不为空');
+ } else {
+   print('字符串为空');
+}
 ```
+同理，还可以推广到集合，例如`List.isEmpty`、`List.isNotEmpty`、`Map.isEmpty`、`Map.isNotEmpty`等等
+
 
 ##### 12. **使用正则表达式进行字符串匹配**
 
@@ -347,6 +356,7 @@ print(moreInfo);  // 输出: In 5 years, I will be 30 years old.
 | `toLowerCase()` | 转换为小写字母      |
 | `trim()`        | 去除字符串两端的空白字符 |
 | `isEmpty`       | 判断字符串是否为空    |
+| `isNotEmpty`    | 判断字符串是否不为空    |
 | `replaceAll()`  | 替换所有匹配的子字符串  |
 | `split()`       | 按分隔符拆分字符串    |
 | `contains()`    | 检查是否包含子字符串   |
@@ -396,28 +406,386 @@ void main() {
 
 ### **1.3.2 集合类型**
 #### **1.3.2.1 `List`（数组）**
-有序可变的集合，支持泛型：
+有序可变的集合，支持泛型：  
+
+在 Dart 中，`List` 是一个非常常用的数据结构，用于存储有序的元素集合。Dart 提供了丰富的内置方法来操作 `List`，包括添加、删除、查找、排序等。下面是一些常见的 `List` 方法和操作的示例：
+
+##### 1. **创建 List**
+
 ```dart
-List<int> numbers = [1, 2, 3];
-numbers.add(4);       // 添加元素
-numbers[0] = 10;      // 修改元素
-print(numbers.length); // 长度
+List<int> numbers = [1, 2, 3, 4, 5];  // 使用字面量创建 List
+List<String> names = ['Alice', 'Bob', 'Charlie'];  // 使用字面量创建 String 类型的 List
+
+// 使用构造函数创建空 List
+List<int> emptyList = List<int>.empty();
+List<int> filledList = List<int>.filled(5, 0);  // 创建一个长度为 5，且每个元素初始化为 0 的 List
 ```
 
-#### **1.3.2.2 `Set`**
+##### 2. **访问 List 元素**
+
+```dart
+List<String> names = ['Alice', 'Bob', 'Charlie'];
+print(names[0]);  // 输出: Alice
+print(names.length);  // 输出: 3，List 的长度
+```
+
+##### 3. **添加元素**
+
+* `add()`：添加一个元素到 List 的末尾。
+* `addAll()`：将另一个 List 的所有元素添加到当前 List。
+* `insert()`：在指定位置插入一个元素。
+* `insertAll()`：在指定位置插入多个元素。
+
+```dart
+List<int> numbers = [1, 2, 3];
+
+// 添加单个元素到末尾
+numbers.add(4);
+print(numbers);  // 输出: [1, 2, 3, 4]
+
+// 添加多个元素
+numbers.addAll([5, 6]);
+print(numbers);  // 输出: [1, 2, 3, 4, 5, 6]
+
+// 在指定位置插入一个元素
+numbers.insert(2, 10);  // 在索引 2 位置插入 10
+print(numbers);  // 输出: [1, 2, 10, 3, 4, 5, 6]
+
+// 在指定位置插入多个元素
+numbers.insertAll(4, [7, 8]);
+print(numbers);  // 输出: [1, 2, 10, 3, 7, 8, 4, 5, 6]
+```
+
+##### 4. **删除元素**
+
+* `remove()`：删除第一个匹配的元素。
+* `removeAt()`：删除指定位置的元素。
+* `removeLast()`：删除 List 中的最后一个元素。
+* `removeWhere()`：删除符合条件的所有元素。
+* `clear()`：清空 List 中的所有元素。
+
+```dart
+List<int> numbers = [1, 2, 3, 4, 5];
+
+// 删除指定的元素
+numbers.remove(3);  // 删除第一个匹配的 3
+print(numbers);  // 输出: [1, 2, 4, 5]
+
+// 删除指定位置的元素
+numbers.removeAt(2);  // 删除索引为 2 的元素（元素 4）
+print(numbers);  // 输出: [1, 2, 5]
+
+// 删除最后一个元素
+numbers.removeLast();  // 删除最后一个元素 5
+print(numbers);  // 输出: [1, 2]
+
+// 删除符合条件的元素
+numbers.removeWhere((element) => element % 2 == 0);  // 删除所有偶数
+print(numbers);  // 输出: [1]
+```
+
+##### 5. **查找元素**
+
+* `indexOf()`：查找某个元素首次出现的索引，如果未找到则返回 -1。
+* `lastIndexOf()`：查找某个元素最后一次出现的索引。
+* `contains()`：判断 List 中是否包含某个元素。
+
+```dart
+List<String> names = ['Alice', 'Bob', 'Charlie'];
+
+// 查找元素的索引
+print(names.indexOf('Bob'));  // 输出: 1
+
+// 查找元素的最后索引
+print(names.lastIndexOf('Alice'));  // 输出: 0
+
+// 判断元素是否存在
+print(names.contains('Charlie'));  // 输出: true
+```
+
+##### 6. **排序和反转**
+
+* `sort()`：对 List 进行排序。
+* `reversed`：反转 List 的顺序。
+
+```dart
+List<int> numbers = [5, 3, 8, 1, 2];
+
+// 排序
+numbers.sort();
+print(numbers);  // 输出: [1, 2, 3, 5, 8]
+
+// 反转
+var reversed = numbers.reversed;
+print(reversed);  // 输出: (8, 5, 3, 2, 1)
+```
+
+##### 7. **转换和映射**
+
+* `map()`：通过给 List 中的每个元素应用一个函数来转换元素。
+* `where()`：过滤 List 中符合条件的元素。
+* `toSet()`：将 List 转换为 Set，去除重复的元素。
+
+```dart
+List<int> numbers = [1, 2, 3, 4, 5];
+
+// 使用 map() 转换元素
+var doubled = numbers.map((e) => e * 2).toList();
+print(doubled);  // 输出: [2, 4, 6, 8, 10]
+
+// 使用 where() 过滤元素
+var evenNumbers = numbers.where((e) => e % 2 == 0).toList();
+print(evenNumbers);  // 输出: [2, 4]
+
+// 转换为 Set（去重）
+List<int> numbersWithDuplicates = [1, 2, 2, 3, 3, 4];
+var uniqueNumbers = numbersWithDuplicates.toSet().toList();
+print(uniqueNumbers);  // 输出: [1, 2, 3, 4]
+```
+
+##### 8. **其他常用方法**
+
+* `forEach()`：遍历 List 中的每个元素。
+* `join()`：将 List 中的元素连接为一个字符串。
+* `first`：获取 List 中的第一个元素。
+* `last`：获取 List 中的最后一个元素。
+* `isEmpty`：判断 List 是否为空。
+
+```dart
+List<String> names = ['Alice', 'Bob', 'Charlie'];
+
+// 遍历每个元素
+names.forEach((name) => print(name));
+
+// 将 List 中的元素连接为字符串
+String result = names.join(', ');
+print(result);  // 输出: Alice, Bob, Charlie
+
+// 获取第一个和最后一个元素
+print(names.first);  // 输出: Alice
+print(names.last);   // 输出: Charlie
+
+// 判断 List 是否为空
+print(names.isEmpty);  // 输出: false
+```
+
+#### **1.3.2.2 `Map`**
+键值对集合，键唯一：  
+
+在 Dart 中，`Map` 是一种非常重要的数据结构，用于存储键值对。`Map` 提供了丰富的内置方法来操作和访问数据。下面是一些常见的 `Map` 方法和操作的示例。
+
+##### 1. **创建 Map**
+
+```dart
+// 使用字面量创建 Map
+Map<String, int> scores = {
+  'Alice': 90,
+  'Bob': 85,
+  'Charlie': 88,
+};
+
+// 使用构造函数创建空 Map
+Map<String, int> emptyMap = Map<String, int>();
+
+// 使用 Map.from() 来创建一个新的 Map，复制另一个 Map 的内容
+Map<String, int> copyMap = Map.from(scores);
+```
+
+##### 2. **访问 Map 元素**
+
+```dart
+Map<String, int> scores = {
+  'Alice': 90,
+  'Bob': 85,
+  'Charlie': 88,
+};
+
+// 通过键访问值
+print(scores['Alice']);  // 输出: 90
+
+// 获取 Map 的长度
+print(scores.length);  // 输出: 3
+
+// 检查键是否存在
+print(scores.containsKey('Bob'));  // 输出: true
+print(scores.containsKey('David'));  // 输出: false
+
+// 检查值是否存在
+print(scores.containsValue(88));  // 输出: true
+```
+
+##### 3. **添加元素**
+
+* `addAll()`：将另一个 `Map` 的键值对添加到当前 `Map`。
+* `putIfAbsent()`：只有在指定键不存在时才添加键值对。
+* `[]=`：通过键添加或更新值。
+
+```dart
+Map<String, int> scores = {
+  'Alice': 90,
+  'Bob': 85,
+};
+
+// 添加一个新键值对
+scores['Charlie'] = 88;
+print(scores);  // 输出: {Alice: 90, Bob: 85, Charlie: 88}
+
+// 使用 addAll() 添加多个键值对
+scores.addAll({'David': 92, 'Eve': 87});
+print(scores);  // 输出: {Alice: 90, Bob: 85, Charlie: 88, David: 92, Eve: 87}
+
+// 使用 putIfAbsent() 只有键不存在时才添加
+scores.putIfAbsent('Frank', () => 80);
+print(scores);  // 输出: {Alice: 90, Bob: 85, Charlie: 88, David: 92, Eve: 87, Frank: 80}
+```
+
+##### 4. **删除元素**
+
+* `remove()`：根据键删除一个键值对。
+* `removeWhere()`：根据条件删除符合条件的所有键值对。
+* `clear()`：删除 `Map` 中的所有键值对。
+
+```dart
+Map<String, int> scores = {
+  'Alice': 90,
+  'Bob': 85,
+  'Charlie': 88,
+};
+
+// 删除指定的键值对
+scores.remove('Bob');
+print(scores);  // 输出: {Alice: 90, Charlie: 88}
+
+// 使用 removeWhere() 删除符合条件的键值对
+scores.removeWhere((key, value) => value < 90);  // 删除值小于 90 的键值对
+print(scores);  // 输出: {Alice: 90}
+
+// 清空 Map
+scores.clear();
+print(scores);  // 输出: {}
+```
+
+##### 5. **查找元素**
+
+* `keys`：返回 `Map` 中所有的键。
+* `values`：返回 `Map` 中所有的值。
+* `forEach()`：遍历 `Map` 中的每个键值对。
+
+```dart
+Map<String, int> scores = {
+  'Alice': 90,
+  'Bob': 85,
+  'Charlie': 88,
+};
+
+// 获取所有的键
+print(scores.keys);  // 输出: (Alice, Bob, Charlie)
+
+// 获取所有的值
+print(scores.values);  // 输出: (90, 85, 88)
+
+// 遍历 Map
+scores.forEach((key, value) {
+  print('$key: $value');
+});
+// 输出:
+// Alice: 90
+// Bob: 85
+// Charlie: 88
+```
+
+##### 6. **修改元素**
+
+* `update()`：更新指定键的值。
+* `updateAll()`：更新所有键值对，根据给定的函数更新值。
+
+```dart
+Map<String, int> scores = {
+  'Alice': 90,
+  'Bob': 85,
+  'Charlie': 88,
+};
+
+// 更新指定键的值
+scores.update('Alice', (value) => value + 5);
+print(scores);  // 输出: {Alice: 95, Bob: 85, Charlie: 88}
+
+// 如果指定键不存在，则可以提供一个默认值
+scores.update('David', (value) => value + 5, ifAbsent: () => 100);
+print(scores);  // 输出: {Alice: 95, Bob: 85, Charlie: 88, David: 100}
+
+// 使用 updateAll() 更新所有值
+scores.updateAll((key, value) => value + 2);
+print(scores);  // 输出: {Alice: 97, Bob: 87, Charlie: 90, David: 102}
+```
+
+##### 7. **其他常用方法**
+
+* `isEmpty`：判断 `Map` 是否为空。
+* `isNotEmpty`：判断 `Map` 是否不为空。
+* `addEntries()`：添加多个键值对。
+* `putIfAbsent()`：当指定的键不存在时，添加一个键值对。
+
+```dart
+Map<String, int> scores = {
+  'Alice': 90,
+  'Bob': 85,
+  'Charlie': 88,
+};
+
+// 判断 Map 是否为空
+print(scores.isEmpty);  // 输出: false
+
+// 判断 Map 是否不为空
+print(scores.isNotEmpty);  // 输出: true
+
+// 使用 addEntries() 添加多个键值对
+scores.addEntries([
+  MapEntry('David', 92),
+  MapEntry('Eve', 87)
+]);
+print(scores);  // 输出: {Alice: 90, Bob: 85, Charlie: 88, David: 92, Eve: 87}
+```
+
+##### 8. **Map 复制与转换**
+
+* `Map.from()`：从已有的 `Map` 创建一个新的 `Map`。
+* `Map.of()`：从已有的键值对集合创建 `Map`。
+
+```dart
+Map<String, int> scores = {
+  'Alice': 90,
+  'Bob': 85,
+  'Charlie': 88,
+};
+
+// 使用 Map.from() 创建新的 Map
+Map<String, int> copiedScores = Map.from(scores);
+print(copiedScores);  // 输出: {Alice: 90, Bob: 85, Charlie: 88}
+
+// 使用 Map.of() 创建新的 Map
+Map<String, int> newScores = Map.of({'David': 92, 'Eve': 87});
+print(newScores);  // 输出: {David: 92, Eve: 87}
+```
+
+##### 总结
+
+Dart 的 `Map` 提供了丰富的操作方法来处理键值对。常见的操作包括：
+
+* **添加元素**：使用 `[]=`、`addAll()` 和 `putIfAbsent()`。
+* **删除元素**：使用 `remove()`、`removeWhere()` 和 `clear()`。
+* **查找元素**：使用 `containsKey()`、`containsValue()`、`keys` 和 `values`。
+* **修改元素**：使用 `update()` 和 `updateAll()`。
+* **遍历 Map**：使用 `forEach()`。
+* **复制与转换**：使用 `Map.from()` 和 `Map.of()`。
+
+
+#### **1.3.2.3 `Set`**
 无序且不重复的集合：
 ```dart
 Set<String> uniqueItems = {'a', 'b', 'c'};
 uniqueItems.add('a'); // 无效（重复值）
 print(uniqueItems);   // {a, b, c}
-```
-
-#### **1.3.2.3 `Map`**
-键值对集合，键唯一：
-```dart
-Map<String, int> scores = {'Alice': 90, 'Bob': 85};
-scores['Charlie'] = 95; // 添加键值对
-print(scores['Alice']); // 90
 ```
 
 ---
