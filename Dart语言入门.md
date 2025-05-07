@@ -883,7 +883,7 @@ int multiply(int a, int b) => a * b;
 ---
 
 ## **3.3 高级函数特性**
-### **3.1 函数作为参数**
+### **3.3.1 函数作为参数**
 - 将函数作为参数传递：
   ```dart
   void execute(Function operation) {
@@ -893,14 +893,14 @@ int multiply(int a, int b) => a * b;
   execute((a, b) => print(a - b)); // 输出 2
   ```
 
-### **3.2 匿名函数**
+### **3.3.2 匿名函数**
 - 直接定义未命名的函数：
   ```dart
   var list = [1, 2, 3];
   list.forEach((item) => print(item)); // 输出 1, 2, 3
   ```
 
-### **3.3 闭包（Closure）**
+### **3.3.3 闭包（Closure）**
 - 函数可捕获外部变量：
   ```dart
   int factor = 2;
@@ -911,17 +911,87 @@ int multiply(int a, int b) => a * b;
 ---
 
 ## **3.4 函数返回值**
-- 显式 `return` 或隐式返回 `null`：
-  ```dart
-  String? findName(int id) {
-    if (id == 1) return 'Alice';
-    // 无 return 时默认返回 null
-  }
-  
-  print(findName(2)); // 输出 null
-  ```
+在Dart中，函数的返回值可以是多种类型，包括基本数据类型（如`int`、`double`等）、对象类型（如`String`、`Widget`等），当函数没有显式使用`return`语句返回值时，默认返回`null`。以下是一些不同返回值类型的函数示例：
 
----
+### 3.4.1 返回`int`类型
+```dart
+// 计算两个整数的和
+int add(int a, int b) {
+  return a + b;
+}
+
+void main() {
+  int result = add(3, 5);
+  print(result); // 输出 8
+}
+```
+在这个例子中，`add`函数的返回类型是`int`，它接收两个整数参数`a`和`b`，并返回它们的和。
+
+### 3.4.2 返回`String`类型
+```dart
+// 拼接两个字符串
+String joinStrings(String str1, String str2) {
+  return str1 + str2;
+}
+
+void main() {
+  String combined = joinStrings('Hello', ' World');
+  print(combined); // 输出 Hello World
+}
+```
+这里`joinStrings`函数的返回类型为`String`，它将传入的两个字符串拼接起来并返回结果。
+
+### 3.4.3 返回`Widget`类型（以Flutter为例）
+```dart
+import 'package:flutter/material.dart';
+
+// 创建一个简单的文本组件
+Widget createTextWidget(String text) {
+  return Text(text);
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: Scaffold(
+      body: Center(
+        child: createTextWidget('Hello, Flutter!'),
+      ),
+    ),
+  ));
+}
+```
+在Flutter开发中，`Widget`是构建用户界面的基本单元。`createTextWidget`函数接收一个字符串参数，返回一个`Text`类型的`Widget`，用于在界面上显示文本。
+
+### 3.4.4 隐式返回`null`的情况
+```dart
+// 根据条件返回不同的字符串，若不满足条件则隐式返回 null
+String? findGreeting(String name) {
+  if (name == 'Bob') {
+    return 'Hello, Bob!';
+  }
+  // 没有 return 语句，隐式返回 null
+}
+
+void main() {
+  String? greeting = findGreeting('Alice');
+  print(greeting); // 输出 null
+}
+```
+此例中，`findGreeting`函数只有在传入的`name`为`'Bob'`时才会返回一个字符串，其他情况下没有`return`语句，会隐式返回`null`。
+
+### 3.4.5 返回`double`类型
+```dart
+// 计算两个数的平均值
+double calculateAverage(double num1, double num2) {
+  return (num1 + num2) / 2;
+}
+
+void main() {
+  double average = calculateAverage(10.5, 20.5);
+  print(average); // 输出 15.5
+}
+```
+`calculateAverage`函数的返回类型是`double`，它接收两个双精度浮点数参数，计算并返回它们的平均值。
 
 ## **3.5 注意事项**
 1. **参数顺序**：  
