@@ -48,13 +48,31 @@ class MyTextWidget extends StatelessWidget {
 ```
 
 ### 2.1.2 `StatefulWidget`（重点）
+#### 2.1.2.1 介绍
 - **定义**：`StatefulWidget` 是有状态的 `Widget`，即它们可以在生命周期中随状态变化而重新构建。它由两个部分组成，一个是 `StatefulWidget` 本身，另一个是与之关联的 `State` ，`State` 包含了可变状态信息，并且可以在其生命周期内改变。
 - **特点**
     - **`StatefulWidget`**：**不可变**（immutable），仅负责创建 `State`（通过 `createState()`）。
     - **`State`**：**可变**，负责管理动态状态和 UI 更新（如 `initState()`、`build()`、`setState()`、`dispose()`、`didUpdateWidget()`、`deactivate()`）。 
     - **状态改变时重新构建**：`setState()` 方法会触发 Flutter 调用 `State` 的 `build()` 方法，更新 UI。
 - **适用场景**：适用于需要动态变化的内容，如表单输入、动画、计数器、需要和用户进行交互的复杂 UI 等。
-- **示例代码**
+
+#### 2.1.2.2 **`Widget` 封装示意图**
+```dart
+class Aaa extends StatefulWidget {
+  @override // 重写
+  State<Aaa> createState() => _BbbState();
+}
+
+class _BbbState extends State<Aaa> {
+  // 生命周期方法
+}
+
+// 其它地方可以直接调用已经封装好的widget
+Aaa() 
+// Aaa() 是一个可以被 Flutter 框架识别并调用内置 build 方法实现渲染的widget
+```
+
+#### 2.1.2.3 **示例代码**
 ```dart
 import 'package:flutter/material.dart';
 
@@ -124,17 +142,6 @@ class _GoodWidgetState extends State<GoodWidget> {
   }
 }
 
-```
-- **创建一个有状态的 Widget 示意图**
-```dart
-class Aaa extends StatefulWidget {
-  @override // 重写
-  State<Aaa> createState() => _BbbState();
-}
-
-class _BbbState extends State<Aaa> {
-  // 生命周期方法
-}
 ```
 - 关键注释说明：
 1. **状态分离**：`StatefulWidget` 本身不可变，仅负责创建 `State`（通过 `createState()`），状态存储在 `_GoodWidgetState` 中
@@ -266,13 +273,14 @@ void main() {
 3. 然后 Flutter 框架会调用 `_BananaState` 类中的 `build()` 方法，构建 UI。
 4. 最终，`Scaffold -> AppBar -> Container -> Text` 的整个界面被渲染出来。
 
-## 2.3 本章小结
+## **2.3 本章小结**
 ```markdown
 main() 
   ↓
 runApp()
   ↓
-MaterialApp(home: 自定义())   // 直接调用组件
+MaterialApp(home: 自定义())   // 直接调用已经封装好的Widget
+  ↓
   ↓
 自定义()                     // 自定义 extends StatefulWidget
   ↓
@@ -342,6 +350,7 @@ Container(
   child: Text('综合示例'),
 )
 ```
+
 #### `alignment` 属性和 `Center` 组件
 ```dart
 Container(
@@ -429,6 +438,7 @@ class MyApp extends StatelessWidget {
   }
 }
 ```
+
 #### `Container` 常用属性总结
 ```markdown
 flutter_container/
@@ -827,53 +837,183 @@ void main() => runApp(MaterialApp(
 ```
 
 ## 3.3 滚动布局
-### `ListView.builder`
-示例：左侧分类导航栏组件
-```dart
-// 在State类中声明状态变量
-int _selectedIndex = 0; // 当前选中的分类索引
-final List<String> _categories = ['热销', '主食', '小吃', '饮料', '套餐'];
+### `SingleChildScrollView`
+`SingleChildScrollView` 是 Flutter 中用于 **使单个子组件可以滚动** 的组件，适用于内容不确定或内容可能超出屏幕但不需要复杂列表的情况。
 
-// 左侧分类导航栏组件
-Container(
-  width: 100,
-  color: Colors.grey[200],
-  child: ListView.builder(
-    itemCount: _categories.length, // 指定列表项数量（此处为 _categories 数组长度）。若为 null，则视为无限列表
-    itemBuilder: (context, index) {
-      return GestureDetector(
-        onTap: () {
-          setState(() {
-            _selectedIndex = index; // 更新选中状态
-          });
-        },
-        child: Container(
-          color: _selectedIndex == index 
-              ? Colors.white 
-              : Colors.transparent,
-          padding: EdgeInsets.symmetric(vertical: 16),
-          child: Text(
-            _categories[index],
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: _selectedIndex == index 
-                  ? Colors.blue 
-                  : Colors.black,
-            ),
-          ),
-        ),
-      );
-    },
+---
+
+#### ✅ 基本用法
+
+```dart
+SingleChildScrollView(
+  child: Column(
+    children: [
+      Text("内容 1"),
+      Text("内容 2"),
+      // 更多内容...
+    ],
   ),
 )
 ```
 
-### `GridView.builder` 和 `GridView.count`
+---
+
+#### 📌 核心特点
+
+| 特性        | 说明                                  |
+| --------- | ----------------------------------- |
+| 只能有一个子组件  | 一般配合 `Column`、`Row`、`Container` 等使用 |
+| 适合少量可滚动内容 | 比如表单、静态布局超出屏幕的情况                    |
+| 默认垂直方向滚动  | 可通过 `scrollDirection` 修改为水平         |
+
+---
+
+#### ✅ 示例代码
+
 ```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: SimpleListView());
+  }
+}
+
+class SimpleListView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('独生子滚动')),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(),
+            Container(height: 20, color: Colors.blue),
+            TextField(),
+            Container(height: 400, width: 100, color: Colors.yellow),
+            Container(height: 400, width: 100, color: Colors.pink),
+            Container(height: 20, color: Colors.blue),
+          ],
+        ),
+      ),
+    );
+  }
+}
 ```
 
-### `SingleChildScrollView`
+---
+
+#### ❗注意事项：
+
+* 不适合用于大量子组件（请使用 `ListView`）。
+* 子组件不能有无限高度（如 `Column` + 未限制高度的 `Expanded` 可能报错）。
+
+### `ListView.builder`
+- `itemCount` ：列表的总项数。必须指定，否则默认无限生成
+- `itemBuilder` ：每个 `item` 的构建函数，返回一个 `Widget`，接收 `context` 和 `index` 参数
+- 示例：左侧分类导航栏组件
 ```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: SimpleListView());
+  }
+}
+
+class SimpleListView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('侧边导航栏')),
+      body: SizedBox(
+        width: 80, // 设置整个 ListView 的宽度为 80
+        child: ListView.builder(
+          // itemCount：列表中一共有多少项（例如 20 项）
+          itemCount: 20,
+
+          // itemBuilder：每当 ListView 需要构建一项时，会调用这个函数
+          // 参数说明：
+          // context：上下文对象
+          // index：当前是第几个列表项（从 0 开始）
+          // 返回值必须是一个 Widget（列表中显示的每一项）
+          itemBuilder: (context, index) {
+            return Container(
+              height: 80, // 每项高度为 80
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(80),
+                color: Colors.yellow,
+              ),
+              child: Center(child: Text('第 $index 项')),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+```
+
+### `GridView.builder`
+- 示例：使用 `GridView.builder` 构建 3 列网格
+```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: GridExample(),
+    );
+  }
+}
+
+class GridExample extends StatelessWidget {
+  final List<String> items = List.generate(20, (index) => "Item $index");
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("3列网格")),
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: GridView.builder(
+          itemCount: items.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,     // 每行显示3个，也就是3列布局
+            crossAxisSpacing: 10,     // 水平间距
+            mainAxisSpacing: 10,       // 垂直间距
+            childAspectRatio: 1.0,     // 宽高比
+          ),
+          itemBuilder: (context, index) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.teal[100 * ((index % 8) + 1)],
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: Text(
+                  items[index],
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
 ```
 
 ### `CustomScrollView`
@@ -889,26 +1029,19 @@ Container(
 ```
 
 ## 3.4 Material Design组件
-### `MaterialApp`
-```dart
-// main() 是Dart程序的唯一入口函数，Flutter应用启动时首先执行该函数
-void main() {
-  // runApp() 是Flutter框架的核心启动函数，用于初始化应用并绑定根Widget
-  runApp(
-    MaterialApp(  // MaterialApp是Flutter提供的Material风格应用框架
-      title: '外卖应用', // 应用标题（显示在任务管理器/多任务视图）
-      theme: ThemeData(primarySwatch: Colors.blue), // 全局主题配置（主色为蓝色）
-      home: Scaffold(), // 默认首页
-    )
-  );
-}
-```
-
 ### `AppBar`
 ```dart
 ```
 
 ### `BottomNavigationBar`
+```dart
+```
+
+### `FloatingActionButton`
+```dart
+```
+
+### `ProgressIndicator`
 ```dart
 ```
 
