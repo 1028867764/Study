@@ -21,18 +21,14 @@ flutter_project/
 └── build/ # 构建输出目录
 ```
 
+
 # 2. **Widgets 基础**
 
-## **2.1 什么是 Widgets**
-在 Flutter 开发中，Widget 是构建用户界面的基本单元，Flutter 里的一切几乎都是 Widget，它可以是结构性的（如按钮或文本）、样式性的（如颜色和字体）、布局性的（如填充或边距），或者甚至是其他 Widget 的容器。Widget 主要分为 StatelessWidget 和 StatefulWidget 两种类型，以下为你详细介绍：
+## **2.1 什么是 `Widget`**
+在 Flutter 开发中，`Widget` 是构建用户界面的基本单元，Flutter 里的一切几乎都是 `Widget`。`Widget` 主要分为 `StatelessWidget` 和 `StatefulWidget` 两种类型，以下为你详细介绍：
 
-### StatelessWidget（无状态 Widget）
-- **定义**：StatelessWidget 是没有状态的 Widget，即它们在构建时不会随时间变化。一旦创建，其内部的属性和状态都是不可变的，在创建后不可变，无论是内部数据还是外部属性的变化，都不会影响其重新构建。
-- **特点**
-    - **不包含可变状态**：所有的值都是最终的，创建后无法改变。
-    - **只在特定情况重新构建**：只在创建和其依赖的属性变化时重新构建。当父 Widget 重新构建时，StatelessWidget 也会被重新构建。
-    - **简单高效**：没有生命周期方法，不需要处理状态变化，只需要根据传入的属性进行渲染，因此具有更高的性能。
-- **适用场景**：适用于显示不变的内容，如静态文本、图标、简单的按钮点击事件、路由跳转等简单交互逻辑，也可作为其他有状态小部件的子组件，用于构建复杂的 UI 结构。
+### 2.1.1 `StatelessWidget`
+- **定义**：StatelessWidget 是没有状态的 Widget，即它们在构建时不会随时间变化。
 - **示例代码**
 ```dart
 import 'package:flutter/material.dart';
@@ -50,39 +46,56 @@ class MyTextWidget extends StatelessWidget {
   }
 }
 ```
-在上述代码中，`MyTextWidget` 接收一个字符串作为参数，然后使用 `Text` 小部件将该字符串展示出来，它不需要维护任何状态，非常适合用于展示静态的文本内容。
 
-### StatefulWidget（有状态 Widget）
-- **定义**：StatefulWidget 是有状态的 Widget，即它们可以在生命周期中随状态变化而重新构建。它由两个类组成，一个是 StatefulWidget 本身，另一个是与之关联的 State 对象，State 对象包含了可变状态信息，并且可以在其生命周期内改变。
+### 2.1.2 `StatefulWidget`（重点）
+- **定义**：`StatefulWidget` 是有状态的 `Widget`，即它们可以在生命周期中随状态变化而重新构建。它由两个部分组成，一个是 `StatefulWidget` 本身，另一个是与之关联的 `State` ，`State` 包含了可变状态信息，并且可以在其生命周期内改变。
 - **特点**
-    - **包含可变状态**：通过与之关联的 State 对象来管理状态，状态可以在 Widget 的生命周期内发生改变。
-    - **状态改变时重新构建**：当状态改变时，通过调用 `setState()` 方法触发重新构建。`setState()` 方法会触发 Flutter 调用 State 的 `build()` 方法，更新 UI。
-    - **多个生命周期方法**：有多个生命周期方法，如 `initState()`、`didUpdateWidget()`、`dispose()` 等，用于在不同阶段管理状态。
+    - **`StatefulWidget`**：**不可变**（immutable），仅负责创建 `State`（通过 `createState()`）。
+    - **`State`**：**可变**，负责管理动态状态和 UI 更新（如 `initState()`、`build()`、`setState()`、`dispose()`、`didUpdateWidget()`、`deactivate()`）。 
+    - **状态改变时重新构建**：`setState()` 方法会触发 Flutter 调用 `State` 的 `build()` 方法，更新 UI。
 - **适用场景**：适用于需要动态变化的内容，如表单输入、动画、计数器、需要和用户进行交互的复杂 UI 等。
 - **示例代码**
 ```dart
 import 'package:flutter/material.dart';
 
-class MyStatefulWidget extends StatefulWidget {
-  @override
-  _MyStatefulWidgetState createState() => _MyStatefulWidgetState();
+/// 1. StatefulWidget 定义
+/// - 继承自 StatefulWidget，表示这是一个有状态的类
+/// - 必须重写 createState() 方法，返回关联的 State
+class GoodWidget extends StatefulWidget {
+  @override // 重写
+  State<GoodWidget> createState() => _GoodWidgetState();
 }
 
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+/// 2. State 类定义
+/// - 管理 GoodWidget 的状态和生命周期
+/// - 命名约定：使用下划线前缀表示私有类（_GoodWidgetState）
+class _GoodWidgetState extends State<GoodWidget> {
+
   String _text = 'I am a StatefulWidget';
 
-  void _changeText() {
-    setState(() {
-      _text = 'State has changed!';
-    });
+  /// 3. 生命周期方法：initState()
+  /// - 在 State 对象创建时调用（只执行一次）
+  /// - 适合初始化数据、订阅事件等操作
+  @override
+  void initState() {
+    super.initState();
+    print('initState: State 对象已创建');
   }
 
+  /// 4. 生命周期方法：build()
+  /// - 必须重写，用于构建 UI
+  /// - 当 setState() 被调用或依赖项变化时自动触发
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(_text),
+        Text(
+          _text,
+          style: TextStyle(fontSize: 20),
+        ),
+        SizedBox(height: 20), // 间距组件
+        // 按钮：点击触发状态更新
         ElevatedButton(
           onPressed: _changeText,
           child: Text('Change Text'),
@@ -90,27 +103,49 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       ],
     );
   }
+
+  /// 5. 自定义方法：修改状态
+  /// - 通过 setState() 通知 Flutter 框架状态变化
+  /// - setState() 会触发 build() 方法重新执行
+  void _changeText() {
+    setState(() {
+      _text = '状态已更新: ${DateTime.now().second}';
+      print('setState 被调用，UI 即将更新');
+    });
+  }
+
+  /// 6. 生命周期方法：dispose()
+  /// - 当 State 对象从树中永久移除时调用
+  /// - 适合取消订阅、释放资源等操作
+  @override
+  void dispose() {
+    super.dispose();
+    print('dispose: State 对象已销毁');
+  }
+}
+
+```
+- **创建一个有状态的 Widget 示意图**
+```dart
+class Aaa extends StatefulWidget {
+  @override // 重写
+  State<Aaa> createState() => _BbbState();
+}
+
+class _BbbState extends State<Aaa> {
+  // 生命周期方法
 }
 ```
-在这个例子中，`MyStatefulWidget` 是一个 `StatefulWidget`，它持有一个变量 `_text` 来保存文本内容。当用户点击按钮时，会调用 `_changeText` 方法，更新 `_text` 的值，并调用 `setState` 方法来重新构建 Widget，从而更新界面。
+- 关键注释说明：
+1. **状态分离**：`StatefulWidget` 本身不可变，仅负责创建 `State`（通过 `createState()`），状态存储在 `_GoodWidgetState` 中
+2. **生命周期方法**：展示了 `initState` → `build` → `dispose` 的典型流程
+3. **`setState` 机制**：调用时会标记状态为"脏"，触发重建
+4. **命名规范**：私有类/变量使用下划线前缀是 Dart 的通用约定
+5. **UI 更新**：每次 `setState` 会生成带时间戳的新文本，直观展示更新效果
 
 ## **2.2 Widget 树与构建过程**
-在 Flutter 中，Widget 树是构建 UI 的核心概念，以下将详细介绍 Widget 树及其构建过程。
 
-### 什么是 Widget 树
-Widget 树是 Flutter 里 UI 的构建方式，所有的 UI 元素（像按钮、文本、图片等）都是 Widget，Widget 树呈现为嵌套结构，父 Widget 会决定子 Widget 的布局和行为。在代码运行时，并没有明确独立的 Widget 树概念，它是开发人员对 Widget 嵌套情况的描述。
-
-### Widget 树的特点
-- **声明式 UI**：借助描述 UI 的状态来构建界面。开发者只需声明 UI 应有的样子，Flutter 框架会负责将其渲染出来。
-- **不可变性**：Widget 是不可变的，一旦创建，其属性和状态就不能被修改。任何状态的变化都会触发 Widget 树的重建。
-
-### Widget 树的组成
-- **根 Widget**：通常是 `MaterialApp` 或 `CupertinoApp`。`MaterialApp` 用于构建具有 Material Design 风格的应用，而 `CupertinoApp` 则用于构建具有 iOS 风格的应用。
-- **布局 Widget**：例如 `Row`、`Column`、`Stack` 等。`Row` 和 `Column` 分别用于水平和垂直布局，`Stack` 则允许子 Widget 重叠排列。
-- **功能 Widget**：如 `Text`、`Image`、`Button` 等，这些 Widget 用于实现具体的 UI 功能。
-
-### Widget 树的构建过程
-#### 1. 应用启动与根 Widget 创建
+### 2.2.1 启动应用与创建根 Widget
 当 Flutter 应用启动时，会调用 `runApp()` 函数，该函数接收一个 Widget 作为参数，这个 Widget 就是应用的根 Widget，通常是 `MaterialApp` 或 `CupertinoApp`。例如：
 ```dart
 import 'package:flutter/material.dart';
@@ -126,87 +161,93 @@ void main() {
 ```
 在这个例子中，`MaterialApp` 是根 Widget，它管理着应用的主题和导航等全局信息。
 
-#### 2. 从根 Widget 开始构建 Widget 树
-根 Widget 的 `build` 方法会被调用，该方法会返回一个 Widget 树。在构建过程中，会根据 Widget 的类型和属性创建相应的 Widget 实例，并将它们组合成树形结构。例如，`Scaffold` 是一个常用的布局 Widget，它会创建一个包含 `AppBar`、`Body` 等子 Widget 的树形结构。
+### 2.2.2 `MaterialApp`
+```dart
+// main() 是Dart程序的唯一入口函数，Flutter应用启动时首先执行该函数
+void main() {
+  // runApp() 是Flutter框架的核心启动函数，用于初始化应用并绑定根Widget
+  runApp(
+    MaterialApp(  // MaterialApp是Flutter提供的Material风格应用框架
+      title: '外卖应用', // 应用标题（显示在任务管理器/多任务视图）
+      theme: ThemeData(primarySwatch: Colors.blue), // 全局主题配置（主色为蓝色）
+      home: Scaffold(), // 默认首页
+    )
+  );
+}
+```
 
-#### 3. 递归构建子 Widget
-在构建 Widget 树时，会递归地调用每个 Widget 的 `build` 方法来构建其子 Widget。例如，在 `Scaffold` 的 `build` 方法中，会调用 `AppBar` 和 `Body` 的 `build` 方法来构建它们各自的子 Widget。这个过程会一直递归下去，直到构建到最底层的 Widget。
+### 2.2.3 重写 `build` 方法
+`MaterialApp` 是一个预定义的 `Widget`，其内部已经实现了 `build` 方法。因此，直接将其作为根组件传递给 `runApp()` 是合法的：
+```dart
+void main() {
+  runApp(MaterialApp(home: Scaffold())); // 无需自定义build方法
+}
+```
+此时 `MaterialApp` 会通过自身的 `build` 方法完成渲染。
 
-#### 4. 处理 Widget 的更新
-当 Widget 的状态发生变化时，会触发 Widget 树的重建。例如，当调用 `setState()` 方法时，Flutter 会标记当前 `State` 对象为“脏”状态，当 `build` 方法再次被调用时，会重新构建 Widget 树，以反映最新的状态。不过，Flutter 采用了局部重建的策略，即只重建需要更新的部分，而不是整个 UI 树，从而提高性能。
+`build` 函数是 `Widget` 类中的一个抽象方法，所有 `widget` 都必须实现它。当 Flutter 需要渲染一个 `widget` 时，就会调用它的 `build` 方法。
 
-### 示例代码
-下面是一个简单的电商首页布局示例，展示了 Widget 树的构建过程：
+若创建自定义的 `StatelessWidget` 或 `StatefulWidget`，则必须重写 `build` 方法，否则会触发编译错误。
+
+```dart
+@override // 重写 build 方法
+Widget build(BuildContext context) {
+  return ;// 返回一个 widget 树
+}
+```
+在 `StatefulWidget` 中，`build` 函数位于对应的 `State` 类中：
+```dart
+class Counter extends StatefulWidget {
+  @override
+  State<Counter> createState() => _CounterState();
+}
+
+class _CounterState extends State<Counter> {
+  int count = 0;
+  
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text('Count: $count'),
+        ElevatedButton(
+          onPressed: () => setState(() => count++),
+          child: Text('Increment'),
+        ),
+      ],
+    );
+  }
+}
+```
+
+### 2.2.4 自定义 Widget 的直接调用
 ```dart
 import 'package:flutter/material.dart';
 
-class EcommerceHomePage extends StatelessWidget {
+class Banana extends StatefulWidget {
+
+ @override
+ State<Banana> createState() => _BananaState();
+
+}
+
+class _BananaState extends State<Banana> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("电商首页"),
+        title: Text("隐式声明"),
         backgroundColor: Colors.blue,
       ),
-      body: Column(
-        children: [
-          // 搜索栏
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: "搜索商品",
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-            ),
-          ),
-          // 分类网格
-          Expanded(
-            flex: 1,
-            child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                crossAxisSpacing: 8.0,
-                mainAxisSpacing: 8.0,
-              ),
-              itemCount: 8,
-              itemBuilder: (context, index) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Center(
-                    child: Text("分类 ${index + 1}"),
-                  ),
-                );
-              },
-            ),
-          ),
-          // 商品列表
-          Expanded(
-            flex: 2,
-            child: ListView.builder(
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: Container(
-                    width: 50,
-                    height: 50,
-                    color: Colors.blue,
-                    child: Icon(Icons.shopping_bag),
-                  ),
-                  title: Text("商品名称 ${index + 1}"),
-                  subtitle: Text("商品描述 ${index + 1}"),
-                  trailing: Text("\$ ${(index + 1) * 10}"),
-                );
-              },
-            ),
-          ),
-        ],
+      body: Container(
+        width: 200,
+        height: 100,
+        color: Colors.yellow,
+        alignment: Alignment.center,
+        child: Text(
+          '好棒哦',
+          style: TextStyle(fontSize: 24),
+        ),
       ),
     );
   }
@@ -214,17 +255,41 @@ class EcommerceHomePage extends StatelessWidget {
 
 void main() {
   runApp(MaterialApp(
-    home: EcommerceHomePage(),
+    home: Banana(), // 通过 Banana() 直接调用自定义的 StatefulWidget 组件
   ));
 }
 ```
-在这个示例中，`MaterialApp` 是根 Widget，`Scaffold` 是其子 Widget，`AppBar`、`Column`、`GridView.builder` 和 `ListView.builder` 等都是 `Scaffold` 的子 Widget，它们共同构成了一个 Widget 树。
+#### 🔍 怎么理解这个调用过程？
+
+1. `Banana()` 调用了自定义的 `StatefulWidget` 类 `Banana`。
+2. `Banana` 会自动执行它的 `createState()` 方法，创建并返回 `_BananaState`
+3. 然后 Flutter 框架会调用 `_BananaState` 类中的 `build()` 方法，构建 UI。
+4. 最终，`Scaffold -> AppBar -> Container -> Text` 的整个界面被渲染出来。
+
+## 2.3 本章小结
+```markdown
+main() 
+  ↓
+runApp()
+  ↓
+MaterialApp(home: 自定义())   // 直接调用组件
+  ↓
+自定义()                     // 自定义 extends StatefulWidget
+  ↓
+createState()                // 创建状态对象
+  ↓
+State<自定义> {              // 状态类开始生命周期
+  ├─ initState()             // 初始化，只调用一次
+  ├─ build()                 // 构建 UI，首次渲染或 setState 后调用
+  ├─ setState()              // 修改状态，触发 build()
+  └─ dispose()               // 销毁前调用，释放资源
+}
+```
 
 # 3. **常用布局组件**
 
 ## 3.1 基础布局组件
 ### `Scaffold`
-#### 基本示例代码
 ```dart
 import 'package:flutter/material.dart';
 
@@ -277,22 +342,13 @@ Container(
   child: Text('综合示例'),
 )
 ```
-
-### `Padding`
-```dart
-Padding(
-  padding: EdgeInsets.all(16), // 四周16像素边距
-  child: Text('Hello, Flutter!'),
-)
-```
-
-### `alignment` 属性和 `Center`
+#### `alignment` 属性和 `Center` 组件
 ```dart
 Container(
   width: 200,
   height: 200,
   color: Colors.blue,
-  alignment: Alignment.center, // 水平垂直居中
+  alignment: Alignment.center, // 子组件Text('居中文本')在容器内居中
   child: Text('居中文本'),
 )
 
@@ -309,77 +365,645 @@ Center(
 )
 ```
 
+#### `Container` 的其它属性
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text('Gradient + Constraints 示例')),
+        body: Center(
+          child: Container(
+            // 1. 尺寸约束：设置最小/最大宽高
+            constraints: BoxConstraints(
+              minWidth: 100,  // 最小宽度
+              maxWidth: 300, // 最大宽度
+              minHeight: 50, // 最小高度
+              maxHeight: 200, // 最大高度
+            ),
+
+            // 2. 渐变背景：使用 LinearGradient 从左到右渐变
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.blue, Colors.green], // 渐变颜色数组
+                begin: Alignment.centerLeft,         // 渐变起始位置
+                end: Alignment.centerRight,          // 渐变结束位置
+              ),
+              borderRadius: BorderRadius.circular(10), // 圆角
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 3,
+                  blurRadius: 5,
+                  offset: Offset(0, 3), // 阴影偏移
+                ),
+              ],
+            ),
+
+            // 3. 子组件对齐方式
+            alignment: Alignment.center,
+
+            // 4. 内边距
+            padding: EdgeInsets.all(16.0),
+
+            // 5. 子组件：居中显示的文本
+            child: Text(
+              'Flutter 容器示例',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+#### `Container` 常用属性总结
+```markdown
+flutter_container/
+├── 基础属性
+│   ├── width: double
+│   ├── height: double
+│   └── color: Color
+│
+├── 布局属性
+│   ├── margin: EdgeInsets
+│   │   ├── fromLTRB(left, top, right, bottom)
+│   │   ├── symmetric(vertical, horizontal)
+│   │   └── all(value)
+│   │
+│   ├── padding: EdgeInsets
+│   │   ├── fromLTRB(left, top, right, bottom)
+│   │   ├── symmetric(vertical, horizontal)
+│   │   └── all(value)
+│   │
+│   └── alignment: Alignment
+│       ├── center
+│       ├── topLeft
+│       ├── bottomRight
+│       └── [其他8个预置位置]
+│
+├── 约束属性
+│   └── constraints: BoxConstraints
+│       ├── minWidth: double
+│       ├── maxWidth: double
+│       ├── minHeight: double
+│       └── maxHeight: double
+│
+├── 装饰属性
+│   └── decoration: BoxDecoration
+│       ├── color: Color
+│       ├── borderRadius: BorderRadius
+│       │   ├── circular(radius)
+│       │   └── only(
+│       │       ├── topLeft: Radius.circular(radius)
+│       │       ├── topRight: Radius.elliptical(x, y)
+│       │       ├── bottomLeft: Radius.zero
+│       │       └── bottomRight: Radius.circular(radius)
+│       │   )
+│       │
+│       ├── gradient: Gradient
+│       │   ├── LinearGradient
+│       │   │   ├── colors: List<Color>
+│       │   │   ├── begin: Alignment
+│       │   │   └── end: Alignment
+│       │   │
+│       │   └── RadialGradient
+│       │       ├── colors: List<Color>
+│       │       ├── center: Alignment(x, y)
+│       │       ├── radius: double (0~1)
+│       │       ├── stops: List<double>?
+│       │       ├── focal: Alignment?
+│       │       └── tileMode: TileMode
+│       │
+│       └── border: Border
+│           ├── all(width, color)
+│           └── symmetric(
+│               ├── vertical: BorderSide
+│               └── horizontal: BorderSide
+│           )
+│
+└── 子元素
+    └── child: Widget
+```
+
+### `Padding`
+```dart
+Padding(
+  padding: EdgeInsets.all(16), // 四周16像素边距
+  child: Text('Hello, Flutter!'),
+)
+```
+
+### `ConstrainedBox`
+```dart
+        // 1. 基础用法（强制固定尺寸）
+        ConstrainedBox(
+          constraints: BoxConstraints.tight(Size(150, 150)), // 强制150x150尺寸
+          child: Container(
+            color: Colors.red,
+            child: Center(child: Text('固定尺寸 150x150')),
+          ),
+        ),
+
+        // 2. 动态约束（最小/最大宽高）
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: 100,
+            maxWidth: 200,
+            minHeight: 50,
+            maxHeight: 150,
+          ),
+          child: Container(
+            color: Colors.blue,
+            padding: EdgeInsets.all(8),
+            child: Center(
+              child: Text(
+                '动态约束\n最小100x50\n最大200x150',
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ),
+
+        // 3. 填充父容器
+        SizedBox( // 限制父容器大小
+          width: 250,
+          height: 100,
+          child: ConstrainedBox(
+            constraints: BoxConstraints.expand(), // 填充父容器
+            child: Container(
+              color: Colors.green,
+              child: Center(child: Text('填充父容器 250x100')),
+            ),
+          ),
+        ),
+      
+```
+
 ### `SizedBox`
 ```dart
 SizedBox(width: 50), // 水平占位空白
 SizedBox(height: 80), // 垂直占位空白
 ```
 
-### `ConstrainedBox`
-```dart
-```
-### `IntrinsicHeight`
-```dart
-```
-### `IntrinsicWidth`
-```dart
-```
 ### `ClipRRect`
+`ClipRRect`是 Flutter 中用于将子组件（如图片、容器等）裁剪为圆角矩形的组件
 ```dart
+// 圆角图片
+ClipRRect(
+  borderRadius: BorderRadius.circular(20),
+  child: Image.asset('assets/avatar.jpg'),
+)
+
+// ​圆角容器
+ClipRRect(
+  borderRadius: BorderRadius.only(
+    topLeft: Radius.circular(10),
+    bottomRight: Radius.circular(10),
+  ),
+  child: Container(color: Colors.red),
+)
+```
+
+### 组件的 `key` 属性
+`key` 是Flutter用来区分相同类型Widget的唯一标识符（ID），若需要参与动态操作（如列表排序、状态保留），则需显式设置Key，否则**通常无需主动指定**
+```dart
+Column(
+  children: [
+    TextField(key: ValueKey('username')), // 用户名输入框
+    TextField(key: ValueKey('password')), // 密码输入框
+  ],
+)
 ```
 
 ## 3.2 线性布局
-### `Column`
-### `Row`
-### `Expanded`
+### `Row` 和 `Column`
+- 水平布局
+```dart
+Row(
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly, // 主轴：子组件均匀分布
+  crossAxisAlignment: CrossAxisAlignment.center,    // 交叉轴：垂直居中
+  children: [
+    Container(
+      color: Colors.red,
+      width: 50,
+      height: 50,
+      child: Text("A"),
+    ),
+    Container(
+      color: Colors.blue,
+      width: 70,
+      height: 50,
+      child: Text("B"),
+    ),
+  ],
+)
+```
+- 垂直布局
+```dart
+Column(
+  mainAxisSize: MainAxisSize.min,           // 主轴：仅包裹子组件高度
+  crossAxisAlignment: CrossAxisAlignment.stretch, // 交叉轴：水平拉伸
+  children: [
+    ElevatedButton(onPressed: () {}, child: Text("按钮1")),
+    ElevatedButton(onPressed: () {}, child: Text("按钮2")),
+    Expanded(                              // 占据剩余空间
+      child: Container(color: Colors.grey),
+    ),
+  ],
+)
+```
+- 嵌套
+```dart
+Column(
+  children: [
+    Row(children: [Text("标题"), Icon(Icons.arrow_drop_down)]),
+    Container(height: 10),
+    Row(
+      children: List.generate(3, (i) => Expanded( // 均分宽度
+        child: Container(height: 50, color: Colors.primaries[i]), //Colors.primaries是Flutter内置的13种基础颜色数组（红、黄、蓝等）
+      )),
+    ),
+  ],
+)
+```
+
+### `Row` 和 `Column` 常用属性总结
+```markdown
+├── 主轴对齐属性
+│   └── mainAxisAlignment: MainAxisAlignment
+│       ├── start    // 子组件从主轴起点排列（Row左端/Column顶部）
+│       │   // 示例：Row(mainAxisAlignment: MainAxisAlignment.start)
+│       ├── end      // 子组件从主轴末端排列（Row右端/Column底部）
+│       │   // 示例：Column(mainAxisAlignment: MainAxisAlignment.end)
+│       ├── center   // 子组件居中排列
+│       │   // 适用于居中按钮组或标题
+│       ├── spaceBetween  // 首尾子组件贴边，中间均匀分布
+│       │   // 典型应用：导航栏图标分布
+│       ├── spaceAround   // 每个子组件两侧留相同空白
+│       │   // 效果：视觉上每个元素有"外边距"
+│       └── spaceEvenly   // 所有间隔（包括首尾）完全均等
+│           // 适合需要精确控制间距的场景
+│
+├── 交叉轴对齐属性
+│   └── crossAxisAlignment: CrossAxisAlignment
+│       ├── start    // 沿交叉轴起点对齐（Row顶部/Column左端）
+│       │   // 注意：受verticalDirection/textDirection影响
+│       ├── end      // 沿交叉轴末端对齐（Row底部/Column右端）
+│       ├── center   // 交叉轴居中对齐（默认值）
+│       │   // 示例：Row(crossAxisAlignment: CrossAxisAlignment.center)
+│       ├── stretch  // 强制子组件拉伸填满交叉轴
+│       │   // 需要子组件没有固定宽度/高度才生效
+│       └── baseline // 按文本基线对齐（需设置textBaseline）
+│           // 适用场景：需要文字底部对齐的输入框组合
+│
+├── 主轴尺寸控制
+│   └── mainAxisSize: MainAxisSize
+│       ├── max  // 填满父容器主轴空间（默认）
+│       │   // 示例：Row(mainAxisSize: MainAxisSize.max)
+│       └── min  // 仅包裹子组件内容大小
+│           // 适用场景：浮动按钮组
+│
+├── 子元素
+│   └── children: List<Widget>
+│       └── [子组件列表]  // 最少包含1个Widget
+│           // 特殊元素：
+│           // Expanded - 按比例分配剩余空间
+│           // Spacer - 创建弹性空白
+│
+├── 方向依赖属性
+│   ├── textDirection: TextDirection（仅 Row 有效）
+│   │   ├── ltr  // 从左到右排列（默认）
+│   │   │   // 影响MainAxisAlignment.start的方向
+│   │   └── rtl  // 从右到左排列
+│   │       // 阿拉伯语等RTL语言适配
+│   │
+│   └── verticalDirection: VerticalDirection（仅 Column 有效）
+│       ├── down  // 从上到下排列（默认）
+│       └── up    // 从下到上排列
+│           // 特殊场景：聊天消息倒序排列
+│
+└── 基线对齐（可选）
+    └── textBaseline: TextBaseline
+        ├── alphabetic   // 字母基线对齐（英文文本常用）
+        └── ideographic // 表意文字基线（中文/日文适用）
+            // 必须与CrossAxisAlignment.baseline配合使用
+            // 示例：
+            // crossAxisAlignment: CrossAxisAlignment.baseline,
+            // textBaseline: TextBaseline.alphabetic
+```
+
+### `Expanded` 和 `Spacer`
+- `Expanded` 必须包含子组件
+```dart
+Row(
+  children: [
+    Container(width: 50, color: Colors.red),
+    Expanded( 
+      flex: 2, // 填满剩余空间,占比2/3
+      child: Container(color: Colors.blue),
+    ),
+    Expanded( // 填满剩余空间,占比1/3
+      flex: 1,
+      child: Container(color: Colors.green),
+    ),
+  ],
+)
+```
+- `Spacer` 无子组件（空白占位）
+```dart
+Row(
+  children: [
+    Container(width: 50, color: Colors.red),
+    Spacer(flex: 2), // 占剩余空间的2/3
+    Container(width: 50, color: Colors.blue),
+    Spacer(), // 默认flex:1，占剩余空间的1/3
+    Container(width: 50, color: Colors.green),
+  ],
+)
+```
+
 ### `Wrap`
+Flutter的 `Wrap` 流式布局组件，用于在空间不足时自动换行排列子组件，非常适合动态布局和响应式设计(例如b站的搜索历史标签)
+```dart
+// 水平流式布局（标签云）
+Wrap(
+  spacing: 8.0, // 主轴（默认水平）间距
+  runSpacing: 4.0, // 交叉轴行列间距
+  direction: MediaQuery.of(context).size.width > 600 
+      ? Axis.horizontal  // 默认水平
+      : Axis.vertical,
+  children: List.generate(
+    5,
+    (index) => Container(
+      width: 100,
+      height: 100,
+      color: Colors.primaries[index],
+    ),
+  ),
+)
+```
+
+### `IntrinsicWidth` 和 `IntrinsicHeight`
+原理：自动取子组件中的最大宽（高）度，让Column（Row）中的不同宽（高）度的子组件统一宽（高）度
+```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(MaterialApp(
+  home: Scaffold(
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // 1. IntrinsicHeight示例：让Row中的不同高度子组件统一高度
+          IntrinsicHeight(
+            child: Row(
+              children: [
+                // 蓝色方块（高度150）
+                Container(
+                  width: 80,
+                  height: 150,
+                  color: Colors.blue,
+                  child: Center(child: Text("高150", style: TextStyle(color: Colors.white))),
+                ),
+                // 红色方块（高度60，会被拉伸到150）
+                Container(
+                  width: 80,
+                  height: 60,
+                  color: Colors.red,
+                  child: Center(child: Text("原高60", style: TextStyle(color: Colors.white))),
+                ),
+                // 绿色方块（未设高度，自动匹配150）
+                Container(
+                  width: 80,
+                  color: Colors.green,
+                  child: Center(child: Text("自动高度", style: TextStyle(color: Colors.white))),
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: 40),
+
+          // 2. IntrinsicWidth示例：让Column中的不同宽度子组件统一宽度
+          IntrinsicWidth(
+            child: Column(
+              children: [
+                // 短按钮（宽度由最长的按钮决定）
+                ElevatedButton(
+                  onPressed: () {},
+                  child: Text("短按钮"),
+                ),
+                // 中等按钮
+                ElevatedButton(
+                  onPressed: () {},
+                  child: Text("中等按钮"),
+                ),
+                // 最长按钮（决定最终宽度）
+                ElevatedButton(
+                  onPressed: () {},
+                  child: Text("这个按钮文本最长，决定最终宽度"),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  ),
+));
+```
 
 ## 3.3 滚动布局
-### `ListView`
-### `GridView`
+### `ListView.builder`
+示例：左侧分类导航栏组件
+```dart
+// 在State类中声明状态变量
+int _selectedIndex = 0; // 当前选中的分类索引
+final List<String> _categories = ['热销', '主食', '小吃', '饮料', '套餐'];
+
+// 左侧分类导航栏组件
+Container(
+  width: 100,
+  color: Colors.grey[200],
+  child: ListView.builder(
+    itemCount: _categories.length, // 指定列表项数量（此处为 _categories 数组长度）。若为 null，则视为无限列表
+    itemBuilder: (context, index) {
+      return GestureDetector(
+        onTap: () {
+          setState(() {
+            _selectedIndex = index; // 更新选中状态
+          });
+        },
+        child: Container(
+          color: _selectedIndex == index 
+              ? Colors.white 
+              : Colors.transparent,
+          padding: EdgeInsets.symmetric(vertical: 16),
+          child: Text(
+            _categories[index],
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: _selectedIndex == index 
+                  ? Colors.blue 
+                  : Colors.black,
+            ),
+          ),
+        ),
+      );
+    },
+  ),
+)
+```
+
+### `GridView.builder` 和 `GridView.count`
+```dart
+```
+
 ### `SingleChildScrollView`
+```dart
+```
+
 ### `CustomScrollView`
+```dart
+```
+
 ### `NestedScrollView`
+```dart
+```
+
 ### `ScrollController`
+```dart
+```
 
 ## 3.4 Material Design组件
+### `MaterialApp`
+```dart
+// main() 是Dart程序的唯一入口函数，Flutter应用启动时首先执行该函数
+void main() {
+  // runApp() 是Flutter框架的核心启动函数，用于初始化应用并绑定根Widget
+  runApp(
+    MaterialApp(  // MaterialApp是Flutter提供的Material风格应用框架
+      title: '外卖应用', // 应用标题（显示在任务管理器/多任务视图）
+      theme: ThemeData(primarySwatch: Colors.blue), // 全局主题配置（主色为蓝色）
+      home: Scaffold(), // 默认首页
+    )
+  );
+}
+```
+
 ### `AppBar`
+```dart
+```
+
 ### `BottomNavigationBar`
+```dart
+```
+
 ### `Card`
+```dart
+```
+
 ### `ListTile`
+```dart
+```
+
 ### `TabBar`
+```dart
+```
+
 ### `TabBarView`
+```dart
+```
+
 ### `AlertDialog`
+```dart
+```
 
 ## 3.5 交互组件
 ### `GestureDetector`
+```dart
+```
+
 ### `InkWell`
+```dart
+```
+
 ### `IconButton`
+```dart
+```
+
 ### `ElevatedButton`
+```dart
+```
+
 ### `TextButton`
+```dart
+```
+
 ### `TextField`
+```dart
+```
 
 ## 3.6 其它
-### `Text`
-### `SelectableText`
+### `Text` 和 `SelectableText`
+```dart
+```
+
+### `Icon`
+```dart
+```
+
 ### `Stack`
+```dart
+```
+
 ### `Positioned`
+```dart
+```
+
 ### `AnimatedOpacity`
+```dart
+```
+
 ### `AnimatedPositioned`
+```dart
+```
+
 ### `SliverList`
+```dart
+```
+
 ### `SliverGrid`
+```dart
+```
+
 ### `SliverAppBar`
+```dart
+```
 
 
-# 4. **自定义 Widget**
-
-* 创建自定义 Widgets
-* 使用 `CustomPaint` 和 `CustomClipper`
-
-# 5. **响应式布局**
+# 4. **响应式布局**
 
 * 使用 `MediaQuery`、`LayoutBuilder` 适配不同屏幕尺寸
 * Flutter 中的响应式设计模式（如 `AspectRatio`, `FractionallySizedBox`）
+
+# 5. **自定义 Widget**
+
+* 创建自定义 Widgets
+* 使用 `CustomPaint` 和 `CustomClipper`
 
 # 6. **状态管理**
 

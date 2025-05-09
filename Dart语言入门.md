@@ -10,7 +10,7 @@ void main() {
   print('Hello, World!');
 }
 ```
-- `main()` 是程序入口，无返回值时自动推断为 `void`。
+- `main()` 是Dart程序的唯一入口，无返回值时自动推断为 `void`。
 - `print()` 用于输出内容到控制台。
 
 ### **1.1.2 注释**
@@ -109,7 +109,7 @@ var str = 'Hello'; // Dart自动推断str为String类型
 String greeting = 'Hello Dart';
 int age = 20;
 ```
-Dart 2.12版本引入了空安全特性，如果变量可能含有空值，需要在类型后面加一个问号`?`。例如：
+Dart 2.12版本引入了**空安全**特性，如果变量可能含有空值，需要在类型后面加一个问号`?`。例如：
 ```dart
 String? nullableString = null;
 ```
@@ -413,8 +413,13 @@ void main() {
 ##### 1. **创建 List**
 
 ```dart
-List<int> numbers = [1, 2, 3, 4, 5];  // 使用字面量创建 List
+List<int> numbers = [1, 2, 3, 4, 5];  // 使用字面量创建int 类型的 List
 List<String> names = ['Alice', 'Bob', 'Charlie'];  // 使用字面量创建 String 类型的 List
+
+
+var dynamicList = []; // 创建未指定类型的动态空List（可存储任意类型，不推荐）
+List<String> nothing = []; // 使用字面量创建 String 类型的空 List
+
 
 // 使用构造函数创建空 List
 List<int> emptyList = List<int>.empty();
@@ -426,6 +431,8 @@ List<int> filledList = List<int>.filled(5, 0);  // 创建一个长度为 5，且
 ```dart
 List<String> names = ['Alice', 'Bob', 'Charlie'];
 print(names[0]);  // 输出: Alice
+print(names[1]);  // 输出: Bob
+print(names[2]);  // 输出: Charlie
 print(names.length);  // 输出: 3，List 的长度
 ```
 
@@ -491,13 +498,16 @@ print(numbers);  // 输出: [1]
 * `contains()`：判断 List 中是否包含某个元素。
 
 ```dart
-List<String> names = ['Alice', 'Bob', 'Charlie'];
+List<String> names = ['Alice', 'Bob', 'Charlie', 'Alice', 'Bob', 'Charlie'];
 
 // 查找元素的索引
 print(names.indexOf('Bob'));  // 输出: 1
 
+// 未找到则返回 -1
+print(names.indexOf('Banana'));  // 输出: -1
+
 // 查找元素的最后索引
-print(names.lastIndexOf('Alice'));  // 输出: 0
+print(names.lastIndexOf('Alice'));  // 输出: 3
 
 // 判断元素是否存在
 print(names.contains('Charlie'));  // 输出: true
@@ -547,19 +557,29 @@ print(uniqueNumbers);  // 输出: [1, 2, 3, 4]
 
 * `forEach()`：遍历 List 中的每个元素。
 * `join()`：将 List 中的元素连接为一个字符串。
+* `split()`：将字符串按照指定的分隔符切割成一个字符串列表。
 * `first`：获取 List 中的第一个元素。
 * `last`：获取 List 中的最后一个元素。
 * `isEmpty`：判断 List 是否为空。
 
 ```dart
 List<String> names = ['Alice', 'Bob', 'Charlie'];
+String sentence = "apple,banana,orange";
 
 // 遍历每个元素
 names.forEach((name) => print(name));
+// 输出: 
+// Alice
+// Bob
+// Charlie
 
 // 将 List 中的元素连接为字符串
 String result = names.join(', ');
 print(result);  // 输出: Alice, Bob, Charlie
+
+// 将字符串切割成List
+List<String> fruits = sentence.split(',');
+print(fruits);  // 输出: [apple, banana, orange]
 
 // 获取第一个和最后一个元素
 print(names.first);  // 输出: Alice
@@ -584,6 +604,12 @@ Map<String, int> scores = {
   'Charlie': 88,
 };
 
+// 创建未指定类型的动态空Map（可存储任意类型，不推荐）
+var dynamicMap = {}; 
+
+// 使用字面量创建 <String, int> 类型的空 Map
+Map<String, int> nothing = {}; 
+
 // 使用构造函数创建空 Map
 Map<String, int> emptyMap = Map<String, int>();
 
@@ -602,6 +628,8 @@ Map<String, int> scores = {
 
 // 通过键访问值
 print(scores['Alice']);  // 输出: 90
+print(scores['Bob']);  // 输出: 85
+print(scores['Charlie']);  // 输出: 88
 
 // 获取 Map 的长度
 print(scores.length);  // 输出: 3
@@ -621,22 +649,22 @@ print(scores.containsValue(88));  // 输出: true
 * `[]=`：通过键添加或更新值。
 
 ```dart
-Map<String, int> scores = {
-  'Alice': 90,
-  'Bob': 85,
+Map<String, double> prices = {
+  'apple': 7.5,
+  'banana': 3.0,
 };
 
 // 添加一个新键值对
-scores['Charlie'] = 88;
-print(scores);  // 输出: {Alice: 90, Bob: 85, Charlie: 88}
+prices['orange'] = 3.9;
+print(prices);  // 输出: {apple: 7.5, banana: 3.0, orange: 3.9}
 
 // 使用 addAll() 添加多个键值对
-scores.addAll({'David': 92, 'Eve': 87});
-print(scores);  // 输出: {Alice: 90, Bob: 85, Charlie: 88, David: 92, Eve: 87}
+prices.addAll({'candy': 6.0, 'biscuit': 5.7});
+print(prices);  // 输出: {apple: 7.5, banana: 3.0, orange: 3.9, candy: 6.0, biscuit: 5.7}
 
 // 使用 putIfAbsent() 只有键不存在时才添加
-scores.putIfAbsent('Frank', () => 80);
-print(scores);  // 输出: {Alice: 90, Bob: 85, Charlie: 88, David: 92, Eve: 87, Frank: 80}
+prices.putIfAbsent('hamburger', () => 9.9);
+print(prices);  // 输出: {apple: 7.5, banana: 3.0, orange: 3.9, candy: 6.0, biscuit: 5.7, hamburger: 9.9}
 ```
 
 ##### 4. **删除元素**
@@ -646,23 +674,24 @@ print(scores);  // 输出: {Alice: 90, Bob: 85, Charlie: 88, David: 92, Eve: 87,
 * `clear()`：删除 `Map` 中的所有键值对。
 
 ```dart
-Map<String, int> scores = {
-  'Alice': 90,
-  'Bob': 85,
-  'Charlie': 88,
+Map<String, double> prices = {
+  'apple': 7.5,
+  'banana': 3.0,
+  'orange': 3.9,
 };
 
-// 删除指定的键值对
-scores.remove('Bob');
-print(scores);  // 输出: {Alice: 90, Charlie: 88}
+// 使用 remove() 删除指定键值对
+prices.remove('banana');
+print(prices);  // 输出: {apple: 7.5, orange: 3.9}
 
-// 使用 removeWhere() 删除符合条件的键值对
-scores.removeWhere((key, value) => value < 90);  // 删除值小于 90 的键值对
-print(scores);  // 输出: {Alice: 90}
+// 使用 removeWhere() 删除所有价格低于 5 的商品
+prices.removeWhere((key, value) => value < 5.0);
+print(prices);  // 输出: {apple: 7.5}
 
-// 清空 Map
-scores.clear();
-print(scores);  // 输出: {}
+// 使用 clear() 清空整个 Map
+prices.clear();
+print(prices);  // 输出: {}
+
 ```
 
 ##### 5. **查找元素**
@@ -672,26 +701,26 @@ print(scores);  // 输出: {}
 * `forEach()`：遍历 `Map` 中的每个键值对。
 
 ```dart
-Map<String, int> scores = {
-  'Alice': 90,
-  'Bob': 85,
-  'Charlie': 88,
+Map<String, double> prices = {
+  'apple': 7.5,
+  'banana': 3.0,
+  'orange': 3.9,
 };
 
 // 获取所有的键
-print(scores.keys);  // 输出: (Alice, Bob, Charlie)
+print(prices.keys);  // 输出: (apple, banana, orange)
 
 // 获取所有的值
-print(scores.values);  // 输出: (90, 85, 88)
+print(prices.values);  // 输出: (7.5, 3.0, 3.9)
 
 // 遍历 Map
-scores.forEach((key, value) {
-  print('$key: $value');
+prices.forEach((key, value) {
+  print('$key 的价格是 $value 元');
 });
 // 输出:
-// Alice: 90
-// Bob: 85
-// Charlie: 88
+// apple 的价格是 7.5 元
+// banana 的价格是 3.0 元
+// orange 的价格是 3.9 元
 ```
 
 ##### 6. **修改元素**
@@ -700,23 +729,23 @@ scores.forEach((key, value) {
 * `updateAll()`：更新所有键值对，根据给定的函数更新值。
 
 ```dart
-Map<String, int> scores = {
-  'Alice': 90,
-  'Bob': 85,
-  'Charlie': 88,
+Map<String, double> prices = {
+  'apple': 7.5,
+  'banana': 3.0,
+  'orange': 3.9,
 };
 
 // 更新指定键的值
-scores.update('Alice', (value) => value + 5);
-print(scores);  // 输出: {Alice: 95, Bob: 85, Charlie: 88}
+prices.update('apple', (value) => value + 1.0);
+print(prices);  // 输出: {apple: 8.5, banana: 3.0, orange: 3.9}
 
 // 如果指定键不存在，则可以提供一个默认值
-scores.update('David', (value) => value + 5, ifAbsent: () => 100);
-print(scores);  // 输出: {Alice: 95, Bob: 85, Charlie: 88, David: 100}
+prices.update('grape', (value) => value + 1.0, ifAbsent: () => 4.5);
+print(prices);  // 输出: {apple: 8.5, banana: 3.0, orange: 3.9, grape: 4.5}
 
-// 使用 updateAll() 更新所有值
-scores.updateAll((key, value) => value + 2);
-print(scores);  // 输出: {Alice: 97, Bob: 87, Charlie: 90, David: 102}
+// 使用 updateAll() 更新所有价格，加 0.5
+prices.updateAll((key, value) => value + 0.5);
+print(prices);  // 输出: {apple: 9.0, banana: 3.5, orange: 4.4, grape: 5.0}
 ```
 
 ##### 7. **其他常用方法**
@@ -727,24 +756,24 @@ print(scores);  // 输出: {Alice: 97, Bob: 87, Charlie: 90, David: 102}
 * `putIfAbsent()`：当指定的键不存在时，添加一个键值对。
 
 ```dart
-Map<String, int> scores = {
-  'Alice': 90,
-  'Bob': 85,
-  'Charlie': 88,
+Map<String, double> prices = {
+  'apple': 7.5,
+  'banana': 3.0,
+  'orange': 3.9,
 };
 
 // 判断 Map 是否为空
-print(scores.isEmpty);  // 输出: false
+print(prices.isEmpty);  // 输出: false
 
 // 判断 Map 是否不为空
-print(scores.isNotEmpty);  // 输出: true
+print(prices.isNotEmpty);  // 输出: true
 
 // 使用 addEntries() 添加多个键值对
-scores.addEntries([
-  MapEntry('David', 92),
-  MapEntry('Eve', 87)
+prices.addEntries([
+  MapEntry('cookie', 6.0),
+  MapEntry('cake', 8.8),
 ]);
-print(scores);  // 输出: {Alice: 90, Bob: 85, Charlie: 88, David: 92, Eve: 87}
+print(prices);  // 输出: {apple: 7.5, banana: 3.0, orange: 3.9, cookie: 6.0, cake: 8.8}
 ```
 
 ##### 8. **Map 复制与转换**
@@ -753,19 +782,19 @@ print(scores);  // 输出: {Alice: 90, Bob: 85, Charlie: 88, David: 92, Eve: 87}
 * `Map.of()`：从已有的键值对集合创建 `Map`。
 
 ```dart
-Map<String, int> scores = {
-  'Alice': 90,
-  'Bob': 85,
-  'Charlie': 88,
+Map<String, double> prices = {
+  'apple': 7.5,
+  'banana': 3.0,
+  'orange': 3.9,
 };
 
 // 使用 Map.from() 创建新的 Map
-Map<String, int> copiedScores = Map.from(scores);
-print(copiedScores);  // 输出: {Alice: 90, Bob: 85, Charlie: 88}
+Map<String, double> copiedPrices = Map.from(prices);
+print(copiedPrices);  // 输出: {apple: 7.5, banana: 3.0, orange: 3.9}
 
 // 使用 Map.of() 创建新的 Map
-Map<String, int> newScores = Map.of({'David': 92, 'Eve': 87});
-print(newScores);  // 输出: {David: 92, Eve: 87}
+Map<String, double> newPrices = Map.of({'milk': 6.6, 'tea': 5.5});
+print(newPrices);  // 输出: {milk: 6.6, tea: 5.5}
 ```
 
 ##### 总结
@@ -827,20 +856,115 @@ if (obj is String) {
 ### **1.3.5 类型转换**
 - **数值与字符串**：
   ```dart
-  int num = int.parse('123');    // 字符串转 int
-  double d = double.parse('3.14');
-  String s = 100.toString();     // int 转字符串
+  int zhengShu = int.parse('123');    // 字符串转 int
+  double fuDianShu = double.parse('3.14'); // 字符串转 double
+  String str1 = 100.toString();     // int 转字符串
+  String str2 = 9.9.toString();  // double 转字符串
   ```
 - **集合转换**：
   ```dart
   List<String> list = ['a', 'b'];
   String joined = list.join(','); // 转为字符串 "a,b"
-  List<String> split = 'a,b'.split(','); // 字符串转列表
+  List<String> split = 'a,b'.split(','); // 字符串转List
   ```
 
 ---
+### **1.3.6 类型判断**
+在 Dart 中，数据类型通常由编译器推断，或者你可以显式地声明类型。以下是如何确定数据类型的一些方法：
 
-### **1.3.6 注意事项**
+#### 1.3.6.1 **类型推断**
+
+Dart 是一种强类型语言，通常会根据赋值推断变量的类型。如果你没有显式声明类型，Dart 会根据初始值自动推断类型。
+
+```dart
+var x = 10;      // Dart 推断 x 的类型是 int
+var y = 3.14;    // Dart 推断 y 的类型是 double
+var name = "Alice"; // Dart 推断 name 的类型是 String
+```
+
+在这个例子中，`var` 用来声明变量，Dart 根据赋值推断类型。
+
+#### 1.3.6.2 **显式类型声明**
+
+你也可以显式地声明变量的类型：
+
+```dart
+int x = 10;
+double y = 3.14;
+String name = "Alice";
+```
+
+#### 1.3.6.3 **使用 `runtimeType` 属性**
+
+Dart 中每个对象都有一个 `runtimeType` 属性，它表示对象在运行时的类型。你可以通过 `runtimeType` 获取对象的类型名称（以字符串形式）。
+
+```dart
+void main() {
+  var x = 10;
+  print(x.runtimeType);  // 输出: int
+
+  var y = 3.14;
+  print(y.runtimeType);  // 输出: double
+
+  var name = "Alice";
+  print(name.runtimeType);  // 输出: String
+}
+```
+
+#### 1.3.6.4 **`is` 运算符**
+
+如果你想检查某个对象是否是某个特定类型，你可以使用 `is` 运算符。
+
+```dart
+void main() {
+  var x = 10;
+
+  if (x is int) {
+    print("x 是 int 类型");
+  } else {
+    print("x 不是 int 类型");
+  }
+}
+```
+
+#### 1.3.6.5 **`is!` 运算符**
+
+`is!` 用来测试一个对象是否不是某个类型。
+
+```dart
+void main() {
+  var x = 9.9;
+
+  if (x is! String) {
+    print("x 不是 String 类型");
+  }
+
+}
+
+```
+
+#### 1.3.6.6 **`as` 运算符**
+
+你还可以使用 `as` 来进行类型转换，将对象转换为指定类型。注意，转换时必须确保对象实际是该类型，否则会抛出异常。
+
+```dart
+void main() {
+  var x = "123";
+  var y = x as String; // 强制转换
+  print(y);  // 输出: 123
+}
+```
+
+#### 1.3.6.5 总结
+
+* **类型推断**：通过赋值自动推断类型。
+* **显式声明**：你可以手动声明变量的类型。
+* **`runtimeType`**：获取对象的运行时类型。
+* **`is` 运算符**：检查对象是否为某个类型。
+* **`is!` 运算符**：检查对象是否不为某个类型。
+* **`as` 运算符**：强制转换对象类型。
+
+### **1.3.7 注意事项**
 - **不可变性**：`String`、`List` 等基础类型默认不可变，修改需重新赋值。
 - **性能优化**：频繁修改 `List` 时，可预分配容量：`List<int> list = List.filled(100, 0);`。
 
@@ -859,7 +983,7 @@ if (obj is String) {
 | `-`  | 减法            | `a - b`             | `7`        |
 | `*`  | 乘法            | `a * b`             | `30`       |
 | `/`  | 除法（返回 double） | `a / b`             | `3.333...` |
-| `~/` | 整除            | `a ~/ b`            | `3`        |
+| `~/` | 整除（结果取整数部分）            | `a ~/ b`            | `3`        |
 | `%`  | 取余（模）         | `a % b`             | `1`        |
 
 ---
@@ -888,6 +1012,7 @@ if (obj is String) {
 ---
 
 ### 1.4.4 赋值运算符（Assignment Operators）
+#### 1.4.4.1 常用赋值
 
 | 运算符   | 描述    | 示例（`a = 10`） | 结果    |
 | ----- | ----- | ------------ | ----- |
@@ -900,28 +1025,78 @@ if (obj is String) {
 | `%=`  | 取余后赋值 | `a %= 3`     | `1`   |
 
 ---
+-示例代码
+```dart
+int x = 10;
+x += 2; // 等价于 x = x + 2
+print(x); // 输出: 12
 
+int y = 6;
+y *= 7; // 等价于 y = y * 7
+print(y); // 输出: 42
+```
+
+#### 1.4.4.2 自增/自减
+##### 后置自增/自减（先使用，后运算）
+- 语法： `i++`  或  `i--` 
+- 执行逻辑：先返回变量的当前值，再将变量值加1或减1。
+```dart
+int a = 5;
+int b = a++; // 等价于：b = a; a = a + 1;
+// 执行后：b = 5，a = 6
+
+int c = 10;
+int d = c--; // 等价于：d = c; c = c - 1;
+// 执行后：d = 10，c = 9
+
+```
+##### 前置自增/自减（先运算，后使用）
+- 语法： `++i`  或  `--i` 
+- 执行逻辑：先将变量值加1或减1，再返回新值。
+```dart
+int a = 5;
+int b = ++a; // 等价于：a = a + 1; b = a;
+// 执行后：b = 6，a = 6
+
+int c = 10;
+int d = --c; // 等价于：c = c - 1; d = c;
+// 执行后：d = 9，c = 9
+```
 
 ### 1.4.5 条件运算符（Conditional Operators）
 
-- 三元运算符
-
+#### 1.4.5.1 三元运算符
+- 基本语法
 ```dart
-var result = condition ? expr1 : expr2;
+condition ? AAA : BBB;
+// 如果 condition 为 true，返回 AAA
+// 如果 condition 为 false，返回 BBB
+```
+- 示例代码
+```dart
+int size = 20;
+String length = size >= 18 ? 'Big' : 'Small';
+print(length); // 输出: Big
 ```
 
-- 空值合并运算符（`??`）
+#### 1.4.5.2 空值合并运算符（`??`）
+- 基本语法
+```dart
+a ?? b
+// 如果 a 不为 null，则返回 a 的值；
+//如果 a 为 null，则返回 b 的值。
+```
+- 示例代码
+```dart
+String? name;
+var finalName = name ?? '默认名'; //如果 name 是空值，则返回 '默认名' ，等价于 var finalName = '默认名' ;
+```
+
+#### 1.4.5.3 空值赋值运算符（`??=`）
 
 ```dart
 String? name;
-var finalName = name ?? '默认名';
-```
-
-- 空值赋值运算符（`??=`）
-
-```dart
-String? name;
-name ??= '默认名';
+name ??= '默认名'; //如果 name 是空值，则将 '默认名' 赋值给 name ，等价于 String? name = '默认名' ; 
 ```
 
 ---
@@ -981,6 +1156,7 @@ void main() {
   } else {
     print('不及格');
   }
+  // 输出 及格
   ```
 - **特点**：
   - 条件表达式必须是布尔值（Dart 无隐式类型转换，`if (score)` 会报错）。
@@ -989,11 +1165,25 @@ void main() {
 ### **2.1.2 `switch-case`**
 - **基本语法**：
   ```dart
-  String day = 'Monday';
+  String day = 'Friday';
   switch (day) {
     case 'Monday':
-      print('工作日');
+      print('星期一');
       break;
+    case 'Tuesday':
+      print('星期二');
+      break;
+    case 'Wednesday':
+      print('星期三');
+      break;
+    case 'Thursday':
+      print('星期四');
+      break;
+    case 'Friday':
+      print('星期五');
+      break;   
+  /* 当 day 的值为 'Saturday' 或 'Sunday' 时
+     这是 switch 语句的多条件合并写法     */
     case 'Saturday':
     case 'Sunday': // 多条件合并
       print('周末');
@@ -1001,9 +1191,11 @@ void main() {
     default:
       print('其他');
   }
+  // 输出 星期五
   ```
 - **关键点**：
   - **必须用 `break`**：否则会继续执行下一个 `case`（无穿透行为）。
+  - **`default`** 表示当所有 `case` 都不匹配时执行的代码，类似于 `if-else` 中的 `else`，不是必须的，但建议总是包含以处理意外情况
   - 支持任意类型（如 `int`、`String`、对象等）。
   - Dart 3.0+ 支持更复杂的模式匹配（需启用实验性功能）。
 
@@ -1037,11 +1229,28 @@ for (int i = 0; i < 5; i++) {
 ## **2.2 循环结构**
 ### **2.2.1 `for` 循环**
 #### **2.2.1.1 传统 `for`**：
-  ```dart
+- 结构示意
+```dart
+  for (初始条件; 循环条件; 迭代器) {
+   // 循环体
+  }
+
+/*
+ 初始条件：在总循环开始时执行仅一次
+ 循环条件：每次循环前检查，若为true则继续执行循环体
+ 迭代器：每次循环后执行
+
+ 当循环条件为true时，执行循环体
+ 当循环条件为false时，退出for循环
+*/
+
+```
+- 示例代码
+```dart
   for (int i = 0; i < 5; i++) {
     print(i); // 输出 0, 1, 2, 3, 4
   }
-  ```
+ ```
 
 #### **2.2.1.2 `for-in` 遍历集合**：
 ```dart
@@ -1133,6 +1342,9 @@ void main() {
   ];
 
   print("=== 蔬菜分类遍历 ===");
+
+  int count = 0; 
+
   // 外层循环遍历每个大类别
   for (var bigCategory in vegetables) {
     // 中层循环遍历每个大类别下的子类别
@@ -1140,9 +1352,12 @@ void main() {
       // 内层循环遍历当前子类别的每种蔬菜
       for (var veg in subCategory) {
         print(veg); // 输出蔬菜名称
+        count++;
       }
     }
   }
+
+print("总共有 $count 种蔬菜");
 
   // 输出结果：
   // === 蔬菜分类遍历 ===
@@ -1158,6 +1373,7 @@ void main() {
   // 黄瓜
   // 茄子
   // 辣椒
+  // 总共有 12 种蔬菜
 }
 ```
 
@@ -1333,11 +1549,11 @@ print(name?.toUpperCase() ?? '匿名'); // 输出 '匿名'（若 name 为 null�
 
 
 ## **2.5 注意事项**
-### 2.5.1 **类型严格性**：  
+### 2.5.1 **类型严格性**  
    条件表达式必须返回布尔值，`if (score)` 会报错（需显式写 `if (score > 0)`）。
-### 2.5.2 **`switch` 的局限性**：  
+### 2.5.2 **`switch` 的局限性**  
    Dart 不支持 `fall-through`（除非显式省略 `break`），但可通过 `case` 合并实现多条件。
-### 2.5.3 **性能优化**：  
+### 2.5.3 **性能优化**  
    - 避免在循环内重复计算（如 `for (int i = 0; i < list.length; i++)` 可缓存 `list.length`）。
    - 大集合遍历优先用 `for-in` 或 `forEach`（代码更简洁）。
 
@@ -1350,6 +1566,15 @@ print(name?.toUpperCase() ?? '匿名'); // 输出 '匿名'（若 name 为 null�
 ## **3.1 函数基础语法**
 ### **3.1.1 标准函数定义**
 ```dart
+/* 结构示意
+
+返回类型 函数名(参数a, 参数b...) {
+      // 函数体
+    return 返回值; // 非void类型需返回值
+}
+
+*/ 
+
 // 传统写法（多行）
 int add(int a, int b) {
   return a + b;
@@ -1698,6 +1923,38 @@ Dart 的函数设计灵活，支持：
 
 ## **4.1 类与对象（Class & Object）**
 ### **4.1.1 基础定义**
+- 结构示意
+```dart
+class 类名 {
+  // 类的属性
+  这里创建属性
+
+  // 构造函数
+   类名(this.属性1, this.属性2); // 自动将传入的参数赋值给对应的属性
+  // 如果没有写构造函数，Dart 会默认提供一个无参数的构造函数
+
+  // 类的方法
+   void 方法名() {
+      // 方法内容
+   }
+}
+
+void main() {
+  // 带参数的构造函数
+  var 对象1 = 类名(参数1, 参数2...);
+
+  // 无参构造函数
+  var 对象2 = 类名();
+
+  // 调用属性
+  对象1.属性
+
+  // 调用方法
+  对象1.方法名()
+
+}
+```
+- 示例1 水果
 ```dart
 // 定义一个名为 Fruit 的类，类就像是一个模板，用来创建具有相同属性和行为的水果对象
 class Fruit {
@@ -1742,7 +1999,53 @@ void main() {
   print(fruit2.name); // 输出: Banana
 }
 ```
+- 示例2 家具
+```dart
+// 定义一个名为 Furniture 的类，类就像是一个模板，用来创建具有相同属性和功能的家具对象
+class Furniture {
+  // 属性（字段），用来描述家具的特征
+  // typeName 表示家具的种类，比如椅子、桌子、镜子
+  String? typeName;
+  // material 表示家具使用的材料，比如木头、金属、玻璃
+  String? material;
+  // usage 表示家具的功能，比如用于坐、放东西等
+  String? usage;
 
+  // 构造函数，创建对象时初始化属性
+  Furniture(this.typeName, this.material, this.usage);
+
+  // 方法，让家具进行自我介绍
+  void describe() {
+    print('This is a $material $typeName, mainly used for $usage.');
+  }
+  // 方法，如何制造家具
+  void made() {
+    print('To make a $typeName, you primarily need $material.');
+  }
+
+  // 命名构造函数：从 JSON 数据创建家具对象
+  Furniture.fromJson(Map<String, dynamic> json)
+      : typeName = json['typeName'] ?? 'Unknown',
+        material = json['material'] ?? 'Unknown',
+        usage = json['usage'] ?? 'No specific use';
+}
+
+void main() {
+  // 使用普通构造函数创建一个家具对象chair
+  var chair = Furniture('chair', 'wood', 'sitting');
+  chair.describe(); // 输出: This is a wood chair, mainly used for sitting.
+
+// 使用普通构造函数创建一个家具对象mirror
+  var mirror = Furniture('mirror', 'glass');
+  mirror.made(); // 输出: To make a mirror, you primarily need ​glass.
+
+  // 使用命名构造函数从 JSON 创建对象
+  var table = Furniture.fromJson({'typeName': 'table', 'material': 'metal'});
+  print(table.typeName); // 输出: table
+  print(table.usage); // 输出: No specific use
+}
+
+```
 ### **4.1.2 Getter/Setter**
 ```dart
 class Circle {
@@ -1775,6 +2078,7 @@ void main() {
 
 ## **4.2 继承与混入（Inheritance & Mixin）**
 ### **4.2.1 单继承**
+- 示例1 动物
 ```dart
 class Animal {
   void breathe() => print('Breathing...');
@@ -1795,6 +2099,30 @@ void main() {
   var dog = Dog();
   dog.breathe(); // 输出: Breathing... \n Dog is panting
   dog.bark();    // 输出: Woof!
+}
+```
+- 示例2 光源
+```dart
+class Light {
+  void shine() => print('Shining...');
+}
+
+class DeskLamp extends Light {
+  void turnOn() => print('The power is on!');
+  void turnOff() => print('The power is off!');
+  
+  // 覆盖父类方法
+  @override
+  void shine() {
+    turnOn();
+    super.shine(); // 调用父类方法
+  }
+}
+
+void main() {
+  var deskLamp = DeskLamp();
+  deskLamp.shine(); // 输出: The power is on! \n Shining... 
+  deskLamp.turnOff();    // 输出: The power is off!
 }
 ```
 
@@ -2013,18 +2341,18 @@ void main() {
 ---
 
 ## **4.7 最佳实践**
-### **4.7.1 命名规范**：
+### **4.7.1 命名规范**
    - 类名：`PascalCase`（如 `UserAccount`）
    - 方法/变量：`camelCase`（如 `calculateTotal`）
    - 常量：`SCREAMING_SNAKE_CASE`（如 `MAX_RETRIES`）
 
-### **4.7.2 空安全处理**：
+### **4.7.2 空安全处理**
    ```dart
    String? nullableString;
    print(nullableString?.length ?? 0); // 安全访问
    ```
 
-### **4.7.3 不可变设计**：
+### **4.7.3 不可变设计**
    ```dart
    class ImmutablePoint {
      final double x;
@@ -2032,7 +2360,7 @@ void main() {
    }
    ```
 
-### **4.7.4 方法参数设计**：
+### **4.7.4 方法参数设计**
    - 必需参数放在前面
    - 可选参数用 `{}` 或 `[]` 包裹
    - 避免过多可选参数（超过3个考虑使用对象封装）
@@ -2113,16 +2441,16 @@ class Counter {
 
 Dart采用单线程模型，这意味着所有代码都在一个主线程上顺序执行。在这样的模型下，异步编程显得尤为重要，主要体现在以下几个方面：
 
-### 避免程序阻塞
+### 5.1.1 避免程序阻塞
 在单线程环境中，如果执行耗时操作（如网络请求、文件读写等）时不采用异步编程，程序会被阻塞，无法响应其他事件。例如，在Flutter应用里，若从服务器获取数据时使用同步方式，界面会被冻结，用户无法进行其他操作，严重影响用户体验。而异步编程允许程序在等待耗时操作完成的同时继续执行其他任务，保证了程序的流畅性和响应性。就像厨师在烹饪一道菜时，利用异步编程可以让他在等待食材煮熟的时间里去准备下一道菜的食材，不会因为一道菜的烹饪而耽误其他工作。
 
-### 提高程序性能
+### 5.1.2 提高程序性能
 单线程模型下，异步编程能充分利用系统资源，提高程序的整体性能。通过事件循环机制，Dart可以在等待异步操作完成时执行其他任务，避免了资源的浪费。比如在进行网络请求时，使用异步编程可以让程序在等待服务器响应的同时处理其他事务，从而提高了程序的吞吐量和响应速度。以服务器处理多个请求为例，异步编程可以让服务器同时处理多个请求，而不是一个一个地等待每个请求完成后再处理下一个，大大提高了服务器的并发处理能力。
 
-### 简化并发编程
+### 5.1.3 简化并发编程
 Dart的单线程模型避免了多线程环境下的竞态条件和同步问题，开发者无需担心复杂的锁机制和线程安全问题。异步编程通过事件循环和队列机制，以一种简单而有序的方式处理并发任务。开发者只需要关注任务的执行顺序和依赖关系，而不需要手动管理线程的创建、销毁和同步，降低了开发难度和出错的可能性。例如，在Java等多线程语言中，开发者需要使用锁来保证线程安全，而在Dart中，由于是单线程模型，这些问题都得到了简化。
 
-### 保证UI响应性
+### 5.1.4 保证UI响应性
 在UI框架如Flutter中，单线程模型有助于保持UI更新的简洁性和一致性。所有的UI更新操作都在主线程上执行，异步编程可以确保在执行耗时操作时不会阻塞UI线程，从而保证界面的流畅响应。例如，当用户在Flutter应用中进行滑动、点击等操作时，异步编程可以让程序在后台处理数据，而不会影响界面的交互体验。如果使用同步编程，界面可能会因为耗时操作而卡顿，给用户带来不好的体验。
 
 综上所述，尽管Dart是单线程模型，但异步编程在其中起着至关重要的作用，它可以让程序在单线程环境下实现高效的并发处理，提高程序的性能和响应能力，同时简化开发过程。
@@ -2383,30 +2711,30 @@ void main() {
 ## **6.1 认识"异常处理"**
 在Dart编程里，异常处理是非常重要的，它能保障程序的稳定、可靠运行。以下从异常处理的原因、定义、优势、类型、处理机制几方面详细介绍：
 
-### 异常处理的原因
+### 6.1.1 异常处理的原因
 程序在运行过程中，难免会遇到各种意外情况，如文件操作时可能遇到权限问题或文件不存在，网络请求时可能因网络不稳定或服务器错误导致失败，数据库交互时可能出现连接失败或查询错误等。若不进行异常处理，这些意外情况会引发程序崩溃，给用户带来不好的体验，还可能导致数据丢失或程序状态异常。异常处理可以捕获并处理这些意外情况，避免程序因未预料的错误而终止，增强程序的健壮性和可靠性。
 
-### 异常的定义
+### 6.1.2 异常的定义
 异常是指程序执行过程中出现的错误或意外情况，它会打断程序的正常流程。在Dart中，异常是一个事件，当程序遇到异常时，后续代码将不会继续执行，除非该异常被捕获并处理。
 
-### 异常处理的优势
+### 6.1.3 异常处理的优势
 - **提高程序稳定性**：通过捕获和处理异常，可防止程序因未预料的错误而崩溃，保证程序在遇到问题时仍能继续运行或优雅地退出。
 - **增强错误报告**：能提供详细的错误信息，帮助开发者快速定位和修复问题，提高开发效率。
 - **资源管理**：使用`finally`块可确保即使在发生异常的情况下，关键资源（如文件、数据库连接、网络连接等）也能得到适当的释放，避免资源泄漏。
 - **错误日志记录**：便于查找程序出错原因，方便后续的调试和维护。
 
-### 异常类型
+### 6.1.4 异常类型
 Dart中的异常主要分为两类：
 - **Error**：指程序中发生的严重错误，这类错误通常是不可恢复的，程序会立即终止。例如内存不足引发的错误。
 - **Exception**：指程序中可以预见的异常，这类错误是可进行恢复的。例如网络中断导致的异常。
 
-### 异常处理机制
+### 6.1.5 **try-catch-finally**
 Dart使用`try-catch-finally`结构来实现异常处理：
 - **try块**：包含可能会抛出异常的代码。如果`try`块中的代码抛出异常，控制流会立即跳转到相应的`catch`块。
 - **catch块**：用于捕获并处理异常。可以指定要捕获的异常类型，若不指定则捕获所有类型的异常。`catch`块可以接收一个参数（通常命名为`e`），该参数是捕获到的异常对象，可在其中记录日志、提示用户、执行回滚操作等。
 - **finally块（可选）**：无论是否发生异常，`finally`块中的代码都会执行，常用于释放资源、关闭文件或网络连接等清理操作。
 
-### 示例代码
+### 6.1.6 示例代码
 ```dart
 void main() {
   try {
