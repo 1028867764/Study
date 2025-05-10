@@ -56,7 +56,7 @@ class MyTextWidget extends StatelessWidget {
     - **状态改变时重新构建**：`setState()` 方法会触发 Flutter 调用 `State` 的 `build()` 方法，更新 UI。
 - **适用场景**：适用于需要动态变化的内容，如表单输入、动画、计数器、需要和用户进行交互的复杂 UI 等。
 
-#### 2.1.2.2 **示意图：创建一个有状态的 `Widget` 对象**
+#### 2.1.2.2 **示意图：创建一个有状态的 `Widget()` 对象**
 ```dart
 class Aaa extends StatefulWidget {
   @override // 重写
@@ -72,83 +72,126 @@ Aaa()
 // Aaa() 是一个可以被 Flutter 框架识别并调用内置 build 方法实现渲染的widget
 ```
 
-#### 2.1.2.3 **示例代码**
+#### 2.1.2.3 **`StatefulWidget` 生命周期**
+
+`StatefulWidget` 的生命周期分为以下几个阶段：
+
+1. **`createState()`**：
+
+   * 这个方法由框架调用，用于创建与 `StatefulWidget` 关联的 `State` 对象。每个 `StatefulWidget` 都需要一个对应的 `State` 对象，`createState()` 就是用来创建这个对象的。
+
+2. **`initState()`**：
+
+   * 在 `State` 对象被插入到树中时调用。只会调用一次，适合做初始化工作（如数据加载、订阅事件等）。
+   * `super.initState()` 需要在自定义实现中调用，确保父类的初始化工作正常执行。
+
+3. **`build()`**：
+
+   * 这是生命周期中最常调用的方法，它用于描述组件的 UI。每当 `setState()` 被调用，或者组件的依赖发生变化时，`build()` 方法都会被重新调用。
+   * `build()` 方法中不应该做耗时的操作，建议仅仅负责 UI 的构建。
+
+4. **`didChangeDependencies()`**：
+
+   * 当 `State` 对象的依赖发生变化时调用。例如，当 `InheritedWidget` 发生变化时，`didChangeDependencies()` 会被调用一次。
+   * 这个方法也会在 `initState()` 之后调用。
+
+5. **`setState()`**：
+
+   * 调用 `setState()` 时，`State` 对象会重新构建其 UI。这会触发 `build()` 方法的执行，刷新页面。
+
+6. **`deactivate()`**：
+
+   * 当 `State` 对象从树中移除时调用，常见于 `StatefulWidget` 被替换或销毁时。在此阶段，`State` 对象仍然在内存中，但不再附加到组件树中。
+
+7. **`dispose()`**：
+
+   * 当 `State` 对象从树中永久移除时调用。这是清理资源的地方，特别是你需要取消订阅的监听器或释放其他资源时。
+   * 一般来说，所有需要清理的资源（如 `AnimationController`、`StreamController`、`ScrollController` 等）都应该在 `dispose()` 中释放。
+
+---
+##### 🚨 **注意点**
+
+* `initState()` 只会调用一次，适合做一次性初始化。
+* `dispose()` 用来释放资源，避免内存泄漏。
+* 在 `setState()` 中不做耗时操作，避免 UI 阻塞。
+* `build()` 会频繁调用，不要在里面进行状态改变（比如不要在 `build()` 中调用 `setState()`）。
+
+---
+
+##### 📚 示例：完整的生命周期
+
 ```dart
 import 'package:flutter/material.dart';
 
-/// 1. StatefulWidget 定义
-/// - 继承自 StatefulWidget，表示这是一个有状态的类
-/// - 必须重写 createState() 方法，返回关联的 State
-class GoodWidget extends StatefulWidget {
-  @override // 重写
-  State<GoodWidget> createState() => _GoodWidgetState();
+class LifecycleExample extends StatefulWidget {
+  @override
+  State<LifecycleExample> createState() => _LifecycleExampleState();
 }
 
-/// 2. State 类定义
-/// - 管理 GoodWidget 的状态和生命周期
-/// - 命名约定：使用下划线前缀表示私有类（_GoodWidgetState）
-class _GoodWidgetState extends State<GoodWidget> {
-
+class _LifecycleExampleState extends State<LifecycleExample> {
   String _text = 'I am a StatefulWidget';
 
-  /// 3. 生命周期方法：initState()
-  /// - 在 State 对象创建时调用（只执行一次）
-  /// - 适合初始化数据、订阅事件等操作
   @override
   void initState() {
     super.initState();
-    print('initState: State 对象已创建');
+    print("initState: 组件被创建");
   }
 
-  /// 4. 生命周期方法：build()
-  /// - 必须重写，用于构建 UI
-  /// - 当 setState() 被调用或依赖项变化时自动触发
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    print("didChangeDependencies: 依赖发生变化");
+  } // 依赖变化时调用
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text(
-          _text,
-          style: TextStyle(fontSize: 20),
-        ),
-        SizedBox(height: 20), // 间距组件
-        // 按钮：点击触发状态更新
-        ElevatedButton(
-          onPressed: _changeText,
-          child: Text('Change Text'),
-        ),
-      ],
+    print("build: 构建 UI");
+    return Scaffold(
+      appBar: AppBar(title: Text("生命周期示例")),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(_text, style: TextStyle(fontSize: 20)),
+          SizedBox(height: 20), // 间距组件
+          // 按钮：点击触发状态更新
+          ElevatedButton(onPressed: _changeText, child: Text('Change Text')),
+        ],
+      ),
     );
-  }
+  } // 被 Flutter 框架调用以渲染界面
+  // 二次触发机制：setState() 或 didChangeDependencies()
 
-  /// 5. 自定义方法：修改状态
-  /// - 通过 setState() 通知 Flutter 框架状态变化
-  /// - setState() 会触发 build() 方法重新执行
   void _changeText() {
     setState(() {
-      _text = '状态已更新: ${DateTime.now().second}';
-      print('setState 被调用，UI 即将更新');
-    });
+      DateTime now = DateTime.now();
+      _text =
+          '状态已更新: ${now.year}-${now.month}-${now.day} ${now.hour}:${now.minute}:${now.second}';
+      print('setState 被调用，UI 即将更新'); 
+    });  // 刷新 UI
   }
 
-  /// 6. 生命周期方法：dispose()
-  /// - 当 State 对象从树中永久移除时调用
-  /// - 适合取消订阅、释放资源等操作
+  @override
+  void deactivate() {
+    super.deactivate();
+    print("deactivate: 组件被移除"); // 从树中移除时调用
+  }
+
   @override
   void dispose() {
     super.dispose();
-    print('dispose: State 对象已销毁');
+    print("dispose: 组件销毁，资源清理"); // 永久移除时调用
   }
 }
 
+void main() => runApp(MaterialApp(home: LifecycleExample()));
 ```
-- 关键注释说明：
-1. **状态分离**：`StatefulWidget` 本身不可变，仅负责创建 `State`（通过 `createState()`），状态存储在 `_GoodWidgetState` 中
-2. **生命周期方法**：展示了 `initState` → `build` → `dispose` 的典型流程
-3. **`setState` 机制**：调用时会标记状态为"脏"，触发重建
-4. **命名规范**：私有类/变量使用下划线前缀是 Dart 的通用约定
-5. **UI 更新**：每次 `setState` 会生成带时间戳的新文本，直观展示更新效果
+---
+
+##### 🔑 关键点：
+
+1. **`initState`** 用于初始化。
+2. **`build`** 用于绘制 UI。
+3. **`dispose`** 用于资源清理。
 
 ## **2.2 Widget 树与构建过程**
 
@@ -192,7 +235,7 @@ void main() {
 ```
 此时 `MaterialApp` 会通过自身的 `build` 方法完成渲染。
 
-`build` 函数是 `Widget` 类中的一个抽象方法，所有 `widget` 都必须实现它。当 Flutter 需要渲染一个 `widget` 时，就会调用它的 `build` 方法。
+`build` 函数是 `Widget` 类中的一个抽象方法，所有 `widget` 都必须实现它。换句话说，所有的 `widget` 内部都必须有 `build` 方法，因为当 Flutter 需要渲染一个 `widget` 时，就会调用它的 `build` 方法（否则 Flutter 无法渲染）。
 
 若创建自定义的 `StatelessWidget` 或 `StatefulWidget`，则必须重写 `build` 方法，否则会触发编译错误。
 
@@ -200,6 +243,26 @@ void main() {
 @override // 重写 build 方法
 Widget build(BuildContext context) {
   return ;// 返回一个 widget 树
+}
+```
+在 `StatelessWidget` 中，`build` 函数直接位于类的内部：
+```dart
+import 'package:flutter/material.dart';
+
+class MyWidget extends StatelessWidget {
+  final String title;
+
+  // 构造函数，接收 title 参数
+  const MyWidget({super.key, required this.title});
+
+  // build 方法：每个 widget 都需要这个来构建 UI
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: const Center(child: Text('Hello World')),
+    );
+  }
 }
 ```
 在 `StatefulWidget` 中，`build` 函数位于对应的 `State` 类中：
@@ -227,7 +290,7 @@ class _CounterState extends State<Counter> {
 }
 ```
 
-### 2.2.4 自定义 Widget 的直接调用
+### 2.2.4 以命名参数形式传入自定义 Widget() 对象
 ```dart
 import 'package:flutter/material.dart';
 
@@ -262,13 +325,13 @@ class _BananaState extends State<Banana> {
 
 void main() {
   runApp(MaterialApp(
-    home: Banana(), // 通过 Banana() 直接调用自定义的 StatefulWidget 组件
+    home: Banana(),  // 以命名参数形式传入自定义的 StatefulWidget 组件 'Banana()'
   ));
 }
 ```
 #### 🔍 怎么理解这个调用过程？
 
-1. `Banana()` 调用了自定义的 `StatefulWidget` 类 `Banana`。
+1. 传入`Banana()` 。
 2. `Banana` 会自动执行它的 `createState()` 方法，创建并返回 `_BananaState`
 3. 然后 Flutter 框架会调用 `_BananaState` 类中的 `build()` 方法，构建 UI。
 4. 最终，`Scaffold -> AppBar -> Container -> Text` 的整个界面被渲染出来。
@@ -279,7 +342,7 @@ main()
   ↓
 runApp()
   ↓
-MaterialApp(home: 自定义())   // 直接调用已经封装好的Widget
+MaterialApp(home: 自定义())   // 以命名参数形式传入自定义 Widget
   ↓
   ↓
 自定义()                     // 自定义 extends StatefulWidget
@@ -1016,6 +1079,128 @@ class GridExample extends StatelessWidget {
 
 ```
 
+### `ScrollController`
+####
+| 功能          | 说明                                                                                            |
+| ----------- | --------------------------------------------------------------------------------------------- |
+| **获取滚动位置**  | `controller.offset`（当前偏移值）                      |
+| **滚动到指定位置** | `controller.jumpTo(offset)`：直接跳转，无动画<br>`controller.animateTo(offset, duration, curve)`：带动画滚动 |
+| **监听滚动事件**  | `controller.addListener(() { ... })`：每次滚动时都会触发，可用于监听滚动距离、触底等                                  |
+
+---
+```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'ScrollController Demo',
+      home: ScrollDemo(),
+    );
+  }
+}
+
+class ScrollDemo extends StatefulWidget {
+  @override
+  _ScrollDemoState createState() => _ScrollDemoState();
+}
+
+class _ScrollDemoState extends State<ScrollDemo> {
+  final ScrollController _scrollController = ScrollController();
+
+  double _scrollOffset = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 添加滚动监听器
+    _scrollController.addListener(() {
+      setState(() {
+        _scrollOffset = _scrollController.offset;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // 释放控制器
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  // 滚动到底部
+  void _scrollToBottom() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
+  }
+
+  // 滚动到顶部
+  void _scrollToTop() {
+    _scrollController.animateTo(
+      0.0,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('ScrollController 示例'),
+      ),
+      body: Column(
+        children: [
+          // 显示当前滚动位置
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text('当前滚动位置: ${_scrollOffset.toStringAsFixed(1)}'),
+          ),
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              itemCount: 50,
+              itemBuilder: (context, index) => ListTile(
+                title: Text('Item $index'),
+              ),
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: _scrollToTop,
+            child: Icon(Icons.arrow_upward),
+            tooltip: '滚动到顶部',
+          ),
+          SizedBox(height: 10),
+          FloatingActionButton(
+            onPressed: _scrollToBottom,
+            child: Icon(Icons.arrow_downward),
+            tooltip: '滚动到底部',
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
+#### 🧠 小提示：
+
+* 结合 `controller.position.maxScrollExtent` 可判断是否滚动到底部；
+* 使用 `controller.dispose()` 释放资源，避免内存泄露；
+* 可在 `initState()` 中初始化监听器。
+---
+
 ### `CustomScrollView`
 ```dart
 ```
@@ -1024,9 +1209,6 @@ class GridExample extends StatelessWidget {
 ```dart
 ```
 
-### `ScrollController`
-```dart
-```
 
 ## 3.4 Material Design组件
 ### `AppBar`
@@ -1090,6 +1272,10 @@ class GridExample extends StatelessWidget {
 ```dart
 ```
 
+### `TextEditingController`
+```dart
+```
+
 ## 3.6 其它
 ### `Text` 和 `SelectableText`
 ```dart
@@ -1132,11 +1318,6 @@ class GridExample extends StatelessWidget {
 
 * 使用 `MediaQuery`、`LayoutBuilder` 适配不同屏幕尺寸
 * Flutter 中的响应式设计模式（如 `AspectRatio`, `FractionallySizedBox`）
-
-# 5. **自定义 Widget**
-
-* 创建自定义 Widgets
-* 使用 `CustomPaint` 和 `CustomClipper`
 
 # 6. **状态管理**
 
