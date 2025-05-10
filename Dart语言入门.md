@@ -2276,37 +2276,119 @@ void main() {
 
 ```
 ### **4.1.2 Getter/Setter**
+在 Dart 中，**直接字段**和 **getter/setter** 的主要区别体现在**封装性**、**灵活性**和**使用场景**上。以下是具体对比：
+
+---
+
+#### **4.1.2.1 核心区别**
+| **特性**         | **直接字段**                          | **Getter/Setter**                          |
+|------------------|--------------------------------------|--------------------------------------------|
+| **定义方式**     | 直接声明为公共变量（无下划线前缀）       | 通过 `get`/`set` 关键字定义，通常操作私有字段（`_field`） |
+| **访问控制**     | 外部代码可自由读写                     | 可限制为只读（仅 getter）或添加逻辑验证（setter）       |
+| **逻辑扩展**     | 无额外逻辑                             | 可在读取/写入时添加验证、计算或副作用（如日志记录）       |
+| **封装性**       | 低（暴露实现细节）                     | 高（隐藏内部实现，通过方法控制访问）                |
+| **典型场景**     | 简单数据存储，无需保护或处理逻辑         | 需要验证输入、动态计算或保护私有数据时               |
+
+---
+
+#### **4.1.2.2 代码示例对比**
+##### **(1) 直接字段**
 ```dart
-class Circle {
-  double _radius = 0; // 私有字段（约定用下划线前缀）
-  
-  // Getter
-  double get radius => _radius;
-  
-  // Setter（带验证逻辑）
-  set radius(double value) {
-    if (value > 0) {
-      _radius = value;
-    } else {
-      throw ArgumentError('Radius must be positive');
-    }
-  }
-  
-  // 计算面积
-  double get area => 3.14159 * _radius * _radius;
+class Person {
+  String name; // 直接字段（外部可直接修改）
+  int age;
 }
 
 void main() {
-  var circle = Circle();
-  circle.radius = 5; // 调用setter
-  print(circle.area); // 输出: 78.53975
+  var person = Person();
+  person.name = 'Alice'; // 直接赋值
+  person.age = -10;      // 非法值也能赋值（无保护），年龄为负数，逻辑上无意义
+}
+```
+
+##### **(2) Getter/Setter 封装私有字段**
+```dart
+class Person {
+  String _name = '';
+  int _age = 0;
+
+  // Getter（只读访问；不提供 setter，因此无法通过公开接口修改 _name）
+  String get name => _name;
+
+  // 如果想要（带有前提条件）赋值私有字段，用 Setter
+  // Setter（带验证）
+  set age(int value) {
+    if (value >= 0) _age = value; // 只允许非负数
+    else throw ArgumentError('Age cannot be negative');
+  }
+
+  // 动态计算属性
+  String get info => 'Name: $_name, Age: $_age';
+}
+
+void main() {
+  var person = Person();
+  person._name = 'Alice'; // 直接访问私有字段（在同一个文件中是允许的，但不推荐）
+  person.name = 'banana'; // ❌ 错误：`name` 只有 getter 没有 setter，不能赋值
+  print(person._name);     // 访问私有字段，输出：Alice（同样只在本文件中可见）
+  print(person.name);     // 通过 getter 访问 `_name`，输出：Alice
+  person.age = -10;       // 抛出异常：Age cannot be negative
+  print(person.info);     // 如果前面 age 抛出异常，这行不会执行；否则输出：Name: Alice, Age: 0
 }
 ```
 
 ---
 
+#### **4.1.2.3 关键优势分析**
+- **Getter/Setter 的用途**  
+  - **数据保护**：防止非法值破坏对象状态（如负数年龄）。  
+  - **动态计算**：如 `area` 属性通过半径实时计算，无需存储。  
+  - **副作用管理**：属性变更时触发通知或日志。  
+  - **兼容性**：未来可修改内部逻辑而不影响外部调用。
+
+- **直接字段的适用场景**  
+  - **简单DTO**：仅需传递数据时（如 `Point(x, y)`）。  
+  - **性能敏感**：避免方法调用开销（极少数情况）。
+
+---
+
+#### **4.1.2.4 设计建议**
+- **优先使用 Getter/Setter**：  
+  除非属性是纯粹的数据容器且无需任何逻辑控制，否则应通过 getter/setter 封装字段。
+- **私有化字段**：  
+  即使使用 getter/setter，也应将字段声明为私有（`_field`），强制通过方法访问。
+
+通过合理选择，可兼顾代码的**安全性**和**可维护性**。
+---
+
 ## **4.2 继承与混入（Inheritance & Mixin）**
 ### **4.2.1 单继承**
+- 语法结构示意
+```dart
+class 父类 {
+  父类的属性；
+  父类的方法();
+  同名方法();
+}
+
+class 子类 extends 父类 { 
+  
+  // 覆盖父类方法
+  @override
+  void 同名方法() {
+    // 新内容
+  }
+  super.父类的方法(); // 调用父类方法
+  子类的属性；
+  子类的方法();
+}
+
+void main() {
+  var 对象 = 子类();
+  对象.父类的属性、方法();  
+  对象.子类的属性、方法();  
+}
+```
 - 示例1 动物
 ```dart
 class Animal {
@@ -2356,6 +2438,40 @@ void main() {
 ```
 
 ### **4.2.2 混入（Mixin）**
+- 语法结构示意
+```dart
+class 基类 {
+  基类的属性；
+  基类的方法();
+}
+
+mixin  混入1 {
+  混入1的属性；
+  混入1的方法();
+}
+
+mixin 混入2 {
+  混入2的属性；
+  混入2的方法();
+}
+
+class 子类 extends 基类 with 混入1, 混入2 {  //当不需要基类时，'extends 基类 '可省略
+  子类的属性；
+  子类的方法();
+}
+
+void main() {
+  var 对象 = 子类();
+  对象.基类的属性、方法();  
+  对象.混入1的属性、方法();  
+  对象.混入2的属性、方法();  
+
+  // Mixin 不能定义构造函数
+  var 对象 = 混入1(); // ❌ 编译错误
+
+}
+```
+- 示例1
 ```dart
 mixin Flyable {
   void fly() => print('Flying...');
@@ -2365,7 +2481,7 @@ mixin Swimmable {
   void swim() => print('Swimming...');
 }
 
-class Duck extends Animal with Flyable, Swimmable {
+class Duck with Flyable, Swimmable {
   // 同时拥有飞行和游泳能力
 }
 
@@ -2373,11 +2489,40 @@ void main() {
   var duck = Duck();
   duck.fly();  // 输出: Flying...
   duck.swim(); // 输出: Swimming...
+
+
+// Mixin 不能定义构造函数
+  var fly = Flyable(); // ❌ 编译错误
+}
+```
+- 示例2
+```dart
+// Animal 基类
+class Animal {
+  void breathe() => print('Breathing...');
+}
+
+mixin Flyable {
+  void fly() => print('Flying...');
+}
+
+mixin Swimmable {
+  void swim() => print('Swimming...');
+}
+
+class Duck extends Animal with Flyable, Swimmable {
+
+}
+
+void main() {
+  var duck = Duck();
+  duck.fly();  // 输出: Flying...
+  duck.swim(); // 输出: Swimming...
+  duck.breathe(); // 输出: Breathing...
 }
 ```
 
 ---
-
 ## **4.3 构造函数进阶**
 ### **4.3.1 初始化列表**
 ```dart
