@@ -56,7 +56,7 @@ class MyTextWidget extends StatelessWidget {
     - **状态改变时重新构建**：`setState()` 方法会触发 Flutter 调用 `State` 的 `build()` 方法，更新 UI。
 - **适用场景**：适用于需要动态变化的内容，如表单输入、动画、计数器、需要和用户进行交互的复杂 UI 等。
 
-#### 2.1.2.2 **`Widget` 封装示意图**
+#### 2.1.2.2 **示意图：创建一个有状态的 `Widget` 对象**
 ```dart
 class Aaa extends StatefulWidget {
   @override // 重写
@@ -67,7 +67,7 @@ class _BbbState extends State<Aaa> {
   // 生命周期方法
 }
 
-// 其它地方可以直接调用已经封装好的widget
+// 其它地方可以直接调用已经封装好的 widget 对象（不一定要声明变量接收保存）
 Aaa() 
 // Aaa() 是一个可以被 Flutter 框架识别并调用内置 build 方法实现渲染的widget
 ```

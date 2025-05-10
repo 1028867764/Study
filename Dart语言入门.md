@@ -1827,50 +1827,115 @@ void printMessage() => print('Hello, Dart!');
 ---
 
 ## **3.2 参数类型**
-### **3.2.1 必需参数**
-- 直接声明的参数为必需参数：
+
+1. 必需参数（位置参数）
+2. 命名参数（含 `required`、默认值）
+3. 可选位置参数
+
+---
+
+### **3.2.1 必需参数 `()`**
+- 按顺序传，全部必填
 ```dart
-  void greet(String name) {
-    print('Hello, $name!');
-  }
-  greet('Dart'); // 正确
-  // greet();    // 编译错误：缺少参数
+void createAccount(String username, String password, int age, String country) {
+  print('Username: $username, Age: $age, Country: $country');
+}
+
+createAccount('user123', 'pass456', 30, 'China'); // ✅ 正确
+// createAccount('user123'); // ❌ 错误：缺少参数
 ```
 
-### **3.2.2 可选参数**
-#### **3.2.2.1 命名参数（`{param}`）**
-- 用 `{}` 包裹，调用时可省略：
+---
+
+### **3.2.2 命名参数 `{}`**
+- 以类似于键值对的方式明确传参，可省略参数，可加默认值，也可以 `required` 强制传参
 ```dart
-  void configure({bool debug = false, String? name}) {
-    print('Debug: $debug, Name: $name');
-  }
-  
-  configure(debug: true); // 输出: Debug: true, Name: null
+void createProfile({
+  required String username,
+  required String email,
+  int age = 18,
+  String country = 'Unknown',
+  bool isPremium = false,
+}) {
+  print('User: $username, Email: $email, Age: $age, Country: $country, Premium: $isPremium');
+}
+
+// ✅ 推荐用法
+createProfile(
+  username: 'alice',
+  email: 'alice@example.com',
+  age: 25,
+  isPremium: true,
+);
+/* 输出：
+User: alice, Email: alice@example.com, Age: 25, Country: Unknown, Premium: true
+*/
+
+// 也可以省略部分参数（使用默认值）
+createProfile(
+  username: 'bob',
+  email: 'bob@example.com',
+);
+/* 输出：
+User: bob, Email: bob@example.com, Age: 18, Country: Unknown, Premium: false
+*/
+
 ```
 
-#### **3.2.2.2 位置参数（`[param]`）**
-- 用 `[]` 包裹，调用时按顺序可选：
+---
+
+### **3.2.3 可选位置参数 `[]`**
+- 按顺序传，可省略后面的
 ```dart
-  void log(String message, [int? code]) {
-    print('$message (Code: $code)');
-  }
-  
-  log('Error');          // 输出: Error (Code: null)
-  log('Error', 404);     // 输出: Error (Code: 404)
+void sendMessage(String content, [String? sender, String? receiver, String? time]) {
+  print('Message: $content');
+  print('From: $sender, To: $receiver, At: $time');
+}
+
+sendMessage('Hello!'); // 只传 message
+sendMessage('Hello!', 'Alice'); // 传 sender
+sendMessage('Hello!', 'Alice', 'Bob', '12:00'); // 全部传
 ```
 
-### **3.2.3 默认值**
-- 为可选参数设置默认值：
+---
+
+### **3.2.4 混合写法（位置参数 + 命名参数）**
+
 ```dart
-  void greet(String name, {int times = 1}) {
-    for (int i = 0; i < times; i++) {
-      print('Hello, $name!');
-    }
-  }
-  
-  greet('Dart');          // 输出 1 次
-  greet('Dart', times: 3); // 输出 3 次
+void placeOrder(
+  String productId,
+  int quantity, {
+  String address = 'Warehouse',
+  bool express = false,
+  String? note,
+}) {
+  print('Product: $productId x$quantity');
+  print('Ship to: $address, Express: $express, Note: $note');
+}
+
+// 调用示例 1：
+placeOrder('A123', 5);
+/* 输出：
+Product: A123 x5
+Ship to: Warehouse, Express: false, Note: null
+*/
+
+// 调用示例 2：
+placeOrder('A123', 2, express: true, note: 'Gift wrap');
+/* 输出：
+Product: A123 x2
+Ship to: Warehouse, Express: true, Note: Gift wrap
+*/
 ```
+
+---
+
+### 3.2.5 总结
+* 一般来说，必需参数（位置参数）和命名参数用得最多
+* 用位置参数，顺序不能错；
+* 用命名参数，名字得写清；
+* 参数多时，推荐命名参数，**默认值 + `required` 更安全**；
+* 可选参数可以传也可以不传，但**默认值只能用于可选参数**。
 
 ---
 
