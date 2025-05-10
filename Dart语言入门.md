@@ -2151,29 +2151,47 @@ Dart 的函数设计灵活，支持：
 # **4. 面向对象**
 
 ## **4.1 类与对象（Class & Object）**
-### **4.1.1 基础定义**
+### **4.1.1 创建对象**
 - 结构示意
 ```dart
 class 类名 {
-  // 类的属性
+  // 1.类的属性
   这里创建属性
 
-  // 构造函数
+  // 2.默认构造函数（Default Constructor）:用于初始化基本属性
    类名(this.属性1, this.属性2); // 自动将传入的参数赋值给对应的属性
-  // 如果没有写构造函数，Dart 会默认提供一个无参数的构造函数
+  // 如果没有写默认构造函数，Dart 会默认提供一个无参数的默认构造函数
 
-  // 类的方法
+  // 3.命名构造函数（Named Constructor）[选学]
+   类名.命名构造函数();
+      : 属性a = A值,
+        属性b = B值,
+        属性c = C值; 
+
+/* 在 Dart 中，
+“命名构造函数（Named Constructor）”之所以这么叫，
+是因为它给构造函数取了一个名字，区别于默认构造函数。
+你可以在同一个类中定义多个命名构造函数，
+以支持不同的初始化方法。
+当然，在一般情况下，默认构造函数就够用了。
+*/
+
+
+  // 4.类的方法
    void 方法名() {
       // 方法内容
    }
 }
 
 void main() {
-  // 带参数的构造函数
+  // 使用带参数的默认构造函数创建对象
   var 对象1 = 类名(参数1, 参数2...);
 
-  // 无参构造函数
+  // 使用无参数的默认构造函数创建对象
   var 对象2 = 类名();
+
+  // 使用命名构造函数创建对象
+  var 对象3 = 类名.命名构造函数();
 
   // 调用属性
   对象1.属性
@@ -2195,7 +2213,7 @@ class Fruit {
   // price 表示水果的价格，类型是 double
   double price;
 
-  // 构造函数（语法糖），构造函数的作用是创建对象时进行初始化操作
+  // 默认构造函数（语法糖），默认构造函数的作用是创建对象时进行初始化操作
   // 这里使用语法糖，让代码更简洁，它会自动将传入的参数赋值给对应的属性
   Fruit(this.name, this.color, this.price);
 
@@ -2216,7 +2234,7 @@ class Fruit {
 
 void main() {
   // 实例化对象，就像是用模板创造出一个具体的水果
-  // 调用 Fruit 类的构造函数，传入名字 'Apple'、颜色 'Red' 和价格 5.0
+  // 调用 Fruit 类的默认构造函数，传入名字 'Apple'、颜色 'Red' 和价格 5.0
   var fruit1 = Fruit('Apple', 'Red', 5.0);
   // 调用水果的 describe 方法，让这个水果做自我介绍
   fruit1.describe(); // 输出: I am a Red Apple, and my price is 5.0 dollars per kilogram.
@@ -2240,7 +2258,7 @@ class Furniture {
   // usage 表示家具的功能，比如用于坐、放东西等
   String? usage;
 
-  // 构造函数，创建对象时初始化属性
+  // 默认构造函数，创建对象时初始化属性
   Furniture(this.typeName, this.material, this.usage);
 
   // 方法，让家具进行自我介绍
@@ -2260,11 +2278,11 @@ class Furniture {
 }
 
 void main() {
-  // 使用普通构造函数创建一个家具对象chair
+  // 使用默认构造函数创建一个家具对象chair
   var chair = Furniture('chair', 'wood', 'sitting');
   chair.describe(); // 输出: This is a wood chair, mainly used for sitting.
 
-// 使用普通构造函数创建一个家具对象mirror
+// 使用默认构造函数创建一个家具对象mirror
   var mirror = Furniture('mirror', 'glass');
   mirror.made(); // 输出: To make a mirror, you primarily need ​glass.
 
@@ -2273,7 +2291,68 @@ void main() {
   print(table.typeName); // 输出: table
   print(table.usage); // 输出: No specific use
 }
+```
+- 示例3 商品
+```dart
+class Product {
+  // 1. 类的属性
+  String name;
+  double price;
+  String category;
+  bool inStock;
 
+  // 2. 默认构造函数
+  Product(this.name, this.price, this.category, this.inStock);
+
+  // 3. 命名构造函数 ：用于创建一个默认的商品
+  Product.defaultProduct()
+      : name = '未知商品',
+        price = 0.0,
+        category = '未分类',
+        inStock = false;
+
+  // 4. 类的方法
+  void displayInfo() {
+    print('商品信息:');
+    print('名称: $name');
+    print('价格: ¥$price');
+    print('分类: $category');
+    print('是否有库存: ${inStock ? '是' : '否'}');
+  }
+}
+
+void main() {
+  // 使用默认构造函数创建对象
+  var product1 = Product('苹果手机', 6999.0, '电子产品', true);
+
+  // 使用命名构造函数创建对象
+  var product2 = Product.defaultProduct();
+
+  // 调用属性
+  print('商品1名称: ${product1.name}'); // 输出: 商品1名称: 苹果手机
+  print('商品2价格: ${product2.price}'); // 输出: 商品2价格: 0.0
+
+  // 调用方法
+  product1.displayInfo();
+  /*
+  输出:
+  商品信息:
+  名称: 苹果手机
+  价格: ¥6999.0
+  分类: 电子产品
+  是否有库存: 是
+  */
+
+  product2.displayInfo();
+    /*
+  输出:
+  商品信息:
+  名称: 未知商品
+  价格: ¥0.0
+  分类: 未分类
+  是否有库存: 否
+  */
+}
 ```
 ### **4.1.2 Getter/Setter**
 在 Dart 中，**直接字段**和 **getter/setter** 的主要区别体现在**封装性**、**灵活性**和**使用场景**上。以下是具体对比：
@@ -2357,8 +2436,7 @@ void main() {
   除非属性是纯粹的数据容器且无需任何逻辑控制，否则应通过 getter/setter 封装字段。
 - **私有化字段**：  
   即使使用 getter/setter，也应将字段声明为私有（`_field`），强制通过方法访问。
-
-通过合理选择，可兼顾代码的**安全性**和**可维护性**。
+  通过合理选择，可兼顾代码的**安全性**和**可维护性**。
 ---
 
 ## **4.2 继承与混入（Inheritance & Mixin）**
