@@ -183,23 +183,63 @@ print(number is! String); // true
 
 ### **1.3.1 基本数据类型**
 #### **1.3.1.1 数值类型**
+Dart中的数值类型分为`int`（整数）和`double`（浮点数），`num`是它们的父类。
 - **`int`**  
   整数类型，支持二进制、八进制、十进制和十六进制表示：
-  ```dart
+```dart
   int a = 42;          // 十进制
   int b = 0b1010;      // 二进制 (10)
   int c = 0o12;        // 八进制 (10)
   int d = 0xA;         // 十六进制 (10)
-  ```
+```
 
 - **`double`**  
   浮点数类型（64位双精度）：
-  ```dart
-  double e = 3.14;
+```dart
+  double e = 3.14159;
   double f = 2e3;      // 科学计数法 (2000.0)
-  ```
+```
 
-#### **1.3.1.2 文本类型**
+#### **1.3.1.2 布尔值类型**
+- **`bool`**  
+  Dart 使用 `bool` 表示布尔值，只有两个可能的值：`true` 和 `false`。  
+```dart
+  bool isRaining = true;
+  bool isSunny = false;
+```
+
+##### 1.**布尔运算**  
+  Dart 支持标准的逻辑运算：
+```dart
+  bool a = true;
+  bool b = false;
+
+  print(a && b);  // 逻辑与（AND）→ false
+  print(a || b);  // 逻辑或（OR）→ true
+  print(!a);      // 逻辑非（NOT）→ false
+```
+
+##### 2.**条件判断**  
+  `bool` 类型常用于条件语句：
+```dart
+  if (isRaining) {
+    print("记得带伞！");
+  } else {
+    print("天气晴朗！");
+  }
+```
+
+##### 3.**类型安全**  
+  Dart 是强类型语言，`if` 语句的条件必须是 `bool` 类型：
+```dart
+  int x = 10;
+  // if (x) { ... }  // 错误！Dart 不允许隐式转换
+  if (x > 0) {       // 正确，x > 0 返回 bool
+    print("x 是正数");
+  }
+```
+
+#### **1.3.1.3 文本类型**
 在 Dart 中，字符串是非常常用的数据类型。Dart 提供了许多强大的方法来操作字符串，涵盖了创建、访问、修改、搜索、格式化等多种常见操作。
 
 ##### 1. **字符串的创建**
@@ -391,17 +431,6 @@ void main() {
   print(greeting);  // 输出: Hello, Alice! Welcome to Dart.
 }
 ```
-
----
-
-#### **1.3.1.3 布尔类型**
-- **`bool`**  
-  只有 `true` 和 `false` 两个值，用于条件判断：
-  ```dart
-  bool isActive = true;
-  if (isActive) print('Active');
-  ```
-
 ---
 
 ### **1.3.2 集合类型**
@@ -841,32 +870,32 @@ if (obj is String) {
 ### **1.3.4 类型安全与空安全**
 - **类型推断**：Dart 会自动推断变量类型（如 `var x = 10` 推断为 `int`）。
 - **非空断言**：在变量后加 `!` 告诉 Dart 该值不为 `null`（需确保安全）：
-  ```dart
+```dart
   String? nullableStr;
   print(nullableStr!.length); // 若 nullableStr 为 null 会抛出异常
-  ```
+```
 - **空合并运算符**：`??` 提供默认值：
-  ```dart
+```dart
   String? name;
   print(name ?? 'Anonymous'); // 输出 'Anonymous'
-  ```
+```
 
 ---
 
 ### **1.3.5 类型转换**
 - **数值与字符串**：
-  ```dart
+```dart
   int zhengShu = int.parse('123');    // 字符串转 int
   double fuDianShu = double.parse('3.14'); // 字符串转 double
   String str1 = 100.toString();     // int 转字符串
   String str2 = 9.9.toString();  // double 转字符串
-  ```
+```
 - **集合转换**：
-  ```dart
+```dart
   List<String> list = ['a', 'b'];
   String joined = list.join(','); // 转为字符串 "a,b"
   List<String> split = 'a,b'.split(','); // 字符串转List
-  ```
+```
 
 ---
 ### **1.3.6 类型判断**
@@ -877,24 +906,63 @@ if (obj is String) {
 Dart 是一种强类型语言，通常会根据赋值推断变量的类型。如果你没有显式声明类型，Dart 会根据初始值自动推断类型。
 
 ```dart
+void main() {
 var x = 10;      // Dart 推断 x 的类型是 int
 var y = 3.14;    // Dart 推断 y 的类型是 double
+var isMoney = true；// Dart 推断 isMoney 的类型是 bool
 var name = "Alice"; // Dart 推断 name 的类型是 String
+var words = ['你', '干', '嘛']; // Dart 推断 words 的类型是 List<String>
+var prices = {'apple': 6.9, 'banana': 3.0}; // Dart 推断 prices 的类型是 Map<String, double>
+}
 ```
-
 在这个例子中，`var` 用来声明变量，Dart 根据赋值推断类型。
+#### 1.3.6.2 **同名赋值的常见类型错误 ❌**
+```dart
+void main() {
+  var x = 10;
+  x = true; // ❌ 错误：不能将类型为 'bool' 的值赋给类型为 'int' 的变量。
 
-#### 1.3.6.2 **显式类型声明**
+  var y = 3.14;
+  y = '三点一四'; // ❌ 错误：不能将类型为 'String' 的值赋给类型为 'double' 的变量。
+
+  var isMoney = true；
+ isMoney = 3.14; // ❌ 错误：不能将类型为 'double' 的值赋给类型为 'bool' 的变量。
+
+  var name = "Alice";
+  name = 6; // ❌ 错误：不能将类型为 'int' 的值赋给类型为 'String' 的变量。
+
+  var name = "Alice";
+  name = [true, false, true]; // ❌ 错误：不能将类型为 'List<bool>' 的值赋给类型为 'String' 的变量。
+
+  var words = ['你', '干', '嘛'];
+  words = [90, 93, 72]; // ❌ 错误：不能将类型为 'List<int>' 的值赋给类型为 'List<String>' 的变量。
+
+  var words = ['你', '干', '嘛'];
+  words = {'word1': '你'}; // ❌ 错误：不能将类型为 'Map<String, String>' 的值赋给类型为 'List<String>' 的变量。
+
+  var prices = {'apple': 6.9, 'banana': 3.0};
+  prices = {'apple': true, 'banana': false}; // ❌ 错误：不能将类型为 'Map<String, bool>' 的值赋给类型为 'Map<String, double>' 的变量。
+
+  var prices = {'apple': 6.9, 'banana': 3.0};
+  prices = [6.9, 3.0]; // ❌ 错误：不能将类型为 'List<double>' 的值赋给类型为 'Map<String, double>' 的变量。
+}
+```
+#### 1.3.6.3 **显式类型声明（推荐）✅**
 
 你也可以显式地声明变量的类型：
 
 ```dart
+void main() {
 int x = 10;
 double y = 3.14;
+bool isMoney = true；
 String name = "Alice";
+List<String> words = ['你', '干', '嘛'];
+Map<String, double> prices = {'apple': 6.9, 'banana': 3.0}; 
+}
 ```
 
-#### 1.3.6.3 **使用 `runtimeType` 属性**
+#### 1.3.6.4 **使用 `runtimeType` 属性**
 
 Dart 中每个对象都有一个 `runtimeType` 属性，它表示对象在运行时的类型。你可以通过 `runtimeType` 获取对象的类型名称（以字符串形式）。
 
@@ -906,30 +974,48 @@ void main() {
   var y = 3.14;
   print(y.runtimeType);  // 输出: double
 
+  var isMoney = true;
+  print(isMoney.runtimeType);  // 输出: bool
+
   var name = "Alice";
   print(name.runtimeType);  // 输出: String
+
+  var words = ['你', '干', '嘛'];
+  print(words.runtimeType);  // 输出: List<String>
+
+  var prices = {'apple': 6.9, 'banana': 3.0};
+  print(prices.runtimeType);  // 输出: Map<String, double>
 }
 ```
 
-#### 1.3.6.4 **`is` 运算符**
+#### 1.3.6.5 **`is` 判断符**
 
-如果你想检查某个对象是否是某个特定类型，你可以使用 `is` 运算符。
+如果你想检查某个对象是否是某个特定类型，你可以使用 `is` 判断符，其构成的语句返回一个 `bool` 值。
 
 ```dart
 void main() {
   var x = 10;
+  var prices = {'apple': 6.9, 'banana': 3.0};
 
   if (x is int) {
     print("x 是 int 类型");
   } else {
     print("x 不是 int 类型");
   }
-}
+  // 输出: x 是 int 类型
+
+  if (prices is Map<String, bool>) {
+    print("prices 是 Map<String, bool> 类型");
+  } else {
+    print("prices 不是 Map<String, bool> 类型");
+  }
+  // 输出: prices 不是 Map<String, bool> 类型
+} 
 ```
 
-#### 1.3.6.5 **`is!` 运算符**
+#### 1.3.6.6 **`is!` 判断符**
 
-`is!` 用来测试一个对象是否不是某个类型。
+`is!` 用来测试一个对象是否不是某个类型，其构成的语句返回一个 `bool` 值。
 
 ```dart
 void main() {
@@ -938,12 +1024,12 @@ void main() {
   if (x is! String) {
     print("x 不是 String 类型");
   }
-
+ // 输出: x 不是 String 类型
 }
 
 ```
 
-#### 1.3.6.6 **`as` 运算符**
+#### 1.3.6.7 **`as` 运算符**
 
 你还可以使用 `as` 来进行类型转换，将对象转换为指定类型。注意，转换时必须确保对象实际是该类型，否则会抛出异常。
 
@@ -955,7 +1041,7 @@ void main() {
 }
 ```
 
-#### 1.3.6.5 总结
+#### 1.3.6.8 总结
 
 * **类型推断**：通过赋值自动推断类型。
 * **显式声明**：你可以手动声明变量的类型。
@@ -1120,9 +1206,24 @@ name ??= '默认名'; //如果 name 是空值，则将 '默认名' 赋值给 nam
 | `!`  | 非空断言（确保非 null） | `name!`                   |
 
 ---
-
-#### ✅ 示例：级联运算符使用
-
+#### 1.4.7.1 级联操作符
+##### 基本语法
+```dart
+final 很长很长的名字 = 对象
+  ..方法1()    //  调用方法
+  ..方法2()    //  继续操作原对象
+  ..属性1 = 值1  //  设置属性
+  ..属性2 = 值2; //  最后操作
+```
+##### 等效于：
+```dart
+final 很长很长的名字 = 对象;
+很长很长的名字.方法1();
+很长很长的名字.方法2();
+很长很长的名字.属性1 = 值1;
+很长很长的名字.属性2 = 值2;
+```
+##### 示例代码
 ```dart
 class Person {
   String? name;
@@ -1138,16 +1239,117 @@ void main() {
     ..setAge(28);
 }
 ```
+#### **1.4.7.2 可空类型标记 `?`，非空断言 `!`**
+
+Dart 从 2.12 版本开始支持**健全的空安全（Sound Null Safety）**，通过 `?` 标记可空类型，明确区分**非空类型**和**可为 null 的类型**。
 
 ---
 
+##### **1. 基本语法**
+```dart
+类型? 变量名;  // 声明可空变量
+```
+- **非空类型**（默认）：`String name`（必须初始化且不能为 `null`）
+- **可空类型**：`String? name`（允许赋值为 `null`）
 
+---
+
+##### **2. 示例代码**
+```dart
+class User {
+  String name;      // 非空类型（必须初始化）
+  int? age;         // 可空类型（允许为 null）
+
+  User(this.name);  // name 必须通过构造函数初始化
+}
+
+void main() {
+  // 可空变量示例
+  String? nullableString = null;  // ✅ 允许
+  String nonNullableString = 'abc';  // ✅ 必须非空
+  // nonNullableString = null;     // ❌ 编译错误
+
+  // 类中的可空属性
+  final user = User('Alice')..age = null;  // ✅ 可空属性赋值为 null
+
+  // 安全访问可空变量
+  print(nullableString?.length);  // 输出：null（不会抛出异常）
+}
+```
+
+---
+
+##### **3. 关键操作**
+| 操作 | 语法 | 说明 |
+|------|------|------|
+| **安全调用** | `object?.method()` | 若 `object` 为 `null` 则跳过方法调用，返回 `null` |
+| **空值合并** | `object ?? defaultValue` | 若 `object` 为 `null` 则返回默认值 |
+| **强制解包** | `object!` | 断言 `object` 非空（若为 `null` 抛出异常） |
+
+
+```dart
+void main() {
+  String? maybeName;
+
+  // 安全调用
+  print(maybeName?.toUpperCase());  // 输出：null
+
+  // 空值合并
+  print(maybeName ?? '未知');       // 输出：未知
+
+  // 强制解包（谨慎使用！）
+  // print(maybeName!);             // 运行时异常（Null check error）
+}
+```
+
+---
+
+##### **4. 级联操作符与可空类型结合**
+```dart
+class Config {
+  String? title;
+  void log() => print('Title: $title');
+}
+
+void main() {
+  // 安全级联（避免 NPE）
+  Config()
+    ?..title = '设置页'  // 若 Config() 为 null 则跳过后续操作
+    ..log();           // 输出：Title: 设置页
+}
+```
+
+---
+
+##### **5. 为什么需要可空类型？**
+1. **编译时检查**：防止 `NullPointerException` 运行时错误。
+2. **代码清晰性**：明确标识哪些变量可能为 `null`。
+3. **与 Flutter 结合**：Widget 的某些属性天然可为空（如 `Text.style`）。
+
+---
 # **2. 控制流**
 
 ## **2.1 条件语句**
 ### **2.1.1 `if-else`**
 - **基本语法**：
-  ```dart
+```dart
+void main() {
+  if (条件1) {
+    // 当 条件1 为 true 时执行
+    执行语句1;
+  } else if (条件2) {
+    // 当 条件1 为 false，但 条件2 为 true 时执行
+    执行语句2;
+  } else {
+    // 当所有条件均为 false 时执行
+    执行语句3;
+  }
+  // 'else if () {}' 和 'else {}' 代码块不是必需的
+}
+```
+- **示例代码**：
+```dart
+void main() {
   int score = 85;
   if (score >= 90) {
     print('优秀');
@@ -1157,14 +1359,37 @@ void main() {
     print('不及格');
   }
   // 输出 及格
-  ```
+}
+```
 - **特点**：
   - 条件表达式必须是布尔值（Dart 无隐式类型转换，`if (score)` 会报错）。
   - 支持嵌套 `if-else`。
 
 ### **2.1.2 `switch-case`**
 - **基本语法**：
-  ```dart
+```dart
+void main() {
+  switch (变量或表达式) {
+    // 从上到下依次匹配 case ，如果匹配某个 case，则执行其代码块，否则继续向下匹配 case 
+    case 值1:
+      执行语句1;
+      break; // 如果省略 break，将直接穿透到下一个 case
+    case 值2:
+      执行语句2;
+      break;
+    // 多条件（'值3'和'值4'）合并写法，多个 case 共享同一段代码
+    case 值3:    // 如果匹配 值3
+    case 值4:    // 或匹配 值4
+      执行语句3;  // 执行同一段代码
+      break;
+    default:
+      执行语句5;  // 如果没有匹配的 case，则执行 default 块（如果存在），default 块不是必需的
+  }
+}
+```
+- **示例代码**：
+```dart
+void main() {
   String day = 'Friday';
   switch (day) {
     case 'Monday':
@@ -1192,7 +1417,8 @@ void main() {
       print('其他');
   }
   // 输出 星期五
-  ```
+}
+```
 - **关键点**：
   - **必须用 `break`**：否则会继续执行下一个 `case`（无穿透行为）。
   - **`default`** 表示当所有 `case` 都不匹配时执行的代码，类似于 `if-else` 中的 `else`，不是必须的，但建议总是包含以处理意外情况
@@ -1210,14 +1436,16 @@ void main() {
 
 **示例对比**
 ```dart
-for (int i = 0; i < 5; i++) {
-  if (i == 2) {
-    continue; // 跳过 i=2，继续循环
-  }
-  if (i == 4) {
-    break; // 终止整个循环
-  }
-  print(i); // 输出: 0, 1, 3
+void main() {
+ for (int i = 0; i < 5; i++) {
+   if (i == 2) {
+     continue; // 跳过 i=2，继续循环
+   }
+   if (i == 4) {
+     break; // 终止整个循环
+   }
+   print(i); // 输出: 0, 1, 3
+ }
 }
 ```
 **说明**：
@@ -1231,10 +1459,11 @@ for (int i = 0; i < 5; i++) {
 #### **2.2.1.1 传统 `for`**：
 - 结构示意
 ```dart
+ void main() {
   for (初始条件; 循环条件; 迭代器) {
    // 循环体
   }
-
+}
 /*
  初始条件：在总循环开始时执行仅一次
  循环条件：每次循环前检查，若为true则继续执行循环体
@@ -1247,8 +1476,10 @@ for (int i = 0; i < 5; i++) {
 ```
 - 示例代码
 ```dart
-  for (int i = 0; i < 5; i++) {
+  void main() {
+   for (int i = 0; i < 5; i++) {
     print(i); // 输出 0, 1, 2, 3, 4
+   }
   }
  ```
 
@@ -1301,19 +1532,19 @@ void main() {
 #### **2.2.1.4 `for-in` vs `forEach`**
 - **优先用 `forEach`**：  
   当只需要简单遍历且无需中断时，`forEach` 更简洁：
-  ```dart
+```dart
   List<int> numbers = [1, 2, 3];
   numbers.forEach(print); // 直接传函数
-  ```
+```
 
 - **用 `for-in` 处理复杂逻辑**：  
   需要中断循环或处理键值对时：
-  ```dart
+```dart
   for (var entry in scores.entries) {
     if (entry.value < 90) continue; // 跳过低分
     print('${entry.key} passed!');
   }
-  ```
+```
 
 #### **2.2.1.5 `for-in` 嵌套循环遍历**
 
@@ -1489,30 +1720,30 @@ void main() {
 
 ### **2.2.2 `while` 和 `do-while`**
 - **`while`**（先判断条件）：
-  ```dart
+```dart
   int count = 0;
   while (count < 3) {
     print(count); // 输出 0, 1, 2
     count++;
   }
-  ```
+```
 - **`do-while`**（至少执行一次）：
-  ```dart
+```dart
   int num = 0;
   do {
     print(num); // 输出 0
     num++;
   } while (num < 0); // 条件不满足，仅执行一次
-  ```
+```
 
 ---
 
 ## **2.3 断言（Debugging）**
 - **基本语法**：
-  ```dart
+```dart
   int age = -5;
   assert(age >= 0, '年龄不能为负数'); // 抛出 AssertionError
-  ```
+```
 - **特点**：
   - 仅在 **调试模式** 下生效（发布版本会被移除）。
   - 第二个参数为可选错误信息。
@@ -1588,49 +1819,49 @@ void printMessage() => print('Hello, Dart!');
 
 ### **3.1.2 函数类型**
 - 显式声明函数类型变量：
-  ```dart
+```dart
   int Function(int, int) mathOperation = (a, b) => a + b;
   print(mathOperation(2, 3)); // 输出 5
-  ```
+```
 
 ---
 
 ## **3.2 参数类型**
 ### **3.2.1 必需参数**
 - 直接声明的参数为必需参数：
-  ```dart
+```dart
   void greet(String name) {
     print('Hello, $name!');
   }
   greet('Dart'); // 正确
   // greet();    // 编译错误：缺少参数
-  ```
+```
 
 ### **3.2.2 可选参数**
 #### **3.2.2.1 命名参数（`{param}`）**
 - 用 `{}` 包裹，调用时可省略：
-  ```dart
+```dart
   void configure({bool debug = false, String? name}) {
     print('Debug: $debug, Name: $name');
   }
   
   configure(debug: true); // 输出: Debug: true, Name: null
-  ```
+```
 
 #### **3.2.2.2 位置参数（`[param]`）**
 - 用 `[]` 包裹，调用时按顺序可选：
-  ```dart
+```dart
   void log(String message, [int? code]) {
     print('$message (Code: $code)');
   }
   
   log('Error');          // 输出: Error (Code: null)
   log('Error', 404);     // 输出: Error (Code: 404)
-  ```
+```
 
 ### **3.2.3 默认值**
 - 为可选参数设置默认值：
-  ```dart
+```dart
   void greet(String name, {int times = 1}) {
     for (int i = 0; i < times; i++) {
       print('Hello, $name!');
@@ -1639,27 +1870,27 @@ void printMessage() => print('Hello, Dart!');
   
   greet('Dart');          // 输出 1 次
   greet('Dart', times: 3); // 输出 3 次
-  ```
+```
 
 ---
 
 ## **3.3 高级函数特性**
 ### **3.3.1 函数作为参数**
 - 将函数作为参数传递：
-  ```dart
+```dart
   void execute(Function operation) {
     operation(5, 3);
   }
   
   execute((a, b) => print(a - b)); // 输出 2
-  ```
+```
 
 ### **3.3.2 匿名函数**
 - 直接定义未命名的函数：
-  ```dart
+```dart
   var list = [1, 2, 3];
   list.forEach((item) => print(item)); // 输出 1, 2, 3
-  ```
+```
 
 ### **3.3.3 作用域**
 
@@ -1856,20 +2087,20 @@ void main() {
 ## **3.5 注意事项**
 1. **参数顺序**：  
    命名参数 `{}` 必须在位置参数 `[]` 之后：
-   ```dart
+ ```dart
    // 正确
    void func(int a, {int b}) {}
    
    // 错误
    void func({int b}, int a) {} // 编译错误
-   ```
+ ```
 
 2. **可选参数限制**：  
    命名参数不能有默认值的冲突（如两个同名参数）。
 
 3. **箭头函数限制**：  
    箭头函数只能用于单行表达式，多行逻辑需用传统写法：
-   ```dart
+ ```dart
    // 错误示例
    int add(int a, int b) => {
      print('Adding...');
@@ -1881,7 +2112,7 @@ void main() {
      print('Adding...');
      return a + b;
    }
-   ```
+ ```
 
 ---
 
@@ -2345,18 +2576,18 @@ void main() {
    - 常量：`SCREAMING_SNAKE_CASE`（如 `MAX_RETRIES`）
 
 ### **4.7.2 空安全处理**
-   ```dart
+ ```dart
    String? nullableString;
    print(nullableString?.length ?? 0); // 安全访问
-   ```
+ ```
 
 ### **4.7.3 不可变设计**
-   ```dart
+ ```dart
    class ImmutablePoint {
      final double x;
      const ImmutablePoint(this.x);
    }
-   ```
+ ```
 
 ### **4.7.4 方法参数设计**
    - 必需参数放在前面
@@ -2819,32 +3050,32 @@ try {
 ## **6.3 注意事项**
 1. **不要捕获所有异常而不处理**  
    ❌ 错误示例：
-   ```dart
+ ```dart
    try { /* ... */ } catch (e) {} // 隐藏错误！
-   ```
+ ```
    ✅ 正确做法：
-   ```dart
+ ```dart
    try { /* ... */ } catch (e) {
      logError(e); // 至少记录错误
      rethrow; // 或适当处理
    }
-   ```
+ ```
 
 2. **避免过度捕获**  
    只捕获你能处理的异常，让其他异常向上传播。
 
 3. **异步代码中的异常传播**  
-   ```dart
+ ```dart
    // 错误：未处理的 Future 异常会导致应用崩溃
    fetchData(); // 未 await 或 .catchError()
 
    // 正确
    await fetchData().catchError((e) => print(e));
-   ```
+ ```
 
 4. **Flutter 中的错误边界**  
    在 Flutter 中，使用 `runZonedGuarded` 捕获未处理的异常：
-   ```dart
+ ```dart
    void main() {
      runZonedGuarded(() {
        runApp(MyApp());
@@ -2852,7 +3083,7 @@ try {
        reportError(error, stack); // 上报错误
      });
    }
-   ```
+ ```
 
 
   
@@ -3114,10 +3345,10 @@ void main() {
 1. **性能影响**：反射比直接调用慢10-100倍
 2. **AOT限制**：Flutter的AOT编译会移除反射代码
 3. **替代方案**：
-   ```dart
+ ```dart
    // 使用代码生成而非反射
    // 例如：json_serializable、freezed等
-   ```
+ ```
 
 ---
 
