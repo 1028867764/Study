@@ -130,10 +130,13 @@ class LifecycleExample extends StatefulWidget {
 
 class _LifecycleExampleState extends State<LifecycleExample> {
   String _text = 'I am a StatefulWidget';
+  int count = 0;
+  String _number = '';
 
   @override
   void initState() {
     super.initState();
+    _number = count.toString();
     print("initState: 组件被创建");
   }
 
@@ -152,6 +155,7 @@ class _LifecycleExampleState extends State<LifecycleExample> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(_text, style: TextStyle(fontSize: 20)),
+          Text('点击次数: $_number', style: TextStyle(fontSize: 18)),
           SizedBox(height: 20), // 间距组件
           // 按钮：点击触发状态更新
           ElevatedButton(onPressed: _changeText, child: Text('Change Text')),
@@ -166,8 +170,10 @@ class _LifecycleExampleState extends State<LifecycleExample> {
       DateTime now = DateTime.now();
       _text =
           '状态已更新: ${now.year}-${now.month}-${now.day} ${now.hour}:${now.minute}:${now.second}';
-      print('setState 被调用，UI 即将更新'); 
-    });  // 刷新 UI
+      count++;
+      _number = count.toString();
+      print('setState 被调用，UI 即将更新');
+    }); // 刷新 UI
   }
 
   @override
