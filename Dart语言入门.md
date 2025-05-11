@@ -1545,16 +1545,22 @@ void main() {
     print(fruit); // 输出 Apple, Banana
   }
 
-  // for-in 遍历键值对
-  Map<String, int> scores = {'Alice': 90, 'Bob': 85, 'Charlie': 95};
+// 定义一个 Map，表示学生分数
+Map<String, int> scores = {'Alice': 90, 'Bob': 85, 'Charlie': 95};
 
-  for (var entry in scores.entries) {
-    print('${entry.key}: ${entry.value}');
-    // 输出:
-    // Alice: 90
-    // Bob: 85
-    // Charlie: 95
-  }
+// 使用 for-in 搭配 .entries 遍历每一个键值对
+// entry 只是变量名，也可以换成其他名字（如 e、pair）
+// entry.key 表示键（学生姓名）
+// entry.value 表示值（分数）
+
+for (var entry in scores.entries) {
+  print('${entry.key}: ${entry.value}');
+  // 输出：
+  // Alice: 90
+  // Bob: 85
+  // Charlie: 95
+}
+
 }
 ```
 
@@ -1603,10 +1609,10 @@ void main() {
 
 #### **2.2.1.5 `for-in` 嵌套循环遍历**
 
-##### 示例 1：三维列表遍历（蔬菜分类）
+##### 示例 1：三维 List 遍历（蔬菜分类）
 ```dart
 void main() {
-  // 定义一个三维列表，表示不同类别的蔬菜，每个类别下还有子类别
+  // 定义一个三维 List，表示不同类别的蔬菜，每个类别下还有子类别
   List<List<List<String>>> vegetables = [
     // 叶菜类
     [
@@ -1660,10 +1666,82 @@ print("总共有 $count 种蔬菜");
   // 总共有 12 种蔬菜
 }
 ```
+##### 示例 2：三维 Map 遍历（蔬菜分类）
+```dart
+void main() {
+  // 定义一个三维 Map，表示不同类别的蔬菜，每个类别下还有子类别
+  Map<String, Map<String, List<String>>> vegetables = {
+    // 叶菜类
+    "叶菜类": {
+      "小白菜类": ["小白菜", "大白菜"],
+      "生菜类": ["生菜", "油麦菜"],
+    },
+    // 根茎类
+    "根茎类": {
+      "萝卜类": ["胡萝卜", "白萝卜"],
+      "薯类": ["土豆", "红薯"],
+    },
+    // 果菜类
+    "果菜类": {
+      "茄果类": ["西红柿", "黄瓜"],
+      "椒类": ["胡椒", "辣椒"],
+    },
+  };
 
+  print("=== 蔬菜分类遍历（三维Map - for-in）===");
 
+  int count = 0;
 
-##### 示例 2：嵌套循环应用（水果与饮料搭配）
+  // 外层遍历大类别（for-in）
+  for (var bigCategory in vegetables.entries) {
+    print("\n【${bigCategory.key}】");
+
+    // 中层遍历子类别（for-in）
+    for (var subCategory in bigCategory.value.entries) {
+      print("${subCategory.key}：");
+
+      // 内层遍历蔬菜（for-in）
+      for (var veg in subCategory.value) {
+        print("  - $veg"); // 输出蔬菜名称
+        count++;
+      }
+    }
+  }
+
+  print("\n总共有 $count 种蔬菜");
+}
+/* 输出结果：
+=== 蔬菜分类遍历（三维Map - for-in）===
+
+【叶菜类】
+小白菜类：
+  - 小白菜
+  - 大白菜
+生菜类：
+  - 生菜
+  - 油麦菜
+
+【根茎类】
+萝卜类：
+  - 胡萝卜
+  - 白萝卜
+薯类：
+  - 土豆
+  - 红薯
+
+【果菜类】
+茄果类：
+  - 西红柿
+  - 黄瓜
+椒类：
+  - 胡椒
+  - 辣椒
+
+总共有 12 种蔬菜
+*/
+```
+
+##### 示例 3：嵌套循环应用（水果与饮料搭配）
 ```dart
 void main() {
   // 定义水果列表
@@ -1695,7 +1773,7 @@ void main() {
 ```
 
 
-##### 示例 3：树形结构遍历（饮品分类）
+##### 示例 4：树形结构遍历（饮品分类）
 ```dart
 class DrinkNode {
   String name;
@@ -1748,15 +1826,19 @@ void main() {
 
 ##### 关键点说明
 
-1. **三维列表遍历**  
-   - 结构：`List<List<List<T>>>` 表示分类数据
+1. **三维 List 遍历**  
+   - 结构：`List<List<List<String>>>` 表示分类数据
    - 应用：适合处理表格型数据（如超市货架分类）
 
-2. **嵌套循环应用**  
+2. **三维 Map 遍历**  
+   - 结构：`Map<String, Map<String, List<String>>>` 表示分类数据
+   - 应用：适合处理具有明确命名层级和语义的分类数据（如电商平台的商品分类）
+
+3. **嵌套循环应用**  
    - 结构：`for-in` 嵌套 `for-in`
    - 应用：生成所有可能的组合（如菜单搭配）
 
-3. **树形结构遍历**  
+4. **树形结构遍历**  
    - 结构：自定义类 + 递归
    - 应用：层级数据（如分类目录）
 
