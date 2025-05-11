@@ -2346,17 +2346,93 @@ void main() {
 
 ---
 
-## **3.6 实际应用示例**
-### **3.6.1 回调函数**
+## **3.6 回调函数**
+- 如何理解回调函数呢？
+想象一下这里有3个东西，外函数、内函数、参数C。内函数作为外函数的一个参数传入外函数。当外函数被调用执行时，外函数会逐行执行内部代码，一旦到了内函数的那一行，就会（如果有参数C的话）往内函数传入参数C，并执行内函数（不管有没有参数C传入都会执行）。
+
+### 🐔 **示例1：基础回调（鸡和香蕉的故事）**  
 ```dart
-void fetchData(void Function(String) callback) {
-  callback('Data loaded');
+void cookFood(Function(String) callback) {
+  print("👨‍🍳 厨师开始做饭..."); // 输出: 👨‍🍳 厨师开始做饭...
+  
+  Future.delayed(Duration(seconds: 1), () {
+    String food = DateTime.now().second.isEven ? "🐔 炸鸡" : "🍌 香蕉派";
+    print("🍽️ 做好了: $food"); // 输出: 🍽️ 做好了: 🐔 炸鸡 或 🍌 香蕉派
+    callback(food); // 回调告诉顾客吃啥
+  });
 }
 
-fetchData((data) => print(data)); // 输出: Data loaded
+void main() {
+  cookFood((String food) {
+    print("😋 顾客吃到了: $food"); // 输出: 😋 顾客吃到了: 🐔 炸鸡 或 🍌 香蕉派
+  });
+  
+  print("🕒 等待上菜中..."); // 输出: 🕒 等待上菜中... (立即执行)
+}
+```
+**可能的输出（随机）**：
+```
+👨‍🍳 厨师开始做饭...
+🕒 等待上菜中...
+🍽️ 做好了: 🐔 炸鸡
+😋 顾客吃到了: 🐔 炸鸡
+```
+或
+```
+👨‍🍳 厨师开始做饭...
+🕒 等待上菜中...
+🍽️ 做好了: 🍌 香蕉派
+😋 顾客吃到了: 🍌 香蕉派
 ```
 
-### **3.6.2 高阶函数（返回函数）**
+---
+
+### 🍌 **示例2：Future + 错误回调（香蕉快递）**  
+```dart
+Future<String> deliverBanana(bool isBroken) async {
+  await Future.delayed(Duration(seconds: 1));
+  if (isBroken) {
+    throw Exception("💥 香蕉被压烂了！");
+  } else {
+    return "🍌 新鲜香蕉送达！";
+  }
+}
+
+void main() async {
+  print("📦 下单香蕉...");
+
+  try {
+    String banana = await deliverBanana(false); // 👈 await 等待结果
+    print("✅ 收到: $banana");
+  } catch (error) {
+    print("❌ 错误: $error");
+  } finally {
+    print("🔚 无论成功或失败我都执行（包装纸丢掉）");
+  }
+
+  print("🚚 等待快递...（虽然写在后面，但会等 async 结束）");
+}
+```
+**两种可能的输出**：
+1. **成功**：
+  ```
+📦 下单香蕉...
+✅ 收到: 🍌 新鲜香蕉送达！
+🔚 无论成功或失败我都执行（包装纸丢掉）
+🚚 等待快递...（虽然写在后面，但会等 async 结束）
+  ```
+2. **失败**（如果 `deliverBanana(true)`）：
+  ```
+📦 下单香蕉...
+❌ 错误: Exception: 💥 香蕉被压烂了！
+🔚 无论成功或失败我都执行（包装纸丢掉）
+🚚 等待快递...（虽然写在后面，但会等 async 结束）
+
+  ```
+
+---
+
+## **3.7 高阶函数（返回函数）**
 ```dart
 Function createMultiplier(int factor) {
   return (int x) => x * factor;
@@ -2365,16 +2441,6 @@ Function createMultiplier(int factor) {
 var doubleIt = createMultiplier(2);
 print(doubleIt(5)); // 输出 10
 ```
-
----
-
-## **3.7 总结**
-Dart 的函数设计灵活，支持：
-- **简洁语法**（箭头函数、默认参数）
-- **灵活调用**（命名参数、位置参数）
-- **函数式编程**（闭包、高阶函数）
-
-掌握这些特性可显著提升代码可读性和复用性！
 
 ---
 
@@ -3309,16 +3375,62 @@ Dart的单线程模型避免了多线程环境下的竞态条件和同步问题�
 
 ## **5.2 Future 基础**
 ### 5.2.1 创建 Future
-- **`Future.value`**：用于创建已完成的 Future，就像提前知道结果一样。
+####  **1. `Future.value`**
+用于创建已完成的 Future，就像提前知道结果一样。
 ```dart
-Future<String> getUserName() => Future.value('Alice');
-```
-- **`Future.delayed`**：模拟延迟操作，比如网络请求的延迟响应。
-```dart
-Future<void> delayedTask() async {
-  await Future.delayed(Duration(seconds: 1));
-  print('Delayed task completed');
+Future<String> fetchUserName() {
+  // 模拟从服务器获取用户名（但其实是立即完成）
+  return Future.value("👤 张小猫");
 }
+
+Future<void> main() async {
+  print("🔍 正在获取用户信息...");
+
+  try {
+    String userName = await fetchUserName();
+    print("✅ 用户信息获取成功: $userName");
+  } catch (e) {
+    print("❌ 获取失败: $e");
+  } finally {
+    print("📦 操作结束");
+  }
+}
+/* 输出结果：
+🔍 正在获取用户信息...
+✅ 用户信息获取成功: 👤 张小猫
+📦 操作结束
+*/
+```
+####  **2. `Future.delayed`**
+模拟延迟操作，比如网络请求的延迟响应。
+```dart
+Future<void> cookNoodles() async {
+  print("👨‍🍳 开始煮泡面...");
+
+  await Future.delayed(Duration(seconds: 1));
+  print("🥢 第 1 分钟：加入调料包...");
+
+  await Future.delayed(Duration(seconds: 1));
+  print("🥢 第 2 分钟：面条开始变软...");
+
+  await Future.delayed(Duration(seconds: 1));
+  print("🥢 第 3 分钟：香气扑鼻～");
+
+  print("✅ 泡面完成！开吃啦！🍜");
+}
+
+void main() {
+  cookNoodles();
+  print("⌛ 等泡面时刷刷短视频...");
+}
+/* 输出结果：
+👨‍🍳 开始煮泡面...
+⌛ 等泡面时刷刷短视频...
+🥢 第 1 分钟：加入调料包...
+🥢 第 2 分钟：面条开始变软...
+🥢 第 3 分钟：香气扑鼻～
+✅ 泡面完成！开吃啦！🍜
+*/
 ```
 
 ### 5.2.2 处理 Future（async/await）
@@ -3575,7 +3687,38 @@ void main() {
 ### 6.1.4 异常类型
 Dart中的异常主要分为两类：
 - **Error**：指程序中发生的严重错误，这类错误通常是不可恢复的，程序会立即终止。例如内存不足引发的错误。
-- **Exception**：指程序中可以预见的异常，这类错误是可进行恢复的。例如网络中断导致的异常。
+- **`Exception`**：指程序中可以预见的异常，这类错误是可进行恢复的。例如网络中断导致的异常。通常会通过 `throw` 主动抛出，结合 `try-catch` 来处理。
+```dart
+void divideNumbers(int a, int b) {
+  try {
+    if (b == 0) {
+      throw Exception("除数不能为 0");
+    }
+    int result = a ~/ b; // 整除运算
+    print("结果是: $result");
+  } catch (e) {
+    print("捕获到异常: $e");
+  } finally {
+    print("运算结束，无论成功与否我都会执行");
+  }
+}
+
+void main() {
+  divideNumbers(10, 2); // 正常情况
+  print("<分隔线>");
+  divideNumbers(10, 0); // 会触发异常
+}
+```
+输出结果：
+```markdown
+结果是: 5
+运算结束，无论成功与否我都会执行
+
+<分隔线>
+
+捕获到异常: Exception: 除数不能为 0
+运算结束，无论成功与否我都会执行
+```
 
 ### 6.1.5 **try-catch-finally**
 Dart使用`try-catch-finally`结构来实现异常处理：
@@ -3583,7 +3726,7 @@ Dart使用`try-catch-finally`结构来实现异常处理：
 - **catch块**：用于捕获并处理异常。可以指定要捕获的异常类型，若不指定则捕获所有类型的异常。`catch`块可以接收一个参数（通常命名为`e`），该参数是捕获到的异常对象，可在其中记录日志、提示用户、执行回滚操作等。
 - **finally块（可选）**：无论是否发生异常，`finally`块中的代码都会执行，常用于释放资源、关闭文件或网络连接等清理操作。
 
-### 6.1.6 示例代码
+### 6.1.6 示例1 分母不为0
 ```dart
 void main() {
   try {
@@ -3600,6 +3743,46 @@ void main() {
 ```
 
 在上述代码中，`try`块里的除法操作会抛出除以零的异常，该异常被`catch`块捕获并输出错误信息，最后`finally`块中的代码无论异常是否发生都会执行。
+
+### 6.1.7 示例2 喂猫系统
+```dart
+void feedCat(String food) {
+  try {
+    print("👦 拿出了一些 $food 准备喂小猫...");
+
+    if (food != '鱼' && food != '猫粮' && food != '鸡肉') {
+      throw Exception("😾 小猫生气了！它不吃 $food！");
+    }
+
+    print("😺 小猫开心地吃着 $food～");
+  } catch (e) {
+    print("💥 喂食失败: $e");
+  } finally {
+    print("📦 喂猫任务结束，收拾碗筷。\n");
+  }
+}
+
+void main() {
+  feedCat("鱼");        // ✅ 小猫开心
+  feedCat("辣条");      // ❌ 小猫生气
+  feedCat("猫粮");      // ✅ 小猫开心
+}
+```
+输出结果：
+```markdown
+👦 拿出了一些 鱼 准备喂小猫...
+😺 小猫开心地吃着 鱼～
+📦 喂猫任务结束，收拾碗筷。
+
+👦 拿出了一些 辣条 准备喂小猫...
+💥 喂食失败: Exception: 😾 小猫生气了！它不吃 辣条！
+📦 喂猫任务结束，收拾碗筷。
+
+👦 拿出了一些 猫粮 准备喂小猫...
+😺 小猫开心地吃着 猫粮～
+📦 喂猫任务结束，收拾碗筷。
+```
+
 
 ---
 
