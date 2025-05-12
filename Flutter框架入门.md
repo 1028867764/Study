@@ -4220,7 +4220,51 @@ LayoutBuilder(
 ---
 
 ## 4.4 实用响应式示例
+### 4.4.1 `MediaQuery` 示例
+```dart
+import 'package:flutter/material.dart';
 
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: SimpleListView());
+  }
+}
+
+class SimpleListView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final pingMuSize = MediaQuery.of(context).size; // 获取屏幕尺寸
+
+    return Scaffold(
+      appBar: AppBar(title: Text('侧边导航栏')),
+      body: SizedBox(
+        width: pingMuSize.width * 0.4, // 设置整个 ListView 的宽度为屏幕宽度的 40%
+        child: ListView.builder(
+          itemCount: 20,
+          itemBuilder: (context, index) {
+            return Container(
+              height: 80, 
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(80),
+                color: Colors.yellow,
+              ),
+              child: Center(child: Text('第 $index 项')),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+```
+#### 应用场景
+* 组件按百分比自适应屏幕的宽高度。
+---
+
+### 4.4.2 `LayoutBuilder` 示例
 ```dart
 import 'package:flutter/material.dart';
 
@@ -4261,15 +4305,11 @@ class MyApp extends StatelessWidget {
   }
 }
 ```
-
----
-
-## 4.5 应用场景
-
+#### 应用场景
 * 小屏手机显示一列，大屏或横屏切换成多列。
 * 横竖屏布局差异适配。
 * 组件按百分比自适应父容器大小。
-
+---
 
 # 5. Flutter 路由与导航
 ## 5.1 基本路由管理

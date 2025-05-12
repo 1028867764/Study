@@ -941,6 +941,9 @@ if (obj is String) {
   double fuDianShu = double.parse('3.14'); // 字符串转 double
   String str1 = 100.toString();     // int 转字符串
   String str2 = 9.9.toString();  // double 转字符串
+  print(3.141592653.toStringAsFixed(1)); // 保留1位小数，输出3.1
+  print(3.141592653.toStringAsFixed(3)); // 保留3位小数，输出3.142
+  print(3.141592653.toStringAsFixed(4)); // 保留4位小数，输出3.1416
 ```
 - **集合转换**：
 ```dart
@@ -3685,9 +3688,41 @@ void main() {
 - **错误日志记录**：便于查找程序出错原因，方便后续的调试和维护。
 
 ### 6.1.4 异常类型
-Dart中的异常主要分为两类：
+
+Dart 中的异常主要分为两类：
 - **Error**：指程序中发生的严重错误，这类错误通常是不可恢复的，程序会立即终止。例如内存不足引发的错误。
 - **`Exception`**：指程序中可以预见的异常，这类错误是可进行恢复的。例如网络中断导致的异常。通常会通过 `throw` 主动抛出，结合 `try-catch` 来处理。
+
+#### 6.1.4.1 常见的 Error 类型：
+- **`ArgumentError`**   
+  当调用函数时传入了非法参数时抛出。**虽然它继承自 `Error`，但更接近 `Exception`，因为它通常在函数内部通过 `throw` 主动抛出，并且可以通过 `try-catch` 捕获**。
+
+  示例：
+```dart
+  void greet(String name) {
+    if (name.isEmpty) {
+      throw ArgumentError("名字不能为空");
+    }
+    print("你好，$name");
+  }
+
+  void main() {
+    try {
+      greet(""); // 抛出 ArgumentError
+    } catch (e) {
+      print("捕获到异常: $e");
+    }
+  }
+```
+
+输出：
+
+```markdown
+捕获到异常: Invalid argument(s): 名字不能为空
+```
+
+#### 6.1.4.2 `Exception` 示例代码：
+
 ```dart
 void divideNumbers(int a, int b) {
   try {
@@ -3709,7 +3744,9 @@ void main() {
   divideNumbers(10, 0); // 会触发异常
 }
 ```
+
 输出结果：
+
 ```markdown
 结果是: 5
 运算结束，无论成功与否我都会执行
@@ -3719,6 +3756,19 @@ void main() {
 捕获到异常: Exception: 除数不能为 0
 运算结束，无论成功与否我都会执行
 ```
+#### 6.1.4.3 对比总结：
+
+| 类型                  | 继承自      | 用途                           | 是否通常通过 `try-catch` 捕获 |
+| ------------------- | -------- | ---------------------------- | --------------------- |
+| **`Error`**         | `Object` | 程序严重错误，通常不可恢复，程序会终止。         | 否                     |
+| **`Exception`**     | `Object` | 程序可恢复的错误，可以通过 `try-catch` 捕获 | 是                     |
+| **`ArgumentError`** | `Error`  | 函数参数非法时抛出，通常可以恢复。            | 是                     |
+
+**总结**：
+
+* **`Error`** 通常用于不可恢复的系统错误，开发者不应捕获。
+* **`Exception`** 用于可预见并可以恢复的错误，开发者应通过 `try-catch` 捕获。
+* **`ArgumentError`** 虽然继承自 `Error`，但它更接近于 `Exception`，因为它是可预见的、可恢复的错误，通常可以通过 `try-catch` 处理。
 
 ### 6.1.5 **try-catch-finally**
 Dart使用`try-catch-finally`结构来实现异常处理：
@@ -3726,7 +3776,7 @@ Dart使用`try-catch-finally`结构来实现异常处理：
 - **catch块**：用于捕获并处理异常。可以指定要捕获的异常类型，若不指定则捕获所有类型的异常。`catch`块可以接收一个参数（通常命名为`e`），该参数是捕获到的异常对象，可在其中记录日志、提示用户、执行回滚操作等。
 - **finally块（可选）**：无论是否发生异常，`finally`块中的代码都会执行，常用于释放资源、关闭文件或网络连接等清理操作。
 
-### 6.1.6 示例1 分母不为0
+#### 6.1.5.1 示例1 分母不为0
 ```dart
 void main() {
   try {
@@ -3744,7 +3794,7 @@ void main() {
 
 在上述代码中，`try`块里的除法操作会抛出除以零的异常，该异常被`catch`块捕获并输出错误信息，最后`finally`块中的代码无论异常是否发生都会执行。
 
-### 6.1.7 示例2 喂猫系统
+#### 6.1.5.2 示例2 喂猫系统
 ```dart
 void feedCat(String food) {
   try {
@@ -3783,6 +3833,94 @@ void main() {
 📦 喂猫任务结束，收拾碗筷。
 ```
 
+### 6.1.6 **`ArgumentError`** 和 **`Exception`** 的区别
+让我们通过一些不能互换的例子，来说明 **`ArgumentError`** 和 **`Exception`** 的不同之处。
+
+#### 例子 1：使用 `ArgumentError` —— 参数错误
+
+`ArgumentError` 用于传入无效参数的情况。当你传递给函数的参数不符合要求时，应该使用 `ArgumentError`，它专门用于标明“你提供的参数无效”。
+
+##### 场景：
+
+你编写一个函数，要求传入的年龄必须是正数。如果传入负数或零，就抛出 `ArgumentError`。
+
+```dart
+void checkAge(int age) {
+  if (age <= 0) {
+    throw ArgumentError("年龄必须大于零！");
+  }
+  print("年龄是 $age 岁！");
+}
+
+void main() {
+  try {
+    checkAge(0);  // 触发 ArgumentError
+  } catch (e) {
+    print("捕获到异常: $e");
+  }
+}
+```
+
+##### 输出：
+
+```markdown
+捕获到异常: Invalid argument(s): 年龄必须大于零！
+```
+
+##### 为什么不用 `Exception` ？
+
+* **`ArgumentError`** 明确表示这是一个关于参数的错误，告诉开发者传入的值无效。
+* 如果用 **`Exception`** 替换，就失去了这个明确的语义，虽然程序仍然会抛出错误，但不会表明是因为参数无效导致的问题。
+
+---
+
+#### 例子 2：使用 `Exception` —— 可恢复的错误
+
+`Exception` 用于表示程序运行中的错误，这些错误通常是可以处理并恢复的，比如网络请求失败、文件读取失败等。这些错误不一定是程序本身的 bug，而是可以通过一些逻辑进行恢复的。
+
+##### 场景：
+
+你编写一个函数，从网络请求数据。如果网络不可用，就抛出 `Exception`，而不是 `ArgumentError`，因为这是一个可恢复的错误。
+
+```dart
+void fetchDataFromNetwork() {
+  bool isNetworkAvailable = false;  // 模拟网络不可用
+
+  if (!isNetworkAvailable) {
+    throw Exception("无法连接到网络！");
+  }
+
+  print("数据获取成功！");
+}
+
+void main() {
+  try {
+    fetchDataFromNetwork();  // 触发 Exception
+  } catch (e) {
+    print("捕获到异常: $e");
+  }
+}
+```
+
+##### 输出：
+
+```markdown
+捕获到异常: Exception: 无法连接到网络！
+```
+
+##### 为什么不用 `ArgumentError` ？
+
+* **`Exception`** 是用来处理程序中可以预见并恢复的错误，比如网络错误。它的语义明确表明这是一个可以通过重试或其他方式解决的问题。
+* 如果用 **`ArgumentError`** 替换，就会误导开发者，认为错误是由无效参数引起的，而实际上是网络连接问题，不能用相同的处理方式。
+
+---
+
+#### 关键总结：
+
+* **`ArgumentError`** 用于无效参数的错误，通常是在函数或方法中检查传入值是否合法时使用。**不能用 `Exception` 替换**，因为 `Exception` 没有明确的参数错误含义。
+* **`Exception`** 用于处理可以预见并恢复的错误，通常在处理外部资源（如网络、文件等）时使用。**不能用 `ArgumentError` 替换**，因为 `ArgumentError` 是用于无效参数，而不是外部错误。
+
+这两个异常类型的使用场景是有明显区别的，并不能互换！
 
 ---
 
