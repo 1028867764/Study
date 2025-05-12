@@ -5027,9 +5027,8 @@ TextField(
 
 ### **6.1.7 其它状态管理方案** 
 - **`Provider` 状态管理** 适合小型项目（少于5个页面）
-- **`Riverpod` 状态管理** 适合中型项目（5 - 20个页面）  
+- **`Riverpod` 状态管理** 适合中型项目（5 - 20个页面）[Riverpod官方文档](https://riverpod.dev/zh-Hans/)
 - **`Bloc` 架构** 适合大型项目（超过20个页面） 
-- 详见 [官方文档](https://docs.flutter.cn/)
 
 # 7. **本地存储与数据库**
 ## **7.1 Shared Preferences**
