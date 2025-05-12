@@ -3620,7 +3620,198 @@ TextField(
 | 监听内容变化 | `_controller.addListener(...)`       |
 | 销毁释放资源 | `dispose()` 方法中调用 `.dispose()`       |
 
-### 3.5.8 交互组件小结
+### 3.5.8 `Checkbox` 和 `Radio`
+`Checkbox`（复选框）和 `Radio`（单选框）的示例代码
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MaterialApp(home: CheckboxRadioExample()));
+}
+
+class CheckboxRadioExample extends StatefulWidget {
+  const CheckboxRadioExample({super.key});
+  @override
+  State<CheckboxRadioExample> createState() => _CheckboxRadioExampleState();
+}
+
+class _CheckboxRadioExampleState extends State<CheckboxRadioExample> {
+  // 多选：每个兴趣独立一个布尔变量
+  bool likesMusic = false;
+  bool likesTravel = false;
+
+  // 单选：多个选项共享一个变量（表示当前选中项的值）
+  String gender = "male";
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("多选和单选演示")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // ---------- 复选框区域（每个 Checkbox 对应一个状态变量） ----------
+            Row(
+              children: [
+                // 音乐复选框：对应 likesMusic 变量
+                Checkbox(
+                  value:
+                      likesMusic, // 这个值为 true 时，这个选项 “被选中” ；这个值为 false 时，这个选项 “不被选中”
+                  onChanged: (bool? fuXuanValue) {
+                    // 点击复选框后，fuXuanValue 会变成原值的反转：true 变 false，false 变 true
+                    setState(() {
+                      likesMusic = fuXuanValue!; // 非空断言
+                    });
+                  },
+                ),
+                Text("音乐"),
+
+                SizedBox(width: 20),
+
+                // 旅行复选框：对应 likesTravel 变量
+                Checkbox(
+                  value:
+                      likesTravel, // 这个值为 true 时，这个选项 “被选中” ；这个值为 false 时，这个选项 “不被选中”
+                  onChanged: (_) {
+                    // 记得加'_'
+                    // 功能与上面那个一样
+                    setState(() {
+                      likesTravel = !likesTravel; // 布尔值取反
+                    });
+                  },
+                ),
+                Text("旅行"),
+              ],
+            ),
+
+            SizedBox(height: 20),
+
+            // ---------- 单选框区域（所有 Radio 共享同一个 groupValue） ----------
+            Row(
+              children: [
+                Text("性别："),
+
+                // 男性单选按钮
+                Radio<String>(
+                  value: "male", // 这个选项的值
+                  groupValue: gender, // 当前选中的值
+                  // 若当前选中的值 == 这个选项的值，则这个选项 “被选中”，否则这个选项 “不被选中”
+                  onChanged: (String? danXuanValue) { // 点击按钮，将 "male" 传入
+                    setState(() {
+                      gender = danXuanValue!; // 非空断言，将 "male" 赋值给 gender
+                    });
+                  },
+                ),
+                Text("男"),
+
+                // 女性单选按钮
+                Radio<String>(
+                  value: "female", // 这个选项的值
+                  groupValue: gender, // 当前选中的值
+                  // 若当前选中的值 == 这个选项的值，则这个选项 “被选中”，否则这个选项 “不被选中”
+                  onChanged: (String? value) { // 点击按钮，将 "female" 传入
+                    setState(() {
+                      gender = value!; // 将 "female" 赋值给 gender
+                    });
+                  },
+                ),
+                Text("女"),
+              ],
+            ),
+
+            SizedBox(height: 30),
+
+            ElevatedButton(
+              onPressed: () {
+                String hobby = [
+                  if (likesMusic) "音乐",
+                  if (likesTravel) "旅行",
+                ].join("、");
+                String genderText = gender == "male" ? "男" : "女";
+
+                showDialog(
+                  context: context,
+                  builder:
+                      (_) => AlertDialog(
+                        title: Text("选择结果"),
+                        content: Text("兴趣：$hobby\n性别：$genderText"),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text("关闭"),
+                          ),
+                        ],
+                      ),
+                );
+              },
+              child: Text("提交"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+### 3.5.9 `Switch`
+完整示例：使用 `Switch` 实现开关功能
+```dart
+import 'package:flutter/material.dart';
+
+class SwitchExample extends StatefulWidget {
+  const SwitchExample({super.key});
+  @override
+  State<SwitchExample> createState() => _SwitchExampleState();
+}
+
+class _SwitchExampleState extends State<SwitchExample> {
+  // 初始化开关状态，默认为关闭（false）
+  bool isDarkMode = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Switch 示例")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // 文字说明当前状态
+            Text(
+              isDarkMode ? "暗黑模式已开启" : "暗黑模式已关闭",
+              style: TextStyle(fontSize: 24),
+            ),
+            SizedBox(height: 20),
+
+            // Switch 控件：用于切换状态
+            Switch(
+              value: isDarkMode, // 显示当前的开关状态
+              onChanged: (bool value) {
+                // 当开关被点击时，更新状态，布尔值会被反转
+                setState(() {
+                  isDarkMode = value;
+                });
+              },
+              activeColor: Colors.blue, // 激活状态时的颜色
+              inactiveThumbColor: Colors.grey, // 不激活时的圆点颜色
+              inactiveTrackColor: Colors.grey[300], // 不激活时的轨道颜色
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+void main() {
+  runApp(MaterialApp(home: SwitchExample()));
+}
+```
+
+### 3.5.10 交互组件小结
 ```dart
 import 'package:flutter/material.dart';
 
@@ -3636,12 +3827,17 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
+  HomePage({super.key});
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _textController = TextEditingController();
+  bool likesMusic = false;
+  bool likesTravel = false;
+  String gender = "male";
+  bool isDarkMode = false;
 
   @override
   void dispose() {
@@ -3723,6 +3919,119 @@ class _HomePageState extends State<HomePage> {
                 );
               },
               child: Text('提交内容'),
+            ),
+            SizedBox(height: 10),
+            Column(
+              children: [
+                Row(
+                  children: [
+                    Checkbox(
+                      value: likesMusic,
+                      onChanged: (bool? fuXuanValue) {
+                        setState(() {
+                          likesMusic = fuXuanValue!;
+                        });
+                      },
+                    ),
+                    Text("音乐"),
+
+                    SizedBox(width: 20),
+
+                    Checkbox(
+                      value: likesTravel,
+                      onChanged: (_) {
+                        setState(() {
+                          likesTravel = !likesTravel;
+                        });
+                      },
+                    ),
+                    Text("旅行"),
+                  ],
+                ),
+
+                SizedBox(height: 20),
+
+                Row(
+                  children: [
+                    Text("性别："),
+
+                    Radio<String>(
+                      value: "male",
+                      groupValue: gender,
+
+                      onChanged: (String? danXuanValue) {
+                        setState(() {
+                          gender = danXuanValue!;
+                        });
+                      },
+                    ),
+                    Text("男"),
+
+                    Radio<String>(
+                      value: "female",
+                      groupValue: gender,
+
+                      onChanged: (String? value) {
+                        setState(() {
+                          gender = value!;
+                        });
+                      },
+                    ),
+                    Text("女"),
+                  ],
+                ),
+
+                SizedBox(height: 30),
+
+                ElevatedButton(
+                  onPressed: () {
+                    String hobby = [
+                      if (likesMusic) "音乐",
+                      if (likesTravel) "旅行",
+                    ].join("、");
+                    String genderText = gender == "male" ? "男" : "女";
+
+                    showDialog(
+                      context: context,
+                      builder:
+                          (_) => AlertDialog(
+                            title: Text("选择结果"),
+                            content: Text("兴趣：$hobby\n性别：$genderText"),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text("关闭"),
+                              ),
+                            ],
+                          ),
+                    );
+                  },
+                  child: Text("提交"),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  isDarkMode ? "暗黑模式已开启" : "暗黑模式已关闭",
+                  style: TextStyle(fontSize: 24),
+                ),
+                SizedBox(height: 20),
+
+                Switch(
+                  value: isDarkMode,
+                  onChanged: (bool value) {
+                    setState(() {
+                      isDarkMode = value;
+                    });
+                  },
+                  activeColor: Colors.blue,
+                  inactiveThumbColor: Colors.grey,
+                  inactiveTrackColor: Colors.grey[300],
+                ),
+              ],
             ),
           ],
         ),
@@ -4716,9 +5025,10 @@ TextField(
 
 ---
 
-🚀 **下一步学习**：  
-- **`Provider` 状态管理**（跨组件共享状态）  
-- **`Bloc` 架构**（复杂应用的状态管理）
+### **6.1.7 其它状态管理方案** 
+- **`Provider` 状态管理** 适合小型项目（少于5个页面）
+- **`Riverpod` 状态管理** 适合中型项目（5 - 20个页面）  
+- **`Bloc` 架构** 适合大型项目（超过20个页面） 
 - 详见 [官方文档](https://docs.flutter.cn/)
 
 # 7. **本地存储与数据库**
