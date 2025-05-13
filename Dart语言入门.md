@@ -16,7 +16,7 @@ void main() {
 ### **1.1.2 注释**
 在 Dart 中，注释的使用方法和大多数编程语言类似。Dart 支持单行注释、多行注释和文档注释，下面是具体的说明和使用示例：
 
-#### 1. **单行注释（Single-line comments）**
+#### 1.1.2.1 **单行注释（Single-line comments）**
 
 单行注释用于对代码中的某一行或部分进行简单说明。你可以在代码中使用 `//` 来标记单行注释。
 
@@ -25,7 +25,7 @@ void main() {
 int a = 10; // 这是对代码后面部分的注释
 ```
 
-#### 2. **多行注释（Multi-line comments）**
+#### 1.1.2.2 **多行注释（Multi-line comments）**
 
 多行注释可以用于注释掉多行代码或对复杂的代码块进行说明。使用 `/*` 和 `*/` 来标记多行注释。
 
@@ -39,7 +39,7 @@ int a = 10;
 int b = 20;
 ```
 
-#### 3. **文档注释（Documentation comments）**
+#### 1.1.2.3 **文档注释（Documentation comments）**
 
 文档注释是 Dart 中用于生成文档的注释，通常用于函数、类和库的说明。文档注释使用 `///`（单行）或 `/** */`（多行）来创建，并且通常会与 Dart 的文档生成工具（如 `dartdoc`）结合使用。
 
@@ -68,13 +68,13 @@ int add(int a, int b) {
 }
 ```
 
-#### 4. **注释的最佳实践**
+#### 1.1.2.4 **注释的规范**
 
 * **清晰明了**：注释应该简洁明了，不要解释显而易见的代码。只有在代码的意图或实现比较复杂时，才需要添加注释。
 * **文档注释**：对于公共函数、类或库，使用文档注释（`///`）详细说明它们的功能和用法。这样有助于生成自动化文档，并让其他开发者容易理解代码的目的。
 * **不要滥用注释**：尽量避免在代码中大量使用注释，而是通过命名清晰的变量和函数来提高代码的可读性。注释的目的是为了解释不直观的部分，而不是用来解释显而易见的内容。
 
-#### 5. **生成文档**
+#### 1.1.2.5 **生成文档**
 
 使用 Dart 的 `dartdoc` 工具，你可以生成项目的文档。`dartdoc` 会提取文档注释并生成 HTML 格式的文档。
 
@@ -87,7 +87,7 @@ dart doc  # 生成文档
 
 ---
 
-#### 总结
+#### 1.1.2.6 总结
 
 * **单行注释**：`//`，适用于简短说明。
 * **多行注释**：`/* ... */`，适用于多行或块状注释。
@@ -95,94 +95,57 @@ dart doc  # 生成文档
 
 注释是代码的重要组成部分，它帮助你和团队成员更好地理解和维护代码。
 
-
-## **1.2 变量与类型**
-
-### 1.2.1 变量声明与初始化
-- **变量声明**：在Dart中，使用`var`关键字来声明一个变量，Dart会自动推断出变量类型。例如：
+## **1.2 变量的声明与初始化**
+### 1.2.1 `var`
+在Dart中，使用`var`关键字来声明一个变量，Dart会自动推断出变量类型。例如：
 ```dart
 var num = 123; // Dart自动推断num为int类型
 var str = 'Hello'; // Dart自动推断str为String类型
 ```
+### 1.2.2 显式声明
 也可以在声明变量时明确指定其类型，这样能让代码更易于理解，并且在编译时检查到类型错误。示例如下：
 ```dart
 String greeting = 'Hello Dart';
 int age = 20;
 ```
+### 1.2.3 `?`
 Dart 2.12版本引入了**空安全**特性，如果变量可能含有空值，需要在类型后面加一个问号`?`。例如：
 ```dart
 String? nullableString = null;
 ```
-如果一个变量在初始化后值不再改变，可以使用`final`或`const`声明它。`final`的值只能被设定一次，而`const`是一个编译时常量。例如：
+### 1.2.4 编译期 vs 运行期
+| 概念    | 编译期（Compile-Time）                | 运行期（Run-Time）               |
+| ----- | -------------------------------- | --------------------------- |
+| 时机    | 程序**还没执行之前**，Dart 编译器在分析代码时      | 程序已经开始执行时（即 `main()` 开始运行后） |
+
+### 1.2.5 `final` 和 `const`
+如果一个变量在初始化后值不再改变，可以使用 `final` 或 `const` 声明它。例如：
 ```dart
 final pi = 3.14159;
 const gravity = 9.8;
 ```
-需要注意的是，`final`和`const`的区别在于，`final`的值可以在声明时不初始化，之后再赋值一次；而`const`必须在声明时初始化，并且其值在编译时就确定。
+需要注意的是：
+| 特性       | `final`         | `const`            |
+| -------- | --------------- | ------------------ |
+| 是否只能赋值一次 | ✅ 是             | ✅ 是                |
+| 是否可以延迟赋值 | ✅ 可以：在运行时赋值一次即可 | ❌ 不行：**必须在声明时初始化** |
+| 是否在编译期常量 | ❌ 否，值在运行时确定     | ✅ 是，值在编译时就必须固定     |
+| -------- | --------------- | ------------------ |
+```dart
+final time = DateTime.now(); // ✅ 合法：运行时初始化
+// const time = DateTime.now(); // ❌ 报错：const 不能用运行时值
 
-### 1.2.2 变量类型
-#### 1.2.2.1 基本数据类型
-- **数字类型（`num`）**：Dart中的数字类型分为`int`（整数）和`double`（浮点数），`num`是它们的父类。例如：
-```dart
-int a = 10; // 整数
-double b = 10.5; // 浮点数
+const pi = 3.14; // ✅ 合法：编译时常量
 ```
-Dart还支持基本的数值运算，如加法、减法、乘法和除法等。此外，还有一些常用的方法，例如：
-```dart
-print(3.141592653.toStringAsFixed(3)); // 保留3位小数，输出3.142
-print(6 ~/ 5 ); // 整除运算，输出1
-```
-- **字符串类型（`String`）**：用于表示文本数据，可以使用单引号或双引号创建字符串，也支持多行字符串。例如：
-```dart
-String greeting = 'Hello, Dart!';
-String multiline = '''
-Dart is a great programming language.
-It is easy to learn and powerful.
-''';
-```
-字符串是不可变的，一旦创建，其内容无法改变，若要更改内容，需生成新的字符串。
-- **布尔类型（`bool`）**：只有两个取值`true`和`false`，常用于控制程序的执行流。例如：
-```dart
-bool isTrue = true;
-bool isFalse = false;
-print(isTrue && isFalse); // 输出false
-```
-- **列表（`List`）**：用于表示数组，是一种可变的、有序的集合，可以包含任何类型的对象。列表的索引从零开始，支持添加、删除和修改元素等操作。例如：
-```dart
-List fruits = ['Apple', 'Banana', 'Cherry'];
-fruits.add('Mango'); // 添加元素
-fruits = 'Blueberry'; // 修改元素
-```
-- **映射（`Map`）**：是一种键值对存储的集合，每个键都是唯一的，可以通过键来快速查找对应的值。例如：
-```dart
-Map ages = {'Alice': 25, 'Bob': 30};
-print(ages['Alice']); // 输出25
-ages['Charlie'] = 35; // 添加元素
-```
+关键点总结：
 
-#### 1.2.2.2 特殊数据类型
-- **`dynamic`类型**：允许动态改变类型的变量，可以表示任何类型的值。在编译时不进行类型检查，允许在运行时动态改变类型，但使用时绕过了类型安全，要小心使用。例如：
-```dart
-dynamic value = 'Hello';
-print(value); // 输出: Hello
-value = 42;
-print(value); // 输出: 42
-```
-- **`Object`类型**：是所有对象的父类，与Java中的`Object`类似。可以将`Object`类型的变量赋值为任何类型的对象，但在使用时，静态类型检查会更严格。
+* `final`：可以稍后赋值一次，**值在运行时确定**。
+* `const`：必须立即赋值，**值在编译时就必须固定**，用于定义**编译时常量**或创建**不可变对象**。
 
-### 1.2.3 类型判断与转换
-- **类型判断**：使用`is`和`is!`进行类型检查和类型非检查。例如：
-```dart
-int number = 100;
-print(number is num); // true
-print(number is! String); // true
-```
-- **类型转换**：Dart提供了一些内置方法来进行类型转换。例如，数字与字符串的转换可以使用`toString()`、`int.parse()`和`double.parse()`方法；列表与字符串的转换可以利用`join()`和`split()`方法。
+---
 
 ## **1.3 数据类型**
-
-### **1.3.1 基本数据类型**
-#### **1.3.1.1 数值类型**
+### **1.3.1 数值**
 Dart中的数值类型分为`int`（整数）和`double`（浮点数），`num`是它们的父类。
 - **`int`**  
   整数类型，支持二进制、八进制、十进制和十六进制表示：
@@ -200,7 +163,7 @@ Dart中的数值类型分为`int`（整数）和`double`（浮点数），`num`�
   double f = 2e3;      // 科学计数法 (2000.0)
 ```
 
-#### **1.3.1.2 布尔值类型**
+### **1.3.2 `bool`**
 - **`bool`**  
   Dart 使用 `bool` 表示布尔值，只有两个可能的值：`true` 和 `false`。  
 ```dart
@@ -208,7 +171,7 @@ Dart中的数值类型分为`int`（整数）和`double`（浮点数），`num`�
   bool isSunny = false;
 ```
 
-##### 1.**布尔运算**  
+#### 1.3.2.1 **布尔运算**  
   Dart 支持标准的逻辑运算：
 ```dart
   bool a = true;
@@ -219,7 +182,7 @@ Dart中的数值类型分为`int`（整数）和`double`（浮点数），`num`�
   print(!a);      // 逻辑非（NOT）→ false
 ```
 
-##### 2.**条件判断**  
+#### 1.3.2.2 **条件判断**  
   `bool` 类型常用于条件语句：
 ```dart
   if (isRaining) {
@@ -229,7 +192,7 @@ Dart中的数值类型分为`int`（整数）和`double`（浮点数），`num`�
   }
 ```
 
-##### 3.**类型安全**  
+#### 1.3.2.3 **类型安全**  
   Dart 是强类型语言，`if` 语句的条件必须是 `bool` 类型：
 ```dart
   int x = 10;
@@ -239,21 +202,25 @@ Dart中的数值类型分为`int`（整数）和`double`（浮点数），`num`�
   }
 ```
 
-#### **1.3.1.3 文本类型**
-在 Dart 中，字符串是非常常用的数据类型。Dart 提供了许多强大的方法来操作字符串，涵盖了创建、访问、修改、搜索、格式化等多种常见操作。
+### **1.3.3 `String`**
+在 Dart 中，`String` (字符串)是非常常用的数据类型。Dart 提供了许多强大的方法来操作字符串，涵盖了创建、访问、修改、搜索、格式化等多种常见操作。
 
-##### 1. **字符串的创建**
+#### 1.3.3.1 **字符串的创建**
 
 ```dart
 String str1 = 'Hello, Dart!';  // 使用单引号
 String str2 = "Hello, Dart!";  // 使用双引号
-String str3 = '''Hello,
-Dart!''';  // 使用三引号（多行字符串）
-String str4 = """Hello,
-Dart!""";  // 使用三引号（多行字符串）
+String str3 = '''
+Dart is a great programming language.
+It is easy to learn and powerful.
+''';  // 使用三引号（多行字符串）
+String str4 = """
+Dart is a great programming language.
+It is easy to learn and powerful.
+""";  // 使用三引号（多行字符串）
 ```
 
-##### 2. **字符串拼接**
+#### 1.3.3.2 **字符串拼接**
 
 ```dart
 String str1 = 'Hello';
@@ -266,7 +233,7 @@ String result2 = '$str1, $str2!';
 print(result2);  // 输出: Hello, Dart!
 ```
 
-##### 3. **字符串长度**
+#### 1.3.3.3 **字符串长度**
 
 ```dart
 String str = 'Hello, Dart!';
@@ -274,7 +241,7 @@ int length = str.length;
 print(length);  // 输出: 13
 ```
 
-##### 4. **访问字符串的单个字符**
+#### 1.3.3.4 **访问字符串的单个字符**
 
 ```dart
 String str = 'Hello, Dart!';
@@ -282,7 +249,7 @@ print(str[0]);  // 输出: H (访问第一个字符)
 print(str[str.length - 1]);  // 输出: ! (访问最后一个字符)
 ```
 
-##### 5. **查找子字符串**
+#### 1.3.3.5 **查找子字符串**
 
 ```dart
 String str = 'Hello, Dart!';
@@ -292,7 +259,7 @@ print(str.startsWith('Hello'));  // 输出: true（检查是否以某个子字�
 print(str.endsWith('!'));  // 输出: true（检查是否以某个子字符串结尾）
 ```
 
-##### 6. **提取子字符串**
+#### 1.3.3.6 **提取子字符串**
 
 ```dart
 String str = 'Hello, Dart!';
@@ -303,7 +270,7 @@ String substr2 = str.substring(0, 5);  // 提取从索引0到索引5的子字符
 print(substr2);  // 输出: Hello
 ```
 
-##### 7. **替换字符串中的某些部分**
+#### 1.3.3.7 **替换字符串中的某些部分**
 
 ```dart
 String str = 'Hello, Dart!';
@@ -311,7 +278,7 @@ String replaced = str.replaceAll('Dart', 'Flutter');
 print(replaced);  // 输出: Hello, Flutter!
 ```
 
-##### 8. **拆合字符串 `.split(',')` vs `.join(',')`**
+#### 1.3.3.8 **拆合字符串 `.split(',')` vs `.join(',')`**
 
 ```dart
 //拆
@@ -324,7 +291,7 @@ List<String> list = ['a', 'b'];
 String joined = list.join(','); // 转为字符串 "a,b"
 ```
 
-##### 9. **去除空白字符**
+#### 1.3.3.9 **去除空白字符**
 
 ```dart
 String str = '   Hello, Dart!   ';
@@ -332,7 +299,7 @@ String trimmed = str.trim();  // 去除前后空白
 print(trimmed);  // 输出: Hello, Dart!
 ```
 
-##### 10. **字符串转换大小写**
+#### 1.3.3.10 **字符串转换大小写**
 
 ```dart
 String str = 'Hello, Dart!';
@@ -342,7 +309,7 @@ print(upper);  // 输出: HELLO, DART!
 print(lower);  // 输出: hello, dart!
 ```
 
-##### 11. **检查字符串是否为空**
+#### 1.3.3.11 **检查字符串是否为空**
 
 ```dart
 String str = 'Hello, Dart!';
@@ -363,7 +330,7 @@ if (str?.isNotEmpty == true) {
 同理，还可以推广到集合，例如`List.isEmpty`、`List.isNotEmpty`、`Map.isEmpty`、`Map.isNotEmpty`等等
 
 
-##### 12. **使用正则表达式进行字符串匹配**
+#### 1.3.3.12 **使用正则表达式进行字符串匹配**
 
 ```dart
 String str = 'abc123def';
@@ -374,7 +341,7 @@ for (var match in matches) {
 }
 ```
 
-##### 13. **字符串插值**
+#### 1.3.3.13 **字符串插值**
 
 Dart 中的字符串插值非常直观和简单，允许直接在字符串中嵌入变量和表达式。你可以使用 `${}` 来插入表达式。
 
@@ -388,7 +355,7 @@ String moreInfo = 'In 5 years, I will be ${age + 5} years old.';  // 使用表�
 print(moreInfo);  // 输出: In 5 years, I will be 30 years old.
 ```
 
-##### 14. **常用的字符串方法**
+#### 1.3.3.14 **常用的字符串方法**
 
 | 方法              | 描述           |
 | --------------- | ------------ |
@@ -407,7 +374,7 @@ print(moreInfo);  // 输出: In 5 years, I will be 30 years old.
 
 ---
 
-##### 15. **示例：综合字符串操作**
+#### 1.3.3.15 **示例：综合字符串操作**
 
 ```dart
 void main() {
@@ -433,13 +400,12 @@ void main() {
 ```
 ---
 
-### **1.3.2 集合类型**
-#### **1.3.2.1 `List`（数组）**
-有序可变的集合，支持泛型：  
+### **1.3.4 `List`**
+`List` （列表）是有序可变的集合，支持泛型：  
 
 在 Dart 中，`List` 是一个非常常用的数据结构，用于存储有序的元素集合。Dart 提供了丰富的内置方法来操作 `List`，包括添加、删除、查找、排序等。下面是一些常见的 `List` 方法和操作的示例：
 
-##### 1. **创建 List**
+#### 1.3.4.1 **创建 List**
 
 ```dart
 List<int> numbers = [1, 2, 3, 4, 5];  // 使用字面量创建int 类型的 List
@@ -455,7 +421,7 @@ List<int> emptyList = List<int>.empty();
 List<int> filledList = List<int>.filled(5, 0);  // 创建一个长度为 5，且每个元素初始化为 0 的 List
 ```
 
-##### 2. **访问 List 元素**
+#### 1.3.4.2 **访问 List 元素**
 
 ```dart
 List<String> names = ['Alice', 'Bob', 'Charlie'];
@@ -465,7 +431,7 @@ print(names[2]);  // 输出: Charlie
 print(names.length);  // 输出: 3，List 的长度
 ```
 
-##### 3. **添加元素**
+#### 1.3.4.3 **添加元素**
 
 * `add()`：添加一个元素到 List 的末尾。
 * `addAll()`：将另一个 List 的所有元素添加到当前 List。
@@ -492,7 +458,7 @@ numbers.insertAll(4, [7, 8]);
 print(numbers);  // 输出: [1, 2, 10, 3, 7, 8, 4, 5, 6]
 ```
 
-##### 4. **删除元素**
+#### 1.3.4.4 **删除元素**
 
 * `remove()`：删除第一个匹配的元素。
 * `removeAt()`：删除指定位置的元素。
@@ -520,7 +486,7 @@ numbers.removeWhere((element) => element % 2 == 0);  // 删除所有偶数
 print(numbers);  // 输出: [1]
 ```
 
-##### 5. **查找元素**
+#### 1.3.4.5 **查找元素**
 
 * `indexOf()`：查找某个元素首次出现的索引，如果未找到则返回 -1。
 * `lastIndexOf()`：查找某个元素最后一次出现的索引。
@@ -542,7 +508,7 @@ print(names.lastIndexOf('Alice'));  // 输出: 3
 print(names.contains('Charlie'));  // 输出: true
 ```
 
-##### 6. **排序和反转**
+#### 1.3.4.6 **排序和反转**
 
 * `sort()`：对 List 进行排序。
 * `reversed`：反转 List 的顺序。
@@ -559,7 +525,7 @@ var reversed = numbers.reversed;
 print(reversed);  // 输出: (8, 5, 3, 2, 1)
 ```
 
-##### 7. **转换和映射**
+#### 1.3.4.7 **转换和映射**
 
 * `map()`：通过给 List 中的每个元素应用一个函数来转换元素。
 * `where()`：过滤 List 中符合条件的元素。
@@ -626,7 +592,7 @@ for (var filt in filtered) {
 } // 依次输出: 6, 8, 10, 而不是 [6, 8, 10]
 ```
 
-##### 8. **其他常用方法**
+#### 1.3.4.8 **其他常用方法**
 
 * `forEach()`：遍历 List 中的每个元素。
 * `join()`：将 List 中的元素连接为一个字符串。
@@ -670,12 +636,12 @@ print(names.last);   // 输出: Charlie
 print(names.isEmpty);  // 输出: false
 ```
 
-#### **1.3.2.2 `Map`**
-键值对集合，键唯一：  
+### **1.3.5 `Map`**
+`Map` 是 `key-value` (键值对)集合，键唯一：  
 
 在 Dart 中，`Map` 是一种非常重要的数据结构，用于存储键值对。`Map` 提供了丰富的内置方法来操作和访问数据。下面是一些常见的 `Map` 方法和操作的示例。
 
-##### 1. **创建 Map**
+#### 1.3.5.1 **创建 Map**
 
 ```dart
 // 使用字面量创建 Map
@@ -698,7 +664,7 @@ Map<String, int> emptyMap = Map<String, int>();
 Map<String, int> copyMap = Map.from(scores);
 ```
 
-##### 2. **访问 Map 元素**
+#### 1.3.5.2 **访问 Map 元素**
 
 ```dart
 Map<String, int> scores = {
@@ -723,7 +689,7 @@ print(scores.containsKey('David'));  // 输出: false
 print(scores.containsValue(88));  // 输出: true
 ```
 
-##### 3. **添加元素**
+#### 1.3.5.3 **添加元素**
 
 * `addAll()`：将另一个 `Map` 的键值对添加到当前 `Map`。
 * `putIfAbsent()`：只有在指定键不存在时才添加键值对。
@@ -748,7 +714,7 @@ prices.putIfAbsent('hamburger', () => 9.9);
 print(prices);  // 输出: {apple: 7.5, banana: 3.0, orange: 3.9, candy: 6.0, biscuit: 5.7, hamburger: 9.9}
 ```
 
-##### 4. **删除元素**
+#### 1.3.5.4 **删除元素**
 
 * `remove()`：根据键删除一个键值对。
 * `removeWhere()`：根据条件删除符合条件的所有键值对。
@@ -775,7 +741,7 @@ print(prices);  // 输出: {}
 
 ```
 
-##### 5. **查找元素**
+#### 1.3.5.5 **查找元素**
 
 * `keys`：返回 `Map` 中所有的键。
 * `values`：返回 `Map` 中所有的值。
@@ -804,7 +770,7 @@ prices.forEach((key, value) {
 // orange 的价格是 3.9 元
 ```
 
-##### 6. **修改元素**
+#### 1.3.5.6 **修改元素**
 
 * `update()`：更新指定键的值。
 * `updateAll()`：更新所有键值对，根据给定的函数更新值。
@@ -829,7 +795,7 @@ prices.updateAll((key, value) => value + 0.5);
 print(prices);  // 输出: {apple: 9.0, banana: 3.5, orange: 4.4, grape: 5.0}
 ```
 
-##### 7. **其他常用方法**
+#### 1.3.5.7 **其他常用方法**
 
 * `isEmpty`：判断 `Map` 是否为空。
 * `isNotEmpty`：判断 `Map` 是否不为空。
@@ -857,7 +823,7 @@ prices.addEntries([
 print(prices);  // 输出: {apple: 7.5, banana: 3.0, orange: 3.9, cookie: 6.0, cake: 8.8}
 ```
 
-##### 8. **Map 复制与转换**
+#### 1.3.5.8 **Map 复制与转换**
 
 * `Map.from()`：从已有的 `Map` 创建一个新的 `Map`。
 * `Map.of()`：从已有的键值对集合创建 `Map`。
@@ -878,7 +844,7 @@ Map<String, double> newPrices = Map.of({'milk': 6.6, 'tea': 5.5});
 print(newPrices);  // 输出: {milk: 6.6, tea: 5.5}
 ```
 
-##### 总结
+#### 1.3.5.9 总结
 
 Dart 的 `Map` 提供了丰富的操作方法来处理键值对。常见的操作包括：
 
@@ -890,8 +856,8 @@ Dart 的 `Map` 提供了丰富的操作方法来处理键值对。常见的操�
 * **复制与转换**：使用 `Map.from()` 和 `Map.of()`。
 
 
-#### **1.3.2.3 `Set`**
-无序且不重复的集合：
+### **1.3.6 `Set`**
+`Set` 是无序且不重复的集合：
 ```dart
 Set<String> uniqueItems = {'a', 'b', 'c'};
 uniqueItems.add('a'); // 无效（重复值）
@@ -900,16 +866,16 @@ print(uniqueItems);   // {a, b, c}
 
 ---
 
-### **1.3.3 特殊数据类型**
-#### **1.3.3.1 `dynamic`**
-动态类型，绕过编译时类型检查（慎用）：
+### **1.3.7 特殊数据类型**
+#### **1.3.7.1 `dynamic`**
+`dynamic` 类型：动态类型，可以表示任何类型的值，在编译时绕过类型检查（慎用）：
 ```dart
 dynamic value = 42;
 value = 'Hello';      // 合法但可能引发运行时错误
 ```
 
-#### **1.3.3.2 `Object?`**
-所有类型的超类，支持可空性（需启用空安全）：
+#### **1.3.7.2 `Object?`**
+`Object?` 类型：是所有对象的父类，支持可空性（需启用空安全）：
 ```dart
 Object? obj = null;   // 允许 null
 if (obj is String) {
@@ -919,7 +885,7 @@ if (obj is String) {
 
 ---
 
-### **1.3.4 类型安全与空安全**
+### **1.3.8 类型安全与空安全**
 - **类型推断**：Dart 会自动推断变量类型（如 `var x = 10` 推断为 `int`）。
 - **非空断言**：在变量后加 `!` 告诉 Dart 该值不为 `null`（需确保安全）：
 ```dart
@@ -934,7 +900,7 @@ if (obj is String) {
 
 ---
 
-### **1.3.5 类型转换**
+### **1.3.9 类型转换**
 - **数值与字符串**：
 ```dart
   int zhengShu = int.parse('123');    // 字符串转 int
@@ -953,10 +919,10 @@ if (obj is String) {
 ```
 
 ---
-### **1.3.6 类型判断**
+### **1.3.10 类型判断**
 在 Dart 中，数据类型通常由编译器推断，或者你可以显式地声明类型。以下是如何确定数据类型的一些方法：
 
-#### 1.3.6.1 **类型推断**
+#### 1.3.10.1 **类型推断**
 
 Dart 是一种强类型语言，通常会根据赋值推断变量的类型。如果你没有显式声明类型，Dart 会根据初始值自动推断类型。
 
@@ -971,7 +937,7 @@ var prices = {'apple': 6.9, 'banana': 3.0}; // Dart 推断 prices 的类型是 M
 }
 ```
 在这个例子中，`var` 用来声明变量，Dart 根据赋值推断类型。
-#### 1.3.6.2 **同名赋值的常见类型错误 ❌**
+#### 1.3.10.2 **同名赋值的常见类型错误 ❌**
 ```dart
 void main() {
   var x = 10;
@@ -1002,7 +968,7 @@ void main() {
   prices = [6.9, 3.0]; // ❌ 错误：不能将类型为 'List<double>' 的值赋给类型为 'Map<String, double>' 的变量。
 }
 ```
-#### 1.3.6.3 **显式类型声明（推荐）✅**
+#### 1.3.10.3 **显式类型声明（推荐）✅**
 
 你也可以显式地声明变量的类型：
 
@@ -1017,7 +983,7 @@ Map<String, double> prices = {'apple': 6.9, 'banana': 3.0};
 }
 ```
 
-#### 1.3.6.4 **使用 `runtimeType` 属性**
+#### 1.3.10.4 **使用 `runtimeType` 属性**
 
 Dart 中每个对象都有一个 `runtimeType` 属性，它表示对象在运行时的类型。你可以通过 `runtimeType` 获取对象的类型名称（以字符串形式）。
 
@@ -1043,7 +1009,7 @@ void main() {
 }
 ```
 
-#### 1.3.6.5 **`is` 判断符**
+#### 1.3.10.5 **`is` 判断符**
 
 如果你想检查某个对象是否是某个特定类型，你可以使用 `is` 判断符，其构成的语句返回一个 `bool` 值。
 
@@ -1068,7 +1034,7 @@ void main() {
 } 
 ```
 
-#### 1.3.6.6 **`is!` 判断符**
+#### 1.3.10.6 **`is!` 判断符**
 
 `is!` 用来测试一个对象是否不是某个类型，其构成的语句返回一个 `bool` 值。
 
@@ -1084,7 +1050,7 @@ void main() {
 
 ```
 
-#### 1.3.6.7 **`as` 运算符**
+#### 1.3.10.7 **`as` 运算符**
 
 你还可以使用 `as` 来进行类型转换，将对象转换为指定类型。注意，转换时必须确保对象实际是该类型，否则会抛出异常。
 
@@ -1096,7 +1062,7 @@ void main() {
 }
 ```
 
-#### 1.3.6.8 总结
+#### 1.3.10.8 总结
 
 * **类型推断**：通过赋值自动推断类型。
 * **显式声明**：你可以手动声明变量的类型。
@@ -1105,7 +1071,7 @@ void main() {
 * **`is!` 运算符**：检查对象是否不为某个类型。
 * **`as` 运算符**：强制转换对象类型。
 
-### **1.3.7 注意事项**
+### **1.3.11 注意事项**
 - **不可变性**：`String`、`List` 等基础类型默认不可变，修改需重新赋值。
 - **性能优化**：频繁修改 `List` 时，可预分配容量：`List<int> list = List.filled(100, 0);`。
 
@@ -1336,7 +1302,7 @@ void main() {
   // 可空变量示例
   String? nullableString = null;  // ✅ 允许
   String nonNullableString = 'abc';  // ✅ 必须非空
-  // nonNullableString = null;     // ❌ 编译错误
+  // String nonNullableString = null;     // ❌ 编译错误
 
   // 类中的可空属性
   final user = User('Alice')..age = null;  // ✅ 可空属性赋值为 null
@@ -3906,7 +3872,7 @@ void main() {
 }
 ```
 
-## **5.5 最佳实践**
+## **5.5 使用规范**
 - **优先使用 `async - await`**：代码更简洁易读，避免回调地狱。
 - **错误处理**：始终用 `try - catch` 包裹异步代码，防止程序崩溃。
 ---
@@ -4295,9 +4261,6 @@ try {
    }
  ```
 
-
-  
-
 ---
 
 # **7. 核心库与工具** [选学]
@@ -4562,7 +4525,7 @@ void main() {
 
 ---
 
-## **8.5 最佳实践**
+## **8.5 建议与规范**
 ### **8.5.1 枚举使用建议**
 - 优先使用增强型枚举（Dart 2.17+）
 - 为枚举值添加有意义的计算属性
@@ -4640,13 +4603,3 @@ void validateUser(User user) {
 }
 ```
 
-
-
----
-
-# **9. 最佳实践** [选学]
-- **空安全**：启用空安全后，变量需显式标记可空（`?`）或非空。
-- **代码风格**：遵循 [Dart 代码规范](https://dart.dev/guides/language/effective-dart/style)。
-- **测试**：使用 `test` 包编写单元测试。
-
----
