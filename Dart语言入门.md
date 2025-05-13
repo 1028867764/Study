@@ -1128,7 +1128,7 @@ void main() {
 | `%`  | 取余（模）         | `a % b`             | `1`        |
 
 ---
-⚠️**注意**⚠️余数始终为非负值
+⚠️**注意**⚠️**余数始终为非负值**
 
 即使除数是负的，Dart 仍然保证余数始终为非负值。
 
@@ -1892,18 +1892,59 @@ void main() {
 
 ---
 
-## **2.3 断言（Debugging）**
-- **基本语法**：
-```dart
-  int age = -5;
-  assert(age >= 0, '年龄不能为负数'); // 抛出 AssertionError
-```
-- **特点**：
-  - 仅在 **调试模式** 下生效（发布版本会被移除）。
-  - 第二个参数为可选错误信息。
-  - 常用于验证输入或中间状态。
+## **2.3 `assert`（仅用于Debugging）**
 
----
+### 2.3.1 基本语法
+在 Dart 里，`assert` 是一个内置的调试工具，其基本语法如下：
+```dart
+assert(condition, [message]);
+```
+- `condition`：这是一个布尔表达式，必须返回 `true` 或者 `false`。若结果为 `false`，则会触发断言失败，抛出 `AssertionError` 异常。
+- `message`（可选）：当断言失败时显示的字符串信息，用于描述错误原因。
+
+以下是一个简单示例：
+```dart
+int age = -5;
+assert(age >= 0, '年龄不能为负数'); // 抛出 AssertionError
+```
+在上述示例中，`age >= 0` 这个条件为 `false`，所以会抛出 `AssertionError`，并且会显示错误信息 `'年龄不能为负数'`。
+
+### 2.3.2 特点
+1. **仅在调试模式下生效（发布版本会被移除）**：
+    - Dart 程序有调试模式（Debug）和生产模式（Release）。在调试模式下，`assert` 语句会正常执行，用于帮助开发者发现代码中的逻辑错误。而在生产模式下（例如通过 `--release` 标志编译的代码），`assert` 语句会被完全移除，不会影响程序的性能。
+    - 例如在 Flutter 开发中，Debug 模式对应 Dart 的 JIT 模式，会打开所有的断言（`assert`）；Release 模式对应 Dart 的 AOT 模式，会关闭所有的断言。
+2. **第二个参数为可选错误信息**：
+    - 当断言条件为 `false` 时，若提供了第二个参数，那么这个参数的值会作为错误信息显示出来，帮助开发者更清晰地了解断言失败的原因。如果不提供第二个参数，则会使用默认的错误信息。
+    - 示例：
+```dart
+void setAge(int age) {
+  assert(age >= 0 && age <= 120, 'Age must be between 0 and 120');
+  print('Age set to: $age');
+}
+
+void main() {
+  setAge(-5); // 触发断言错误，会显示 'Age must be between 0 and 120'
+}
+```
+3. **常用于验证输入或中间状态**：
+    - 在函数或方法中，可以使用 `assert` 来验证输入参数是否符合预期。在类的关键逻辑中，也能使用 `assert` 来验证对象的状态是否合法。在开发阶段，还可以使用 `assert` 来验证代码中的假设是否成立。
+    - 示例：
+```dart
+class BankAccount {
+  double balance = 0;
+
+  void deposit(double amount) {
+    assert(amount > 0, 'Deposit amount must be positive');
+    balance += amount;
+  }
+}
+
+void main() {
+  var account = BankAccount();
+  account.deposit(100); // 正常执行
+  account.deposit(-50); // 触发断言错误，会显示 'Deposit amount must be positive'
+}
+```
 
 ## **2.4 控制流进阶技巧**
 ### **2.4.1 级联操作（Cascade）**
@@ -1948,16 +1989,16 @@ print(name?.toUpperCase() ?? '匿名'); // 输出 '匿名'（若 name 为 null�
 
 ## **3.1 函数基础语法**
 ### **3.1.1 标准函数定义**
+- 函数结构示意图
 ```dart
-/* 结构示意
-
 返回值的类型 函数名(参数a, 参数b...) {
       // 函数体
     return 返回值; // 非void类型需返回值
 }
+```
 
-*/ 
-
+- 传统写法与箭头函数
+```dart
 // 传统写法（多行）
 int add(int a, int b) {
   return a + b;
@@ -1965,10 +2006,11 @@ int add(int a, int b) {
 
 // 箭头函数（单行，自动返回）
 int multiply(int a, int b) => a * b;
+```
 
-// print 函数返回 void
+- print 函数返回 void
+```dart
 void printMessage() => print('Hello, Dart!');
-
 ```
 
 ### **3.1.2 函数类型**
@@ -2508,24 +2550,41 @@ print(doubleIt(5)); // 输出 10
 ---
 
 # **4. 面向对象**
-
 ## **4.1 类与对象（Class & Object）**
+在 Dart 中，**类（class）** 就像是一个“模板”或“设计图”，用来描述一类事物具有什么样的属性（数据）和能做什么样的事情（方法）。
+
+**对象（object）** 就是根据这个模板创建出来的“实际的东西”。你可以把类想象成是“设计图”，而对象就是“根据设计图造出来的产品”。
+
+通过类和对象，我们可以把代码写得更清晰、结构更好，而且可以反复利用这份“设计图”创建多个类似的对象。
 ### **4.1.1 创建对象**
 #### 4.1.1.0 结构示意
+- 带注释版
 ```dart
 class 类名 {
   // 1.类的属性
   这里创建属性
 
   // 2.默认构造函数（Default Constructor）:用于初始化基本属性
-   类名(this.属性1, this.属性2); // 自动将传入的参数赋值给对应的属性
-  // 如果没有写默认构造函数，Dart 会默认提供一个无参数的默认构造函数
+   类名(this.属性1, this.属性2) // 构造函数参数列表
+      : 属性a = A值,   //————|初始化|
+        属性b = B值,   //————|列表|
+        属性c = C值;  
+
+
+/* 'this.' 自动将传入的参数赋值给对应的属性。
+
+ 构造函数参数列表后面可以接一个初始化列表，也可以不接，
+ 不接的时候直接写 "类名(构造函数参数列表);" 就可以了。
+
+ 如果没有写默认构造函数，Dart 会默认提供一个无参数的默认构造函数
+*/
+
 
   // 3.命名构造函数（Named Constructor）[选学]
-   类名.命名构造函数();
-      : 属性a = A值,
-        属性b = B值,
-        属性c = C值; 
+   类名.命名构造函数(构造函数参数列表)
+      : 属性aa = AA值,  // ————|初始化|
+        属性bb = BB值,  //————|列表|
+        属性cc = CC值;   
 
 /* 在 Dart 中，
 “命名构造函数（Named Constructor）”之所以这么叫，
@@ -2578,10 +2637,45 @@ void main() {
   对象2.属性
 
   // 调用方法
-  对象2.方法名()
+  对象2.方法名();
 
 }
 ```
+- 不带注释版
+```dart
+class 类名 {
+  这里创建属性
+
+   类名(this.属性1, this.属性2);  
+
+   类名.命名构造函数(构造函数参数列表)
+      : 属性aa = AA值,  
+        属性bb = BB值,  
+        属性cc = CC值;   
+
+   void 方法名() {
+      一顿操作;
+   }
+}
+
+void main() {
+
+    类名(参数1, 参数2...); 
+    类名();
+
+  var 对象1 = 类名();
+
+  var 对象2 = 类名(参数1, 参数2...);
+
+  var 对象3 = 类名.命名构造函数();
+
+  对象2.属性
+
+  对象2.方法名();
+
+}
+```
+
 #### 4.1.1.1 示例1 水果
 ```dart
 // 定义一个名为 Fruit 的类，类就像是一个模板，用来创建具有相同属性和行为的水果对象
@@ -3129,6 +3223,28 @@ void main() {
 ---
 ## **4.3 构造函数进阶**
 ### **4.3.1 初始化列表**
+初始化列表以冒号 `:` 开头，用于在对象创建时对属性进行初始化
+- 示例1 使用初始化列表设置初始值（含逻辑）
+```dart
+class Student {
+  String name;
+  int score;
+  String grade;
+
+  // 初始化列表中根据 score 设置 grade
+  Student(this.name, this.score) : grade = score >= 90 ? 'A' : 'B';
+
+  void showInfo() {
+    print('$name got score $score, grade $grade');
+  }
+}
+
+void main() {
+  var s = Student('Tom', 92);
+  s.showInfo(); // 输出：Tom got score 92, grade A
+}
+```
+- 示例2 初始化 `final` 字段和参数校验
 ```dart
 class Point {
   final int x;
@@ -3144,8 +3260,35 @@ void main() {
   // var p = Point(-1, 2); // 抛出异常
 }
 ```
+- 示例3 初始化父类构造函数
 
-### **4.3.2 常量构造函数**
+当子类继承父类时，子类的构造函数可以通过初始化列表显式调用父类的构造函数。
+```dart
+class Animal {
+  final String name;
+
+  // 父类构造函数
+  Animal(this.name);
+}
+
+class Dog extends Animal {
+  final String breed;
+
+  // 子类构造函数，初始化父类构造函数，并添加自己的初始化逻辑
+  Dog(String name, this.breed) : super(name);
+
+  void bark() {
+    print('Woof! My name is $name and I am a $breed.');
+  }
+}
+
+void main() {
+  var dog = Dog('Buddy', 'Golden Retriever');
+  dog.bark();  // 输出: Woof! My name is Buddy and I am a Golden Retriever.
+}
+```
+
+### **4.3.2 常量构造函数** [选学]
 ```dart
 class ImmutablePoint {
   final int x;
@@ -3166,7 +3309,7 @@ void main() {
 
 ---
 
-## **4.4 抽象类与接口**
+## **4.4 抽象类与接口** [选学]
 ### **4.4.1 抽象类**
 ```dart
 abstract class Shape {
@@ -3214,7 +3357,7 @@ class MultiFunctionDevice implements Printer {
 
 ---
 
-## **4.5 方法与运算符重载**
+## **4.5 方法与运算符重载** [选学]
 ### **4.5.1 方法重载（Dart风格）**
 ```dart
 class Calculator {
@@ -3266,7 +3409,7 @@ void main() {
 
 ---
 
-## **4.6 高级特性**
+## **4.6 高级特性** [选学]
 ### **4.6.1 工厂构造函数**
 ```dart
 class Logger {
@@ -3318,11 +3461,49 @@ void main() {
 
 ---
 
-## **4.7 最佳实践**
+## **4.7 再提几点**
 ### **4.7.1 命名规范**
-   - 类名：`PascalCase`（如 `UserAccount`）
-   - 方法/变量：`camelCase`（如 `calculateTotal`）
-   - 常量：`SCREAMING_SNAKE_CASE`（如 `MAX_RETRIES`）
+
+在编程中，良好的命名规范能够大大提高代码的可读性和可维护性。Dart 语言遵循一套统一的命名风格规范，下面逐一说明：
+
+#### 4.7.1.1 变量名/方法名：`camelCase`
+
+* **不能以阿拉伯数字开头**，例如 `1stValue` 是非法的，应该使用 `firstValue`。
+* 首个单词小写，后续单词首字母大写。不使用下划线。
+* 适用于函数、方法、普通变量、参数、局部变量等。
+
+**示例：**
+
+```dart
+int calculateTotal(int quantity, int price) {
+  int totalPrice = quantity * price;
+  return totalPrice;
+}
+```
+
+#### 4.7.1.2 类名：`PascalCase`
+
+* 同样，**类名也不能以阿拉伯数字开头**，如 `3DModel` 应改为 `ThreeDModel`。
+* 首个单词首字母大写，后续单词首字母大写。不使用下划线。
+* 通常用于类（`class`）、枚举（`enum`）、扩展（`extension`）等类型名称。
+
+**示例：**
+
+```dart
+class UserAccount {}
+mixin SweetBaby {}
+enum OrderStatus { Pending, Completed, Cancelled }
+extension StringUtils on String {}
+```
+
+#### 4.7.1.3 补充建议
+
+* **命名不得以阿拉伯数字开头**：无论是变量名、方法名、类名还是文件名，均不能以阿拉伯数字作为首字符。
+* **私有字段**：使用下划线 `_` 开头表示私有，例如 `_counter`、`_sweetBaby`。
+* **文件名/库名**：使用小写字母和下划线分隔，例如：`user_account.dart`。
+* **避免缩写**：尽量使用清晰的全称，例如 `calculateTotal` 优于 `calcTot`。
+
+
 
 ### **4.7.2 空安全处理**
  ```dart
@@ -3345,7 +3526,7 @@ void main() {
 
 ---
 
-## **4.8 实际应用示例**
+## **4.8 实际应用示例** [选学]
 ### **4.8.1 数据模型类**
 ```dart
 class User {
@@ -3781,6 +3962,32 @@ Dart 中的异常主要分为两类：
 捕获到异常: Invalid argument(s): 名字不能为空
 ```
 
+- **`AssertionError`**
+  当断言失败时抛出，通常用于开发阶段的调试用途。在使用 `assert()` 时，如果表达式为 false，则会抛出该错误。**它主要用于开发阶段发现逻辑错误，在生产环境中断言默认是被禁用的。**
+
+  示例：
+
+```dart
+  void checkAge(int age) {
+    assert(age >= 0, "年龄不能为负数");
+    print("年龄是: $age");
+  }
+
+  void main() {
+    try {
+      checkAge(-5); // 抛出 AssertionError（仅在调试模式下）
+    } catch (e) {
+      print("捕获到异常: $e");
+    }
+  }
+```
+
+  输出（仅在调试模式下）：
+
+```
+  捕获到异常: Assertion failed: "年龄不能为负数"
+```
+
 #### 6.1.4.2 `Exception` 示例代码：
 
 ```dart
@@ -3816,19 +4023,21 @@ void main() {
 捕获到异常: Exception: 除数不能为 0
 运算结束，无论成功与否我都会执行
 ```
-#### 6.1.4.3 对比总结：
+#### 6.1.4.3 对比：
 
-| 类型                  | 继承自      | 用途                           | 是否通常通过 `try-catch` 捕获 |
-| ------------------- | -------- | ---------------------------- | --------------------- |
-| **`Error`**         | `Object` | 程序严重错误，通常不可恢复，程序会终止。         | 否                     |
-| **`Exception`**     | `Object` | 程序可恢复的错误，可以通过 `try-catch` 捕获 | 是                     |
-| **`ArgumentError`** | `Error`  | 函数参数非法时抛出，通常可以恢复。            | 是                     |
+| 类型                 | 继承自    | 用途                           | 是否通常通过 try-catch 捕获 |
+| ------------------ | ------ | ---------------------------- | ------------------- |
+| **Error**          | Object | 程序严重错误，通常不可恢复，程序会终止。         | 否                   |
+| **Exception**      | Object | 程序可恢复的错误，可以通过 try-catch 捕获   | 是                   |
+| **ArgumentError**  | Error  | 函数参数非法时抛出，通常可以恢复。            | 是                   |
+| **AssertionError** | Error  | 断言失败时抛出，用于开发阶段调试逻辑错误，非运行时异常。 | 否（调试模式下可捕获）         |
 
 **总结**：
 
-* **`Error`** 通常用于不可恢复的系统错误，开发者不应捕获。
-* **`Exception`** 用于可预见并可以恢复的错误，开发者应通过 `try-catch` 捕获。
-* **`ArgumentError`** 虽然继承自 `Error`，但它更接近于 `Exception`，因为它是可预见的、可恢复的错误，通常可以通过 `try-catch` 处理。
+* **Error** 通常用于不可恢复的系统错误，开发者不应在运行时捕获。
+* **Exception** 用于可预见并可以恢复的错误，开发者应通过 try-catch 捕获。
+* **ArgumentError** 虽然继承自 Error，但它是可预见的、可恢复的异常，实际应用中经常通过 try-catch 捕获处理。
+* **AssertionError** 多用于调试阶段的逻辑断言，能帮助开发者尽早发现错误，生产环境中默认不会触发。
 
 ### 6.1.5 **try-catch-finally**
 Dart使用`try-catch-finally`结构来实现异常处理：
@@ -3984,7 +4193,7 @@ void main() {
 
 ---
 
-## **6.2 实际应用示例**
+## **6.2 实际应用示例** [选学]
 ### **6.2.1 表单验证**
 ```dart
 class FormValidator {
@@ -4048,7 +4257,7 @@ try {
 
 ---
 
-## **6.3 注意事项**
+## **6.3 注意事项** [选学]
 1. **不要捕获所有异常而不处理**  
    ❌ 错误示例：
  ```dart
@@ -4091,14 +4300,14 @@ try {
 
 ---
 
-# **7. 核心库与工具**
+# **7. 核心库与工具** [选学]
 - **标准库**：`dart:core`（基础功能）、`dart:io`（文件/网络）、`dart:async`（异步）。
 - **包管理**：通过 `pubspec.yaml` 引入第三方库（如 `http`、`flutter`）。
 - **文档工具**：`dartdoc` 生成 API 文档。
 
 ---
 
-# **8. 高级特性**
+# **8. 高级特性** [选学]
 
 ## **8.1 枚举（Enum）**
 ### **8.1.1 基础用法**
@@ -4435,7 +4644,7 @@ void validateUser(User user) {
 
 ---
 
-# **9. 最佳实践**
+# **9. 最佳实践** [选学]
 - **空安全**：启用空安全后，变量需显式标记可空（`?`）或非空。
 - **代码风格**：遵循 [Dart 代码规范](https://dart.dev/guides/language/effective-dart/style)。
 - **测试**：使用 `test` 包编写单元测试。
