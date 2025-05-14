@@ -1,3 +1,6 @@
+需要学习Dart语言基础的可以看：
+[Dart语言入门教程（markdown版）](https://blog.csdn.net/2403_88863963/article/details/147912561?fromshare=blogdetail&sharetype=blogdetail&sharerId=147912561&sharerefer=PC&sharesource=2403_88863963&sharefrom=from_link)
+
 整理后的 **Flutter** 知识大纲如下：
 
 # 1. **Flutter 基础**
@@ -25,7 +28,7 @@ flutter_project/
 # 2. **Widgets 基础**
 
 ## **2.1 什么是 `Widget`**
-在 Flutter 开发中，`Widget` 是构建用户界面的基本单元，Flutter 里的一切几乎都是 `Widget`。`Widget` 主要分为 `StatelessWidget` 和 `StatefulWidget` 两种类型，以下为你详细介绍：
+在 Flutter 开发中，`Widget` （组件）是构建用户界面的基本单元，Flutter 里的一切几乎都是 `Widget`。`Widget` 主要分为 `StatelessWidget` 和 `StatefulWidget` 两种类型，以下为你详细介绍：
 
 ## 2.2 `StatelessWidget`
 - **定义**：StatelessWidget 是没有状态的 Widget，即它们在构建时不会随时间变化。
