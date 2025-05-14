@@ -1241,21 +1241,26 @@ name ??= '默认名'; //如果 name 是空值，则将 '默认名' 赋值给 nam
 
 ---
 #### 1.4.7.1 级联操作符
+Dart 中的级联操作符（`..`）允许你在同一个对象上连续调用多个方法或设置多个属性，而不需要重复对象名。
 ##### 基本语法
 ```dart
-final 很长很长的名字 = 对象
-  ..方法1()    //  调用方法
-  ..方法2()    //  继续操作原对象
-  ..属性1 = 值1  //  设置属性
-  ..属性2 = 值2; //  最后操作
+ /*
+ 原为：
+  object..method1()..method2()..property = value;
+
+  经过VScode的'Format Document'之后，变成如下'列表式'排布
+*/
+
+object
+  ..method1()
+  ..method2()
+  ..property = value;
 ```
 ##### 等效于：
 ```dart
-final 很长很长的名字 = 对象;
-很长很长的名字.方法1();
-很长很长的名字.方法2();
-很长很长的名字.属性1 = 值1;
-很长很长的名字.属性2 = 值2;
+object.method1();
+object.method2();
+object.property = value;
 ```
 ##### 示例代码
 ```dart
@@ -1270,7 +1275,13 @@ class Person {
 void main() {
   var p = Person()
     ..setName("小李")
-    ..setAge(28);
+    ..setAge(28); 
+/* 
+    相当于 
+    var p = Person(); 
+    p.setName("小李"); 
+    p.setAge(28); 
+*/    
 }
 ```
 #### **1.4.7.2 可空类型标记 `?`，非空断言 `!`**
@@ -1913,7 +1924,7 @@ void main() {
 
 ## **2.4 控制流进阶技巧**
 ### **2.4.1 级联操作（Cascade）**
-结合循环简化代码：
+Dart 中的级联操作符（`..`）允许你在同一个对象上连续调用多个方法或设置多个属性，而不需要重复对象名。
 ```dart
 List<int> numbers = [1, 2, 3];
 numbers..add(4) // 级联调用
