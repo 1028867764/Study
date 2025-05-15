@@ -423,11 +423,37 @@ List<int> filledList = List<int>.filled(5, 0);  // 创建一个长度为 5，且
 #### 1.3.4.2 **访问 List 元素**
 
 ```dart
-List<String> names = ['Alice', 'Bob', 'Charlie'];
-print(names[0]);  // 输出: Alice
-print(names[1]);  // 输出: Bob
-print(names[2]);  // 输出: Charlie
-print(names.length);  // 输出: 3，List 的长度
+void main() {
+  List<String> fruits = [
+    'apple',
+    'banana',
+    'cherry',
+    'date',
+    'fig',
+    'grape',
+    'honeydew'
+  ];
+
+  // 访问单个元素
+  print(fruits[0]);  // 输出: apple
+  print(fruits[1]);  // 输出: banana
+  print(fruits[2]);  // 输出: cherry
+  print(fruits[3]);  // 输出: date
+  print(fruits[4]);  // 输出: fig
+  print(fruits[5]);  // 输出: grape
+  print(fruits[6]);  // 输出: honeydew
+
+  // 打印列表长度
+  print(fruits.length);  // 输出: 7
+
+  // 访问多个元素：用 sublist(start, end)
+  // '顾头不顾腚'，包括'start'不包括'end'
+  print(fruits.sublist(2, 5));  // 输出: [cherry, date, fig]
+
+  // 从某个位置一直到最后一个
+  print(fruits.sublist(3));  // 输出: [date, fig, grape, honeydew]
+
+}
 ```
 
 #### 1.3.4.3 **添加元素**
@@ -1544,10 +1570,10 @@ void main() {
 ```dart
   void main() {
   // for-in 遍历列表
-  List<String> fruits = ['Apple', 'Banana'];
+  List<String> fruits = ['Apple', 'Banana', 'Orange'];
 
   for (var fruit in fruits) {
-    print(fruit); // 输出 Apple, Banana
+    print(fruit); // 依次输出: Apple, Banana, Orange
   }
 
 // 定义一个 Map，表示学生分数
@@ -1793,16 +1819,18 @@ class TreeNode {
 
 // 统计终端节点数量
 int countLeaves(TreeNode node) {
-  if (node.children.isEmpty) { // 终止条件
-    return 1; 
+  if (node.children.isEmpty) {
+    // 终止条件
+    print('${node.name}: 触底啦!返回一个1');
+    return 1;
   }
-
+  print('下来到${node.name}啦!count = 0');
   int count = 0;
   for (var child in node.children) {
-    print('这里是节点${child.name}');
-    count += countLeaves(child);              // 递归调用
-    print('${count} → 是节点${child.name}的');
+    print('这里是节点${child.name}:即将往下试探');
+    count += countLeaves(child); // 递归调用
   }
+  print('上来到${node.name}了:此时的count是${count}');
   return count;
 }
 
@@ -1850,28 +1878,35 @@ void main() {
 }
 
 /*输出结果：
-这里是节点B
-这里是节点F
-1 → 是节点F的
-1 → 是节点B的
-这里是节点C
-这里是节点E
-这里是节点I
-1 → 是节点I的
-1 → 是节点E的
-这里是节点G
-2 → 是节点G的
-3 → 是节点C的
-这里是节点D
-这里是节点H
-这里是节点J
-1 → 是节点J的
-这里是节点K
-2 → 是节点K的
-这里是节点L
-3 → 是节点L的
-3 → 是节点H的
-6 → 是节点D的
+下来到A啦!count = 0
+这里是节点B:即将往下试探
+下来到B啦!count = 0
+这里是节点F:即将往下试探
+F: 触底啦!返回一个1
+上来到B了:此时的count是1
+这里是节点C:即将往下试探
+下来到C啦!count = 0
+这里是节点E:即将往下试探
+下来到E啦!count = 0
+这里是节点I:即将往下试探
+I: 触底啦!返回一个1
+上来到E了:此时的count是1
+这里是节点G:即将往下试探
+G: 触底啦!返回一个1
+上来到C了:此时的count是2
+这里是节点D:即将往下试探
+下来到D啦!count = 0
+这里是节点H:即将往下试探
+下来到H啦!count = 0
+这里是节点J:即将往下试探
+J: 触底啦!返回一个1
+这里是节点K:即将往下试探
+K: 触底啦!返回一个1
+这里是节点L:即将往下试探
+L: 触底啦!返回一个1
+上来到H了:此时的count是3
+上来到D了:此时的count是3
+上来到A了:此时的count是6
 终端节点数量：6
 */
 ```
@@ -2224,16 +2259,18 @@ class TreeNode {
 
 // 统计终端节点数量
 int countLeaves(TreeNode node) {
-  if (node.children.isEmpty) { // 终止条件
+  if (node.children.isEmpty) {
+    // 终止条件
+    print('${node.name}: 触底啦!返回一个1');
     return 1;
   }
-
+  print('下来到${node.name}啦!count = 0');
   int count = 0;
-  for (var child in node.children) { 
-    print('这里是节点${child.name}');
-    count += countLeaves(child);               // 递归调用
-    print('${count} → 是节点${child.name}的');
+  for (var child in node.children) {
+    print('这里是节点${child.name}:即将往下试探');
+    count += countLeaves(child); // 递归调用
   }
+  print('上来到${node.name}了:此时的count是${count}');
   return count;
 }
 
@@ -2281,28 +2318,35 @@ void main() {
 }
 
 /*输出结果：
-这里是节点B
-这里是节点F
-1 → 是节点F的
-1 → 是节点B的
-这里是节点C
-这里是节点E
-这里是节点I
-1 → 是节点I的
-1 → 是节点E的
-这里是节点G
-2 → 是节点G的
-3 → 是节点C的
-这里是节点D
-这里是节点H
-这里是节点J
-1 → 是节点J的
-这里是节点K
-2 → 是节点K的
-这里是节点L
-3 → 是节点L的
-3 → 是节点H的
-6 → 是节点D的
+下来到A啦!count = 0
+这里是节点B:即将往下试探
+下来到B啦!count = 0
+这里是节点F:即将往下试探
+F: 触底啦!返回一个1
+上来到B了:此时的count是1
+这里是节点C:即将往下试探
+下来到C啦!count = 0
+这里是节点E:即将往下试探
+下来到E啦!count = 0
+这里是节点I:即将往下试探
+I: 触底啦!返回一个1
+上来到E了:此时的count是1
+这里是节点G:即将往下试探
+G: 触底啦!返回一个1
+上来到C了:此时的count是2
+这里是节点D:即将往下试探
+下来到D啦!count = 0
+这里是节点H:即将往下试探
+下来到H啦!count = 0
+这里是节点J:即将往下试探
+J: 触底啦!返回一个1
+这里是节点K:即将往下试探
+K: 触底啦!返回一个1
+这里是节点L:即将往下试探
+L: 触底啦!返回一个1
+上来到H了:此时的count是3
+上来到D了:此时的count是3
+上来到A了:此时的count是6
 终端节点数量：6
 */
 ```
