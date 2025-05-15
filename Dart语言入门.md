@@ -3267,9 +3267,9 @@ void main() {
   通过合理选择，可兼顾代码的**安全性**和**可维护性**。
 ---
 
-## **4.3 继承与混入（Inheritance & Mixin）**
-### **4.3.1 单继承**
-- 语法结构示意
+## **4.3 继承（Inheritance）**
+
+### **4.3.0 语法结构示意**
 ```dart
 class 父类 {
   父类的属性；
@@ -3295,7 +3295,7 @@ void main() {
   对象.子类的属性、方法();  
 }
 ```
-- 示例1 动物
+### **4.3.1 示例1 动物**
 ```dart
 class Animal {
   void breathe() => print('Breathing...');
@@ -3318,7 +3318,7 @@ void main() {
   dog.bark();    // 输出: Woof!
 }
 ```
-- 示例2 光源
+### **4.3.2 示例2 光源**
 ```dart
 class Light {
   void shine() => print('Shining...');
@@ -3343,8 +3343,8 @@ void main() {
 }
 ```
 
-### **4.3.2 混入（Mixin）**
-#### 4.3.2.0 语法结构示意
+## **4.4 混入（Mixin）**
+### 4.4.0 语法结构示意
 ```dart
 class 基类 {
   基类的属性；
@@ -3377,7 +3377,7 @@ void main() {
 
 }
 ```
-#### 4.3.2.1 示例1
+### 4.4.1 示例1
 ```dart
 mixin Flyable {
   void fly() => print('Flying...');
@@ -3401,7 +3401,7 @@ void main() {
   var fly = Flyable(); // ❌ 编译错误
 }
 ```
-#### 4.3.2.1 示例2
+### 4.4.2 示例2
 ```dart
 // Animal 基类
 class Animal {
@@ -3429,9 +3429,9 @@ void main() {
 ```
 
 ---
-## **4.4 初始化列表**
+## **4.5 初始化列表**
 初始化列表以冒号 `:` 开头，用于在对象创建时对属性进行初始化
-### 4.4.1 使用初始化列表设置初始值（含逻辑）
+### 4.5.1 使用初始化列表设置初始值（含逻辑）
 ```dart
 class Student {
   String name;
@@ -3451,7 +3451,7 @@ void main() {
   s.showInfo(); // 输出：Tom got score 92, grade A
 }
 ```
-### 4.4.2 初始化 `final` 字段和参数校验
+### 4.5.2 初始化 `final` 字段和参数校验
 ```dart
 class Point {
   final int x;
@@ -3467,7 +3467,7 @@ void main() {
   // var p = Point(-1, 2); // 抛出异常
 }
 ```
-### 4.4.3 初始化父类构造函数
+### 4.5.3 初始化父类构造函数
 当子类继承父类时，子类的构造函数可以通过初始化列表显式调用父类的构造函数。
 ```dart
 class Animal {
@@ -3493,12 +3493,12 @@ void main() {
   dog.bark();  // 输出: Woof! My name is Buddy and I am a Golden Retriever.
 }
 ```
-## **4.5 再提几点**
-### **4.5.1 命名规范**
+## **4.6 再提几点**
+### **4.6.1 命名规范**
 
 在编程中，良好的命名规范能够大大提高代码的可读性和可维护性。Dart 语言遵循一套统一的命名风格规范，下面逐一说明：
 
-#### 4.5.1.1 变量名/方法名：`camelCase`
+#### 4.6.1.1 变量名/方法名：`camelCase`
 
 * **不能以阿拉伯数字开头**，例如 `1stValue` 是非法的，应该使用 `firstValue`。
 * 首个单词小写，后续单词首字母大写。不使用下划线。
@@ -3513,7 +3513,7 @@ int calculateTotal(int quantity, int price) {
 }
 ```
 
-#### 4.5.1.2 类名：`PascalCase`
+#### 4.6.1.2 类名：`PascalCase`
 
 * 同样，**类名也不能以阿拉伯数字开头**，如 `3DModel` 应改为 `ThreeDModel`。
 * 首个单词首字母大写，后续单词首字母大写。不使用下划线。
@@ -3528,7 +3528,7 @@ enum OrderStatus { Pending, Completed, Cancelled }
 extension StringUtils on String {}
 ```
 
-#### 4.5.1.3 补充建议
+#### 4.6.1.3 补充建议
 
 * **命名不得以阿拉伯数字开头**：无论是变量名、方法名、类名还是文件名，均不能以阿拉伯数字作为首字符。
 * **私有字段**：使用下划线 `_` 开头表示私有，例如 `_counter`、`_sweetBaby`。
@@ -3537,13 +3537,13 @@ extension StringUtils on String {}
 
 
 
-### **4.5.2 空安全处理**
+### **4.6.2 空安全处理**
  ```dart
    String? nullableString;
    print(nullableString?.length ?? 0); // 安全访问
  ```
 
-### **4.5.3 不可变设计**
+### **4.6.3 不可变设计**
  ```dart
    class ImmutablePoint {
      final double x;
@@ -3551,12 +3551,12 @@ extension StringUtils on String {}
    }
  ```
 
-### **4.5.4 方法参数设计**
+### **4.6.4 方法参数设计**
    - 必需参数放在前面
    - 可选参数用 `{}` 或 `[]` 包裹
    - 避免过多可选参数（超过3个考虑使用对象封装）
 
-## **4.6 常量构造函数** [选学]
+## **4.7 常量构造函数** [选学]
 ```dart
 class ImmutablePoint {
   final int x;
@@ -3577,8 +3577,8 @@ void main() {
 
 ---
 
-## **4.7 抽象类与接口** [选学]
-### **4.7.1 抽象类**
+## **4.8 抽象类与接口** [选学]
+### **4.8.1 抽象类**
 ```dart
 abstract class Shape {
   // 抽象方法（无实现）
@@ -3604,7 +3604,7 @@ void main() {
 }
 ```
 
-### **4.7.2 接口实现**
+### **4.8.2 接口实现**
 ```dart
 class Printer {
   void printDocument(String content) => 
@@ -3625,8 +3625,8 @@ class MultiFunctionDevice implements Printer {
 
 ---
 
-## **4.8 方法与运算符重载** [选学]
-### **4.8.1 方法重载（Dart风格）**
+## **4.9 方法与运算符重载** [选学]
+### **4.9.1 方法重载（Dart风格）**
 ```dart
 class Calculator {
   // 方法1：两数相加
@@ -3643,7 +3643,7 @@ void main() {
 }
 ```
 
-### **4.8.2 运算符重载**
+### **4.9.2 运算符重载**
 ```dart
 class Vector {
   final double x;
@@ -3677,8 +3677,8 @@ void main() {
 
 ---
 
-## **4.9 高级特性** [选学]
-### **4.9.1 工厂构造函数**
+## **4.10 高级特性** [选学]
+### **4.10.1 工厂构造函数**
 ```dart
 class Logger {
   final String name;
@@ -3701,7 +3701,7 @@ void main() {
 }
 ```
 
-### **4.9.2 枚举类型**
+### **4.10.2 枚举类型**
 ```dart
 enum Color { red, green, blue }
 
@@ -3727,8 +3727,8 @@ void main() {
 }
 ```
 ---
-## **4.10 实际应用示例** [选学]
-### **4.10.1 数据模型类**
+## **4.11 实际应用示例** [选学]
+### **4.11.1 数据模型类**
 ```dart
 class User {
   final String id;
@@ -3761,7 +3761,7 @@ class User {
 }
 ```
 
-### **4.10.2 响应式属性**
+### **4.11.2 响应式属性**
 ```dart
 class Counter {
   int _value = 0;
