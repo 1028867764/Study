@@ -1240,9 +1240,9 @@ name ??= '默认名'; //如果 name 是空值，则将 '默认名' 赋值给 nam
 | `!`  | 非空断言（确保非 null） | `name!`                   |
 
 ---
-#### 1.4.7.1 级联操作符
+### 1.4.8 级联操作符
 Dart 中的级联操作符（`..`）允许你在同一个对象上连续调用多个方法或设置多个属性，而不需要重复对象名。
-##### 基本语法
+#### 基本语法
 ```dart
  /*
  原为：
@@ -1256,13 +1256,13 @@ object
   ..method2()
   ..property = value;
 ```
-##### 等效于：
+#### 等效于：
 ```dart
 object.method1();
 object.method2();
 object.property = value;
 ```
-##### 示例代码
+#### 示例代码
 ```dart
 class Person {
   String? name;
@@ -1284,13 +1284,25 @@ void main() {
 */    
 }
 ```
-#### **1.4.7.2 可空类型标记 `?`，非空断言 `!`**
+#### 注意事项
+
+* 只能用于**返回对象自身的函数**（即返回 `this` 或无返回值的函数）；
+* 不能用于 `null` 对象（除非使用 **空级联操作符 `?..`**，Dart 2.6+ 支持）。
+
+```dart
+MyClass? obj;
+obj
+  ?..doSomething()
+  ?..value = 42;
+```
+
+### **1.4.9 可空类型标记 `?`，非空断言 `!`**
 
 Dart 从 2.12 版本开始支持**健全的空安全（Sound Null Safety）**，通过 `?` 标记可空类型，明确区分**非空类型**和**可为 null 的类型**。
 
 ---
 
-##### **1. 基本语法**
+#### **1. 基本语法**
 ```dart
 类型? 变量名;  // 声明可空变量
 ```
@@ -1299,7 +1311,7 @@ Dart 从 2.12 版本开始支持**健全的空安全（Sound Null Safety）**，
 
 ---
 
-##### **2. 示例代码**
+#### **2. 示例代码**
 ```dart
 class User {
   String name;      // 非空类型（必须初始化）
@@ -1324,7 +1336,7 @@ void main() {
 
 ---
 
-##### **3. 关键操作**
+#### **3. 关键操作**
 | 操作 | 语法 | 说明 |
 |------|------|------|
 | **安全调用** | `object?.method()` | 若 `object` 为 `null` 则跳过方法调用，返回 `null` |
@@ -1349,7 +1361,7 @@ void main() {
 
 ---
 
-##### **4. 级联操作符与可空类型结合**
+#### **4. 级联操作符与可空类型结合**
 ```dart
 class Config {
   String? title;
@@ -1366,7 +1378,7 @@ void main() {
 
 ---
 
-##### **5. 为什么需要可空类型？**
+#### **5. 为什么需要可空类型？**
 1. **编译时检查**：防止 `NullPointerException` 运行时错误。
 2. **代码清晰性**：明确标识哪些变量可能为 `null`。
 3. **与 Flutter 结合**：Widget 的某些属性天然可为空（如 `Text.style`）。
@@ -1499,9 +1511,8 @@ void main() {
 
 ---
 
-## **2.2 循环结构**
-### **2.2.1 `for` 循环**
-#### **2.2.1.1 传统 `for`**：
+## **2.2 `for` 循环**
+### **2.2.1 传统 `for`**
 - 结构示意
 ```dart
  void main() {
@@ -1512,7 +1523,7 @@ void main() {
 /*
  初始条件：在总循环开始时执行仅一次
  循环条件：每次循环前检查，若为true则继续执行循环体
- 迭代器：每次循环后执行
+ 迭代器：每次执行循环体后执行
 
  当循环条件为true时，执行循环体
  当循环条件为false时，退出for循环
@@ -1528,7 +1539,7 @@ void main() {
   }
  ```
 
-#### **2.2.1.2 `for-in` 遍历集合**：
+### **2.2.2 `for-in` 遍历集合**
 ```dart
   void main() {
   // for-in 遍历列表
@@ -1557,7 +1568,7 @@ for (var entry in scores.entries) {
 }
 ```
 
-#### **2.2.1.3 `forEach` 遍历集合**：
+### **2.2.3 `forEach` 遍历集合**
 ```dart
 void main() {
   // forEach 遍历列表
@@ -1583,7 +1594,7 @@ void main() {
 }
 ```
 
-#### **2.2.1.4 `for-in` vs `forEach`**
+### **2.2.4 `for-in` vs `forEach`**
 - **优先用 `forEach`**：  
   当只需要简单遍历且无需中断时，`forEach` 更简洁：
 ```dart
@@ -1600,9 +1611,7 @@ void main() {
   }
 ```
 
-#### **2.2.1.5 `for-in` 嵌套循环遍历**
-
-##### 示例 1：三维 List 遍历（蔬菜分类）
+### **2.2.5 三维 List 遍历（蔬菜分类）**
 ```dart
 void main() {
   // 定义一个三维 List，表示不同类别的蔬菜，每个类别下还有子类别
@@ -1659,7 +1668,9 @@ print("总共有 $count 种蔬菜");
   // 总共有 12 种蔬菜
 }
 ```
-##### 示例 2：三维 Map 遍历（蔬菜分类）
+   - 结构：`List<List<List<String>>>` 表示分类数据
+   - 应用：适合处理表格型数据（如超市货架分类）
+### **2.2.6 三维 Map 遍历（蔬菜分类）**
 ```dart
 void main() {
   // 定义一个三维 Map，表示不同类别的蔬菜，每个类别下还有子类别
@@ -1733,8 +1744,9 @@ void main() {
 总共有 12 种蔬菜
 */
 ```
-
-##### 示例 3：排列组合（水果与饮料搭配）
+   - 结构：`Map<String, Map<String, List<String>>>` 表示分类数据
+   - 应用：适合处理具有明确命名层级和语义的分类数据（如电商平台的商品分类）
+### **2.2.7 排列组合（水果与饮料搭配）**
 ```dart
 void main() {
   // 定义水果列表
@@ -1764,80 +1776,112 @@ void main() {
   // 橙子 + 茶
 }
 ```
-
-
-##### 示例 4：树形结构遍历（饮品分类）
+   - 结构：`for-in` 嵌套 `for-in`
+   - 应用：生成所有可能的组合（如菜单搭配）
+### **2.2.8 树形结构的先序遍历**
+#### **2.2.8.1 语法示意**
+Dart 中实现树形结构的先序遍历（pre-order traversal），通常通过递归函数来完成。以下是 **语法示意**：
 ```dart
-class DrinkNode {
+class TreeNode {
   String name;
-  List<DrinkNode> subTypes;
+  List<TreeNode> children;
 
-  DrinkNode(this.name, [this.subTypes = const []]);
+  TreeNode({required this.name, this.children = const []}); // 可选参数的默认值必须是编译期常量
+}
+
+void preOrder(TreeNode node) {
+  print(node.name); // 访问当前节点
+
+  for (var child in node.children) {
+    preOrder(child); // 递归遍历子节点
+  }
+}
+
+// 统计终端节点数量
+int countLeaves(TreeNode node) {
+  if (node.children.isEmpty) {
+    return 1;
+  }
+
+  int count = 0;
+  for (var child in node.children) {
+    count += countLeaves(child);
+  }
+  return count;
 }
 
 void main() {
-  // 构建饮品分类树
-  DrinkNode root = DrinkNode("饮品", [
-    DrinkNode("热饮", [
-      DrinkNode("咖啡"),
-      DrinkNode("茶")
-    ]),
-    DrinkNode("冷饮", [
-      DrinkNode("碳酸饮料", [
-        DrinkNode("可乐"),
-        DrinkNode("雪碧")
-      ]),
-      DrinkNode("果汁")
-    ])
-  ]);
+  /*
 
-  print("\n=== 饮品分类遍历（先序） ===");
-  void traverse(DrinkNode node) {
-    if (node == null) return;
-    print(node.name); // 先访问当前节点
-    for (var child in node.subTypes) {
-      traverse(child); // 递归遍历子节点
-    }
-  }
-  traverse(root);
+ 构建一个树形结构：
+         A
+      /  |   \
+     B   C    D
+    /   / \     \
+   F   E   G     H
+      /       / | \
+     I       J  K  L
 
-  // 输出结果：
-  // === 饮品分类遍历（先序） ===
-  // 饮品
-  // 热饮
-  // 咖啡
-  // 茶
-  // 冷饮
-  // 碳酸饮料
-  // 可乐
-  // 雪碧
-  // 果汁
+*/
+  var root = TreeNode(
+    name: 'A',
+    children: [
+      TreeNode(name: 'B', children: [TreeNode(name: 'F')]),
+      TreeNode(
+        name: 'C',
+        children: [
+          TreeNode(name: 'E', children: [TreeNode(name: 'I')]),
+          TreeNode(name: 'G'),
+        ],
+      ),
+      TreeNode(
+        name: 'D',
+        children: [
+          TreeNode(
+            name: 'H',
+            children: [
+              TreeNode(name: 'J'),
+              TreeNode(name: 'K'),
+              TreeNode(name: 'L'),
+            ],
+          ),
+        ],
+      ),
+    ],
+  );
+
+  print('先序遍历结果：');
+  preOrder(root);
+  print('终端节点数量：${countLeaves(root)}');
 }
+
+/*
+先序遍历结果：
+A
+B
+F
+C
+E
+I
+G
+D
+H
+J
+K
+L
+终端节点数量：6
+*/
 ```
 
+#### **2.2.8.2 说明**
+* **先序遍历**的顺序是：先访问当前节点，然后依次递归访问每个子节点。
+* Dart 中使用 `List<TreeNode>` 表示多子节点结构，适合构建通用树（非二叉树）。
+* `const []` 是 Dart 中初始化不可变空列表的写法，用作默认参数。
+* 结构：自定义类 + 递归
+* 应用：层级数据（如分类目录）
 ---
 
-##### 关键点说明
-
-1. **三维 List 遍历**  
-   - 结构：`List<List<List<String>>>` 表示分类数据
-   - 应用：适合处理表格型数据（如超市货架分类）
-
-2. **三维 Map 遍历**  
-   - 结构：`Map<String, Map<String, List<String>>>` 表示分类数据
-   - 应用：适合处理具有明确命名层级和语义的分类数据（如电商平台的商品分类）
-
-3. **嵌套循环应用**  
-   - 结构：`for-in` 嵌套 `for-in`
-   - 应用：生成所有可能的组合（如菜单搭配）
-
-4. **树形结构遍历**  
-   - 结构：自定义类 + 递归
-   - 应用：层级数据（如分类目录）
-
----
-
-##### 输出结果对比
+### **2.2.9 遍历对比**
 
 | 示例 | 数据结构 | 遍历方式 | 输出特点 |
 |------|----------|----------|----------|
@@ -1848,7 +1892,7 @@ void main() {
 
 ---
 
-### **2.2.2 `while` 和 `do-while`**
+## **2.3 `while` 和 `do-while`**
 - **`while`**（先判断条件）：
 ```dart
   int count = 0;
@@ -1868,9 +1912,9 @@ void main() {
 
 ---
 
-## **2.3 `assert`（仅用于Debugging）**
+## **2.4 `assert`（仅用于Debugging）**
 
-### 2.3.1 基本语法
+### 2.4.1 基本语法
 在 Dart 里，`assert` 是一个内置的调试工具，其基本语法如下：
 ```dart
 assert(condition, [message]);
@@ -1885,7 +1929,7 @@ assert(age >= 0, '年龄不能为负数'); // 抛出 AssertionError
 ```
 在上述示例中，`age >= 0` 这个条件为 `false`，所以会抛出 `AssertionError`，并且会显示错误信息 `'年龄不能为负数'`。
 
-### 2.3.2 特点
+### 2.4.2 特点
 1. **仅在调试模式下生效（发布版本会被移除）**：
     - Dart 程序有调试模式（Debug）和生产模式（Release）。在调试模式下，`assert` 语句会正常执行，用于帮助开发者发现代码中的逻辑错误。而在生产模式下（例如通过 `--release` 标志编译的代码），`assert` 语句会被完全移除，不会影响程序的性能。
     - 例如在 Flutter 开发中，Debug 模式对应 Dart 的 JIT 模式，会打开所有的断言（`assert`）；Release 模式对应 Dart 的 AOT 模式，会关闭所有的断言。
@@ -1922,8 +1966,8 @@ void main() {
 }
 ```
 
-## **2.4 控制流进阶技巧**
-### **2.4.1 级联操作（Cascade）**
+## **2.5 控制流进阶技巧**
+### **2.5.1 级联操作（Cascade）**
 Dart 中的级联操作符（`..`）允许你在同一个对象上连续调用多个方法或设置多个属性，而不需要重复对象名。
 ```dart
 List<int> numbers = [1, 2, 3];
@@ -1931,14 +1975,14 @@ numbers..add(4) // 级联调用
        ..forEach(print); // 输出 1, 2, 3, 4
 ```
 
-### **2.4.2 三元表达式（Ternary Operator）**
+### **2.5.2 三元表达式（Ternary Operator）**
 替代简单 `if-else`：
 ```dart
 int a = 10, b = 20;
 String result = (a > b) ? 'a大' : 'b大'; // 输出 'b大'
 ```
 
-### **2.4.3 空安全与控制流**
+### **2.5.3 空安全与控制流**
 Dart 3.0+ 支持更安全的空值处理：
 ```dart
 String? name;
@@ -1948,12 +1992,12 @@ print(name?.toUpperCase() ?? '匿名'); // 输出 '匿名'（若 name 为 null�
 ---
 
 
-## **2.5 注意事项**
-### 2.5.1 **类型严格性**  
+## **2.6 注意事项**
+### 2.6.1 **类型严格性**  
    条件表达式必须返回布尔值，`if (score)` 会报错（需显式写 `if (score > 0)`）。
-### 2.5.2 **`switch` 的局限性**  
+### 2.6.2 **`switch` 的局限性**  
    Dart 不支持 `fall-through`（除非显式省略 `break`），但可通过 `case` 合并实现多条件。
-### 2.5.3 **性能优化**  
+### 2.6.3 **性能优化**  
    - 避免在循环内重复计算（如 `for (int i = 0; i < list.length; i++)` 可缓存 `list.length`）。
    - 大集合遍历优先用 `for-in` 或 `forEach`（代码更简洁）。
 
@@ -2013,45 +2057,46 @@ void createAccount(String username, String password, int age, String country) {
   print('Username: $username, Age: $age, Country: $country');
 }
 
-createAccount('user123', 'pass456', 30, 'China'); // ✅ 正确
-// createAccount('user123'); // ❌ 错误：缺少参数
+void main() {
+  createAccount('user123', 'pass456', 30, 'China'); // ✅ 正确
+  // createAccount('user123'); // ❌ 错误：缺少参数
+}
 ```
 
 ---
 
 ### **3.2.2 命名参数 `{}`**
-- 以类似于键值对的方式明确传参，可省略参数，可加默认值，也可以 `required` 强制传参
+- 以类似于键值对的方式明确传参，可省略参数，可加默认值（可选参数的默认值必须是编译期常量，不能是变量），也可以 `required` 强制传参
 ```dart
 void createProfile({
   required String username,
   required String email,
-  int age = 18,
-  String country = 'Unknown',
-  bool isPremium = false,
+  int age = 18, // 加默认值 (必须是编译期常量，不能是变量)
+  String country = 'Unknown', // 加默认值 (必须是编译期常量，不能是变量)
+  bool isPremium = false, // 加默认值 (必须是编译期常量，不能是变量)
 }) {
-  print('User: $username, Email: $email, Age: $age, Country: $country, Premium: $isPremium');
+  print(
+    'User: $username, Email: $email, Age: $age, Country: $country, Premium: $isPremium',
+  );
 }
 
-// ✅ 推荐用法
-createProfile(
-  username: 'alice',
-  email: 'alice@example.com',
-  age: 25,
-  isPremium: true,
-);
-/* 输出：
+void main() {
+  createProfile(
+    username: 'alice',
+    email: 'alice@example.com',
+    age: 25,
+    isPremium: true,
+  );
+  /* 输出：
 User: alice, Email: alice@example.com, Age: 25, Country: Unknown, Premium: true
 */
 
-// 也可以省略部分参数（使用默认值）
-createProfile(
-  username: 'bob',
-  email: 'bob@example.com',
-);
-/* 输出：
+  // 也可以省略部分参数（使用默认值）
+  createProfile(username: 'bob', email: 'bob@example.com');
+  /* 输出：
 User: bob, Email: bob@example.com, Age: 18, Country: Unknown, Premium: false
 */
-
+}
 ```
 
 ---
@@ -2059,14 +2104,21 @@ User: bob, Email: bob@example.com, Age: 18, Country: Unknown, Premium: false
 ### **3.2.3 可选位置参数 `[]`**
 - 按顺序传，可省略后面的
 ```dart
-void sendMessage(String content, [String? sender, String? receiver, String? time]) {
+void sendMessage(
+  String content, [
+  String? sender,
+  String? receiver,
+  String? time,
+]) {
   print('Message: $content');
   print('From: $sender, To: $receiver, At: $time');
 }
 
-sendMessage('Hello!'); // 只传 message
-sendMessage('Hello!', 'Alice'); // 传 sender
-sendMessage('Hello!', 'Alice', 'Bob', '12:00'); // 全部传
+void main() {
+  sendMessage('Hello!'); // 只传 message
+  sendMessage('Hello!', 'Alice'); // 传 sender
+  sendMessage('Hello!', 'Alice', 'Bob', '12:00'); // 全部传
+}
 ```
 
 ---
@@ -2085,19 +2137,21 @@ void placeOrder(
   print('Ship to: $address, Express: $express, Note: $note');
 }
 
-// 调用示例 1：
-placeOrder('A123', 5);
-/* 输出：
+void main() {
+  // 调用示例 1：
+  placeOrder('A123', 5);
+  /* 输出：
 Product: A123 x5
 Ship to: Warehouse, Express: false, Note: null
 */
 
-// 调用示例 2：
-placeOrder('A123', 2, express: true, note: 'Gift wrap');
-/* 输出：
+  // 调用示例 2：
+  placeOrder('A123', 2, express: true, note: 'Gift wrap');
+  /* 输出：
 Product: A123 x2
 Ship to: Warehouse, Express: true, Note: Gift wrap
 */
+}
 ```
 
 ---
@@ -2532,8 +2586,7 @@ print(doubleIt(5)); // 输出 10
 **对象（object）** 就是根据这个模板创建出来的“实际的东西”。你可以把类想象成是“设计图”，而对象就是“根据设计图造出来的产品”。
 
 通过类和对象，我们可以把代码写得更清晰、结构更好，而且可以反复利用这份“设计图”创建多个类似的对象。
-### **4.1.1 创建对象**
-#### 4.1.1.0 结构示意
+### 4.1.0 创建对象语法示意
 - 带注释版
 ```dart
 class 类名 {
@@ -2652,7 +2705,7 @@ void main() {
 }
 ```
 
-#### 4.1.1.1 示例1 水果
+### 4.1.1 创建对象示例1 水果
 ```dart
 // 定义一个名为 Fruit 的类，类就像是一个模板，用来创建具有相同属性和行为的水果对象
 class Fruit {
@@ -2697,7 +2750,7 @@ void main() {
   print(fruit2.name); // 输出: Banana
 }
 ```
-#### 4.1.1.2 示例2 家具
+### 4.1.2 创建对象示例2 家具
 ```dart
 // 定义一个名为 Furniture 的类，类就像是一个模板，用来创建具有相同属性和功能的家具对象
 class Furniture {
@@ -2743,7 +2796,7 @@ void main() {
   print(table.usage); // 输出: No specific use
 }
 ```
-#### 4.1.1.3 示例3 商品
+### 4.1.3 创建对象示例3 商品
 ```dart
 class Product {
   // 1. 类的属性
@@ -2805,7 +2858,7 @@ void main() {
   */
 }
 ```
-#### 4.1.1.4 示例4 书本
+### 4.1.4 创建对象示例4 书本
 ```dart
 // 在前面的3个示例中，默认构造函数里面并没有使用灵活的'命名参数'形式传参，所以我将在示例4里弥补这个遗憾
 class Book {
@@ -2950,12 +3003,12 @@ void main() {
   */
 }
 ```
-### **4.1.2 Getter/Setter**
+## **4.2 Getter/Setter**
 在 Dart 中，**直接字段**和 **getter/setter** 的主要区别体现在**封装性**、**灵活性**和**使用场景**上。以下是具体对比：
 
 ---
 
-#### **4.1.2.1 核心区别**
+### **4.2.1 核心区别**
 | **特性**         | **直接字段**                          | **Getter/Setter**                          |
 |------------------|--------------------------------------|--------------------------------------------|
 | **定义方式**     | 直接声明为公共变量（无下划线前缀）       | 通过 `get`/`set` 关键字定义，通常操作私有字段（`_field`） |
@@ -2966,8 +3019,8 @@ void main() {
 
 ---
 
-#### **4.1.2.2 代码示例对比**
-##### **(1) 直接字段**
+### **4.2.2 代码示例对比**
+#### **(1) 直接字段**
 ```dart
 class Person {
   String name; // 直接字段（外部可直接修改）
@@ -2981,7 +3034,7 @@ void main() {
 }
 ```
 
-##### **(2) Getter/Setter 封装私有字段**
+#### **(2) Getter/Setter 封装私有字段**
 ```dart
 class Person {
   String _name = '';
@@ -3014,7 +3067,7 @@ void main() {
 
 ---
 
-#### **4.1.2.3 关键优势分析**
+### **4.2.3 关键优势分析**
 - **Getter/Setter 的用途**  
   - **数据保护**：防止非法值破坏对象状态（如负数年龄）。  
   - **动态计算**：如 `area` 属性通过半径实时计算，无需存储。  
@@ -3027,7 +3080,7 @@ void main() {
 
 ---
 
-#### **4.1.2.4 设计建议**
+### **4.2.4 设计建议**
 - **优先使用 Getter/Setter**：  
   除非属性是纯粹的数据容器且无需任何逻辑控制，否则应通过 getter/setter 封装字段。
 - **私有化字段**：  
@@ -3035,8 +3088,8 @@ void main() {
   通过合理选择，可兼顾代码的**安全性**和**可维护性**。
 ---
 
-## **4.2 继承与混入（Inheritance & Mixin）**
-### **4.2.1 单继承**
+## **4.3 继承与混入（Inheritance & Mixin）**
+### **4.3.1 单继承**
 - 语法结构示意
 ```dart
 class 父类 {
@@ -3111,8 +3164,8 @@ void main() {
 }
 ```
 
-### **4.2.2 混入（Mixin）**
-- 语法结构示意
+### **4.3.2 混入（Mixin）**
+#### 4.3.2.0 语法结构示意
 ```dart
 class 基类 {
   基类的属性；
@@ -3145,7 +3198,7 @@ void main() {
 
 }
 ```
-- 示例1
+#### 4.3.2.1 示例1
 ```dart
 mixin Flyable {
   void fly() => print('Flying...');
@@ -3169,7 +3222,7 @@ void main() {
   var fly = Flyable(); // ❌ 编译错误
 }
 ```
-- 示例2
+#### 4.3.2.1 示例2
 ```dart
 // Animal 基类
 class Animal {
@@ -3197,10 +3250,9 @@ void main() {
 ```
 
 ---
-## **4.3 构造函数进阶**
-### **4.3.1 初始化列表**
+## **4.4 初始化列表**
 初始化列表以冒号 `:` 开头，用于在对象创建时对属性进行初始化
-- 示例1 使用初始化列表设置初始值（含逻辑）
+### 4.4.1 使用初始化列表设置初始值（含逻辑）
 ```dart
 class Student {
   String name;
@@ -3220,7 +3272,7 @@ void main() {
   s.showInfo(); // 输出：Tom got score 92, grade A
 }
 ```
-- 示例2 初始化 `final` 字段和参数校验
+### 4.4.2 初始化 `final` 字段和参数校验
 ```dart
 class Point {
   final int x;
@@ -3236,8 +3288,7 @@ void main() {
   // var p = Point(-1, 2); // 抛出异常
 }
 ```
-- 示例3 初始化父类构造函数
-
+### 4.4.3 初始化父类构造函数
 当子类继承父类时，子类的构造函数可以通过初始化列表显式调用父类的构造函数。
 ```dart
 class Animal {
@@ -3263,8 +3314,70 @@ void main() {
   dog.bark();  // 输出: Woof! My name is Buddy and I am a Golden Retriever.
 }
 ```
+## **4.5 再提几点**
+### **4.5.1 命名规范**
 
-### **4.3.2 常量构造函数** [选学]
+在编程中，良好的命名规范能够大大提高代码的可读性和可维护性。Dart 语言遵循一套统一的命名风格规范，下面逐一说明：
+
+#### 4.5.1.1 变量名/方法名：`camelCase`
+
+* **不能以阿拉伯数字开头**，例如 `1stValue` 是非法的，应该使用 `firstValue`。
+* 首个单词小写，后续单词首字母大写。不使用下划线。
+* 适用于函数、方法、普通变量、参数、局部变量等。
+
+**示例：**
+
+```dart
+int calculateTotal(int quantity, int price) {
+  int totalPrice = quantity * price;
+  return totalPrice;
+}
+```
+
+#### 4.5.1.2 类名：`PascalCase`
+
+* 同样，**类名也不能以阿拉伯数字开头**，如 `3DModel` 应改为 `ThreeDModel`。
+* 首个单词首字母大写，后续单词首字母大写。不使用下划线。
+* 通常用于类（`class`）、枚举（`enum`）、扩展（`extension`）等类型名称。
+
+**示例：**
+
+```dart
+class UserAccount {}
+mixin SweetBaby {}
+enum OrderStatus { Pending, Completed, Cancelled }
+extension StringUtils on String {}
+```
+
+#### 4.5.1.3 补充建议
+
+* **命名不得以阿拉伯数字开头**：无论是变量名、方法名、类名还是文件名，均不能以阿拉伯数字作为首字符。
+* **私有字段**：使用下划线 `_` 开头表示私有，例如 `_counter`、`_sweetBaby`。
+* **文件名/库名**：使用小写字母和下划线分隔，例如：`user_account.dart`。
+* **避免缩写**：尽量使用清晰的全称，例如 `calculateTotal` 优于 `calcTot`。
+
+
+
+### **4.5.2 空安全处理**
+ ```dart
+   String? nullableString;
+   print(nullableString?.length ?? 0); // 安全访问
+ ```
+
+### **4.5.3 不可变设计**
+ ```dart
+   class ImmutablePoint {
+     final double x;
+     const ImmutablePoint(this.x);
+   }
+ ```
+
+### **4.5.4 方法参数设计**
+   - 必需参数放在前面
+   - 可选参数用 `{}` 或 `[]` 包裹
+   - 避免过多可选参数（超过3个考虑使用对象封装）
+
+## **4.6 常量构造函数** [选学]
 ```dart
 class ImmutablePoint {
   final int x;
@@ -3285,8 +3398,8 @@ void main() {
 
 ---
 
-## **4.4 抽象类与接口** [选学]
-### **4.4.1 抽象类**
+## **4.7 抽象类与接口** [选学]
+### **4.7.1 抽象类**
 ```dart
 abstract class Shape {
   // 抽象方法（无实现）
@@ -3312,7 +3425,7 @@ void main() {
 }
 ```
 
-### **4.4.2 接口实现**
+### **4.7.2 接口实现**
 ```dart
 class Printer {
   void printDocument(String content) => 
@@ -3333,8 +3446,8 @@ class MultiFunctionDevice implements Printer {
 
 ---
 
-## **4.5 方法与运算符重载** [选学]
-### **4.5.1 方法重载（Dart风格）**
+## **4.8 方法与运算符重载** [选学]
+### **4.8.1 方法重载（Dart风格）**
 ```dart
 class Calculator {
   // 方法1：两数相加
@@ -3351,7 +3464,7 @@ void main() {
 }
 ```
 
-### **4.5.2 运算符重载**
+### **4.8.2 运算符重载**
 ```dart
 class Vector {
   final double x;
@@ -3385,8 +3498,8 @@ void main() {
 
 ---
 
-## **4.6 高级特性** [选学]
-### **4.6.1 工厂构造函数**
+## **4.9 高级特性** [选学]
+### **4.9.1 工厂构造函数**
 ```dart
 class Logger {
   final String name;
@@ -3409,7 +3522,7 @@ void main() {
 }
 ```
 
-### **4.6.2 枚举类型**
+### **4.9.2 枚举类型**
 ```dart
 enum Color { red, green, blue }
 
@@ -3434,76 +3547,9 @@ void main() {
   }
 }
 ```
-
 ---
-
-## **4.7 再提几点**
-### **4.7.1 命名规范**
-
-在编程中，良好的命名规范能够大大提高代码的可读性和可维护性。Dart 语言遵循一套统一的命名风格规范，下面逐一说明：
-
-#### 4.7.1.1 变量名/方法名：`camelCase`
-
-* **不能以阿拉伯数字开头**，例如 `1stValue` 是非法的，应该使用 `firstValue`。
-* 首个单词小写，后续单词首字母大写。不使用下划线。
-* 适用于函数、方法、普通变量、参数、局部变量等。
-
-**示例：**
-
-```dart
-int calculateTotal(int quantity, int price) {
-  int totalPrice = quantity * price;
-  return totalPrice;
-}
-```
-
-#### 4.7.1.2 类名：`PascalCase`
-
-* 同样，**类名也不能以阿拉伯数字开头**，如 `3DModel` 应改为 `ThreeDModel`。
-* 首个单词首字母大写，后续单词首字母大写。不使用下划线。
-* 通常用于类（`class`）、枚举（`enum`）、扩展（`extension`）等类型名称。
-
-**示例：**
-
-```dart
-class UserAccount {}
-mixin SweetBaby {}
-enum OrderStatus { Pending, Completed, Cancelled }
-extension StringUtils on String {}
-```
-
-#### 4.7.1.3 补充建议
-
-* **命名不得以阿拉伯数字开头**：无论是变量名、方法名、类名还是文件名，均不能以阿拉伯数字作为首字符。
-* **私有字段**：使用下划线 `_` 开头表示私有，例如 `_counter`、`_sweetBaby`。
-* **文件名/库名**：使用小写字母和下划线分隔，例如：`user_account.dart`。
-* **避免缩写**：尽量使用清晰的全称，例如 `calculateTotal` 优于 `calcTot`。
-
-
-
-### **4.7.2 空安全处理**
- ```dart
-   String? nullableString;
-   print(nullableString?.length ?? 0); // 安全访问
- ```
-
-### **4.7.3 不可变设计**
- ```dart
-   class ImmutablePoint {
-     final double x;
-     const ImmutablePoint(this.x);
-   }
- ```
-
-### **4.7.4 方法参数设计**
-   - 必需参数放在前面
-   - 可选参数用 `{}` 或 `[]` 包裹
-   - 避免过多可选参数（超过3个考虑使用对象封装）
-
----
-
-## **4.8 实际应用示例** [选学]
-### **4.8.1 数据模型类**
+## **4.10 实际应用示例** [选学]
+### **4.10.1 数据模型类**
 ```dart
 class User {
   final String id;
@@ -3536,7 +3582,7 @@ class User {
 }
 ```
 
-### **4.8.2 响应式属性**
+### **4.10.2 响应式属性**
 ```dart
 class Counter {
   int _value = 0;
