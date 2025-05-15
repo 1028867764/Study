@@ -1540,6 +1540,7 @@ void main() {
  ```
 
 ### **2.2.2 `for-in` 遍历集合**
+`for-in` 遍历完所有元素后，循环会自动结束。
 ```dart
   void main() {
   // for-in 遍历列表
@@ -1569,6 +1570,7 @@ for (var entry in scores.entries) {
 ```
 
 ### **2.2.3 `forEach` 遍历集合**
+`forEach` 遍历完所有元素后，循环会自动结束。
 ```dart
 void main() {
   // forEach 遍历列表
@@ -1789,23 +1791,17 @@ class TreeNode {
   TreeNode({required this.name, this.children = const []}); // 可选参数的默认值必须是编译期常量
 }
 
-void preOrder(TreeNode node) {
-  print(node.name); // 访问当前节点
-
-  for (var child in node.children) {
-    preOrder(child); // 递归遍历子节点
-  }
-}
-
 // 统计终端节点数量
 int countLeaves(TreeNode node) {
-  if (node.children.isEmpty) {
-    return 1;
+  if (node.children.isEmpty) { // 终止条件
+    return 1; 
   }
 
   int count = 0;
   for (var child in node.children) {
-    count += countLeaves(child);
+    print('这里是节点${child.name}');
+    count += countLeaves(child);              // 递归调用
+    print('${count} → 是节点${child.name}的');
   }
   return count;
 }
@@ -1850,25 +1846,32 @@ void main() {
     ],
   );
 
-  print('先序遍历结果：');
-  preOrder(root);
   print('终端节点数量：${countLeaves(root)}');
 }
 
-/*
-先序遍历结果：
-A
-B
-F
-C
-E
-I
-G
-D
-H
-J
-K
-L
+/*输出结果：
+这里是节点B
+这里是节点F
+1 → 是节点F的
+1 → 是节点B的
+这里是节点C
+这里是节点E
+这里是节点I
+1 → 是节点I的
+1 → 是节点E的
+这里是节点G
+2 → 是节点G的
+3 → 是节点C的
+这里是节点D
+这里是节点H
+这里是节点J
+1 → 是节点J的
+这里是节点K
+2 → 是节点K的
+这里是节点L
+3 → 是节点L的
+3 → 是节点H的
+6 → 是节点D的
 终端节点数量：6
 */
 ```
@@ -2165,8 +2168,7 @@ Ship to: Warehouse, Express: true, Note: Gift wrap
 
 ---
 
-## **3.3 高级函数特性**
-### **3.3.1 函数作为参数**
+## **3.3 函数作为参数**
 - 将函数作为参数传递：
 ```dart
   void execute(Function operation) {
@@ -2176,25 +2178,155 @@ Ship to: Warehouse, Express: true, Note: Gift wrap
   execute((a, b) => print(a - b)); // 输出 2
 ```
 
-### **3.3.2 匿名函数**
+## **3.4 匿名函数**
 - 直接定义未命名的函数：
 ```dart
   var list = [1, 2, 3];
   list.forEach((item) => print(item)); // 输出 1, 2, 3
 ```
 
-### **3.3.3 作用域**
+## **3.5 递归函数**
 
-#### 3.3.3.1 变量作用域
+* **定义**：递归函数是指在函数内部调用自身的函数。
+* **常用于**：树形结构遍历、数学计算（如阶乘、斐波那契）、搜索算法等。
+* **关键组成**：
+
+  * **终止条件**：避免无限递归
+  * **递归调用**：函数调用自身
+  * **状态推进**：每次递归都向终止条件逼近
+
+---
+
+### 3.5.1 示例 1：计算阶乘
+
+```dart
+int factorial(int n) {
+  if (n == 0 || n == 1) return 1; // 终止条件
+  return n * factorial(n - 1);    // 递归调用
+}
+
+void main() {
+  print(factorial(5)); // 输出 120
+}
+```
+
+---
+
+### 3.5.2 示例 2：树的先序遍历
+
+```dart
+class TreeNode {
+  String name;
+  List<TreeNode> children;
+
+  TreeNode({required this.name, this.children = const []}); // 可选参数的默认值必须是编译期常量
+}
+
+// 统计终端节点数量
+int countLeaves(TreeNode node) {
+  if (node.children.isEmpty) { // 终止条件
+    return 1;
+  }
+
+  int count = 0;
+  for (var child in node.children) { 
+    print('这里是节点${child.name}');
+    count += countLeaves(child);               // 递归调用
+    print('${count} → 是节点${child.name}的');
+  }
+  return count;
+}
+
+void main() {
+  /*
+
+ 构建一个树形结构：
+         A
+      /  |   \
+     B   C    D
+    /   / \     \
+   F   E   G     H
+      /       / | \
+     I       J  K  L
+
+*/
+  var root = TreeNode(
+    name: 'A',
+    children: [
+      TreeNode(name: 'B', children: [TreeNode(name: 'F')]),
+      TreeNode(
+        name: 'C',
+        children: [
+          TreeNode(name: 'E', children: [TreeNode(name: 'I')]),
+          TreeNode(name: 'G'),
+        ],
+      ),
+      TreeNode(
+        name: 'D',
+        children: [
+          TreeNode(
+            name: 'H',
+            children: [
+              TreeNode(name: 'J'),
+              TreeNode(name: 'K'),
+              TreeNode(name: 'L'),
+            ],
+          ),
+        ],
+      ),
+    ],
+  );
+
+  print('终端节点数量：${countLeaves(root)}');
+}
+
+/*输出结果：
+这里是节点B
+这里是节点F
+1 → 是节点F的
+1 → 是节点B的
+这里是节点C
+这里是节点E
+这里是节点I
+1 → 是节点I的
+1 → 是节点E的
+这里是节点G
+2 → 是节点G的
+3 → 是节点C的
+这里是节点D
+这里是节点H
+这里是节点J
+1 → 是节点J的
+这里是节点K
+2 → 是节点K的
+这里是节点L
+3 → 是节点L的
+3 → 是节点H的
+6 → 是节点D的
+终端节点数量：6
+*/
+```
+
+---
+
+### 3.5.3 注意事项
+
+* 每次递归都必须**推进状态**，朝终止条件靠近
+* 没有终止条件会造成栈溢出（Stack Overflow）
+* 递归可改为迭代，但有时递归更简洁直观
+
+## 3.6 变量作用域
 在Dart中，变量作用域指变量在代码里可访问的范围，其作用域规则遵循块级作用域，即由代码块 `{}` 的位置决定。主要有以下四种作用域：
-1. **全局作用域**：程序中任何地方都能访问，通常在文件顶部声明的变量处于全局作用域，全局变量在整个程序生命周期内都有效。不过要慎用全局变量，过度使用会导致命名冲突和内存浪费。
+### 3.6.1 **全局作用域**
+程序中任何地方都能访问，通常在文件顶部声明的变量处于全局作用域，全局变量在整个程序生命周期内都有效。不过要慎用全局变量，过度使用会导致命名冲突和内存浪费。
 ```dart
 int globalVar = 100; // 全局变量
 void main() {
   print(globalVar); // 访问全局变量
 }
 ```
-2. **函数作用域**：在函数内部声明的变量，仅在该函数内部可访问，这类变量具有局部作用域，在函数执行时创建，执行结束后销毁。
+### 3.6.2 **函数作用域**
+在函数内部声明的变量，仅在该函数内部可访问，这类变量具有局部作用域，在函数执行时创建，执行结束后销毁。
 ```dart
 void myFunction() {
   int localVar = 200; // 局部变量
@@ -2205,7 +2337,8 @@ void main() {
   // print(localVar); // 错误：无法访问函数外部的 localVar
 }
 ```
-3. **块级作用域**：Dart中被大括号 `{}` 包围的代码块会创建新的作用域，像控制语句 `if`、`for` 和 `while` 等都会创建新作用域。
+### 3.6.3 **块级作用域**
+Dart中被大括号 `{}` 包围的代码块会创建新的作用域，像控制语句 `if`、`for` 和 `while` 等都会创建新作用域。
 ```dart
 void main() {
   if (true) {
@@ -2221,7 +2354,8 @@ for (var i = 0; i < 3; i++) {
 }
 // print(i); // 报错，Dart的for循环计数器变量作用域仅限于for循环的代码块内部
 ```
-4. **闭包作用域**：闭包是Dart的特殊功能，一个函数能“记住”并访问它创建时的外部作用域中的变量，即便外部函数已执行完毕，闭包仍可访问外部函数的局部变量。但要注意，被捕获的变量会一直存在内存中，可能导致内存泄漏。
+### 3.6.4 **闭包作用域**
+闭包是Dart的特殊功能，一个函数能“记住”并访问它创建时的外部作用域中的变量，即便外部函数已执行完毕，闭包仍可访问外部函数的局部变量。但要注意，被捕获的变量会一直存在内存中，可能导致内存泄漏。
 ```dart
 Function createClosure() {
   int outerVar = 400; // 外部变量
@@ -2234,7 +2368,8 @@ void main() {
   closure(); // 输出外部变量的值
 }
 ```
-5. **作用域优先级**：当变量名冲突时，遵循就近原则，优先访问最近作用域的变量。若局部变量和全局变量同名，局部变量会覆盖全局变量，局部变量的作用域优先于全局变量，直到局部作用域结束。
+### 3.6.5 **作用域优先级**
+当变量名冲突时，遵循就近原则，优先访问最近作用域的变量。若局部变量和全局变量同名，局部变量会覆盖全局变量，局部变量的作用域优先于全局变量，直到局部作用域结束。
 ```dart
 int x = 500; // 全局变量
 void main() {
@@ -2242,11 +2377,11 @@ void main() {
   print(x); // 输出局部变量的值
 }
 ```
-#### 3.3.3.2 函数访问范围
+## 3.7 函数访问范围
 
 在Dart语言里，公共函数和私有函数是控制函数访问范围的重要概念，以下为你详细介绍：
 
-##### 公共函数
+### 3.7.1 公共函数
 在Dart中，默认情况下，所有未加下划线的标识符都是公共的（Public），公共函数的作用范围是可以从任何地方访问，等价于其他语言中的`public`。定义公共函数时，只需使用普通的命名方式，无需前缀。以下是一个示例：
 ```dart
 class MyClass {
@@ -2263,7 +2398,7 @@ void main() {
 ```
 上述代码中，`publicMethod`就是一个公共函数，在`main`函数里可以正常调用它。
 
-##### 私有函数
+### 3.7.2 私有函数
 Dart使用下划线`_`前缀来表示私有成员，私有函数只能在定义它们的库（library）内访问，不会对其他库公开，等价于其他语言中的`private`。以下是私有函数的示例：
 ```dart
 class MyClass {
@@ -2286,16 +2421,16 @@ void main() {
 ```
 在这个例子中，`_privateMethod`是私有函数，不能直接在`main`函数中访问，但可以通过类中的公共函数`callPrivateMethod`间接调用它。
 
-##### 总结
+### 3.7.3 总结
 - **公共函数**：默认情况下，未加下划线的函数就是公共函数，作用范围是全局可访问。
 - **私有函数**：以`_`开头的函数为私有函数，只能在定义它的库内访问。
 
 ---
 
-## **3.4 函数返回值**
+## **3.8 函数返回值**
 在Dart中，函数的返回值可以是多种类型，包括基本数据类型（如`int`、`double`等）、对象类型（如`String`、`Widget`等），当函数没有显式使用`return`语句返回值时，默认返回`null`。以下是一些不同返回值类型的函数示例：
 
-### 3.4.1 返回`int`类型
+### 3.8.1 返回`int`类型
 ```dart
 // 计算两个整数的和
 int add(int a, int b) {
@@ -2309,7 +2444,7 @@ void main() {
 ```
 在这个例子中，`add`函数的返回类型是`int`，它接收两个整数参数`a`和`b`，并返回它们的和。
 
-### 3.4.2 返回`String`类型
+### 3.8.2 返回`String`类型
 ```dart
 // 拼接两个字符串
 String joinStrings(String str1, String str2) {
@@ -2323,7 +2458,7 @@ void main() {
 ```
 这里`joinStrings`函数的返回类型为`String`，它将传入的两个字符串拼接起来并返回结果。
 
-### 3.4.3 返回`Widget`类型（以Flutter为例）
+### 3.8.3 返回`Widget`类型（以Flutter为例）
 ```dart
 import 'package:flutter/material.dart';
 
@@ -2344,7 +2479,7 @@ void main() {
 ```
 在Flutter开发中，`Widget`是构建用户界面的基本单元。`createTextWidget`函数接收一个字符串参数，返回一个`Text`类型的`Widget`，用于在界面上显示文本。
 
-### 3.4.4 隐式返回`null`的情况
+### 3.8.4 隐式返回`null`的情况
 ```dart
 // 根据条件返回不同的字符串，若不满足条件则隐式返回 null
 String? findGreeting(String name) {
@@ -2361,7 +2496,7 @@ void main() {
 ```
 此例中，`findGreeting`函数只有在传入的`name`为`'Bob'`时才会返回一个字符串，其他情况下没有`return`语句，会隐式返回`null`。
 
-### 3.4.5 返回`double`类型
+### 3.8.5 返回`double`类型
 ```dart
 // 计算两个数的平均值
 double calculateAverage(double num1, double num2) {
@@ -2375,13 +2510,13 @@ void main() {
 ```
 `calculateAverage`函数的返回类型是`double`，它接收两个双精度浮点数参数，计算并返回它们的平均值。
 
-### 3.4.6 返回`List`类型
+### 3.8.6 返回`List`类型
 ```dart
 List<int> filterEven(List<int> numbers) {
   return numbers.where((n) => n % 2 == 0).toList();
 }
 ```
-### 3.4.7 返回`Map`类型
+### 3.8.7 返回`Map`类型
 ```dart
 Map<String, double> lengthMap() {
   return {'friend': 18.0, 'guy': 15.9, 'alien': 20.1};
@@ -2392,7 +2527,7 @@ void main() {
   print(size); //输出： {'friend': 18.0, 'guy': 15.9, 'alien': 20.1};
 }
 ```
-## **3.5 注意事项**
+## **3.9 注意事项**
 1. **参数顺序**：  
    命名参数 `{}` 必须要在必需参数（位置参数）之后：
  ```dart
@@ -2435,7 +2570,7 @@ void main() {
 
 ---
 
-## **3.6 回调函数**
+## **3.10 回调函数**
 - 如何理解回调函数呢？
 想象一下这里有3个东西，外函数、内函数、参数C。内函数作为外函数的一个参数传入外函数。当外函数被调用执行时，外函数会逐行执行内部代码，一旦到了内函数的那一行，就会（如果有参数C的话）往内函数传入参数C，并执行内函数（不管有没有参数C传入都会执行）。这个内函数也被称作"**回调函数**"，这个过程也被称作"**使用'内函数'作为回调**"。
 ```dart
@@ -2550,14 +2685,14 @@ void main() async {
 ```
 **两种可能的输出**：
 1. **成功**：
-  ```
+  ```dart
 📦 下单香蕉...
 ✅ 收到: 🍌 新鲜香蕉送达！
 🔚 无论成功或失败我都执行（包装纸丢掉）
 🚚 等待快递...（虽然写在后面，但会等 async 结束）
   ```
 2. **失败**（如果 `deliverBanana(true)`）：
-  ```
+  ```dart
 📦 下单香蕉...
 ❌ 错误: Exception: 💥 香蕉被压烂了！
 🔚 无论成功或失败我都执行（包装纸丢掉）
@@ -2567,7 +2702,7 @@ void main() async {
 
 ---
 
-## **3.7 高阶函数（返回函数）**
+## **3.11 高阶函数（返回函数）**
 ```dart
 Function createMultiplier(int factor) {
   return (int x) => x * factor;
