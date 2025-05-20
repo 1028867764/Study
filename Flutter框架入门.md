@@ -885,9 +885,35 @@ Padding(
 ```
 
 ### 3.1.5 `SizedBox`
+`SizedBox` 是 Flutter 中一个非常常用的布局控件，主要用来控制子组件的尺寸（宽度和高度），还可以用来做占位
 ```dart
-SizedBox(width: 50), // 水平占位空白
-SizedBox(height: 80), // 垂直占位空白
+SizedBox(width: 50, height: 100) // 纯占位（无子组件）
+
+SizedBox(height: 100) // width 和 height 可以只写一个
+
+SizedBox(
+  width: 100, 
+  height: 50,
+  child: Container( // 也可以有子组件
+    color: Colors.yellow,
+  ),
+)
+
+// SizedBox 本身没有 color 属性，它只是一个尺寸控件，不会绘制颜色
+SizedBox(  
+  width: 100,
+  height: 50,
+  child: Container( // 如果你想让 SizedBox 显示颜色，通常需要包裹一个有颜色的控件
+    color: Colors.blue,
+  ),
+)
+
+// 或者直接用 Container 设置大小和颜色
+Container( 
+  width: 100,
+  height: 50,
+  color: Colors.blue,
+)
 ```
 
 ### 3.1.6 `ClipRRect`
@@ -1234,7 +1260,155 @@ class SimpleListView extends StatelessWidget {
 * 不适合用于大量子组件（请使用 `ListView`）。
 * 子组件不能有无限高度（如 `Column` + 未限制高度的 `Expanded` 可能报错）。
 
-### 3.3.2 `ListView.builder`
+### 3.3.2 `ListView`
+#### 3.3.2.1 `ListView` 的简介
+##### 基础概念
+`ListView` 是 Flutter 里用于在垂直滚动列表中展示项目集合的组件，也可通过设置实现水平滚动。它能动态显示一组项目，每个项目可以是简单文本、图像或更复杂的布局。通过视图重用机制优化内存使用与性能，这对显示大量数据很关键。
+##### 内容特性
+- **项目类型多样**：可以包含简单文本、图像、按钮等多种类型的子组件，以满足不同的设计需求。例如，可以创建一个包含图片和文本的列表项，或者添加带有交互功能的按钮列表项。
+- **视图类型丰富**：支持多种视图类型，如大图标、小图标、列表和报表等。开发者可以根据应用场景选择合适的视图来展示数据。
+##### 常用属性
+- **`scrollDirection`**：决定列表的滚动方向，默认为垂直方向（`Axis.vertical`），也可设置为水平方向（`Axis.horizontal`）。
+- **`itemCount`**：表示列表的项数，如果设置为 `null`，则表示列表项数量无限。
+- **`itemBuilder`**：用于构建列表项的回调函数，根据索引返回对应的 `Widget`。
+##### 优势
+- **内存效率高**：通过视图重用机制，只创建屏幕上可见的项目视图，避免为列表中的每个项目都创建视图，尤其在处理大量数据时优势明显。
+- **滚动性能好**：滚动时只更新屏幕上的项目，而非整个列表，提高了滚动的流畅性。
+- **高度可定制**：可以自定义每个项目的布局和样式，以适应各种设计需求。
+##### 应用场景
+- **新闻应用**：展示新闻标题和摘要列表，用户可以滚动浏览最新的新闻内容。
+- **邮件客户端**：列出收件箱中的邮件，方便用户查看邮件列表并选择查看具体邮件。
+- **社交网络**：展示好友列表、动态更新等内容，用户可以方便地浏览和交互。
+- **电子商务**：展示商品列表，用户可以浏览商品信息并进行购买操作。
+
+#### 3.3.2.2 `ListView` 的应用示例
+Flutter 的 `ListView` 默认是**垂直滚动**的
+```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'ListView Container Demo',
+      home: Scaffold(
+        appBar: AppBar(title: Text('ListView + Container')),
+        body: ListView(
+          children: [
+            for (int i = 1; i <= 20; i++)
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.blue[100],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.blueAccent),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.star, color: Colors.blue),
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Item $i',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            '这是第 $i 项内容',
+                            style: TextStyle(color: Colors.grey[700]),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+- 若要改为**水平滚动**，则需要给 `ListView` 设置属性：
+```dart
+scrollDirection: Axis.horizontal,
+```
+- 同时，因为水平滚动时 `ListView` 的高度不会自动撑开，你通常需要用一个固定高度的容器包裹它，比如 SizedBox 或 Container。
+- 另外，**水平滚动时每个项需要固定宽度**，不然布局会乱。
+```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Horizontal ListView Demo',
+      home: Scaffold(
+        appBar: AppBar(title: Text('ListView + Container (水平滚动)')),
+        body: SizedBox(
+          height: 150, // 固定高度，决定水平列表高度
+          child: ListView(
+            scrollDirection: Axis.horizontal, // 水平滚动
+            children: [
+              for (int i = 1; i <= 20; i++)
+                Container(
+                  width: 200, // 固定宽度
+                  margin: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[100],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.blueAccent),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.star, color: Colors.blue),
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center, // 居中对齐
+                          children: [
+                            Text(
+                              'Item $i',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              '这是第 $i 项内容',
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+#### 3.3.2.3 `ListView.builder` 的应用示例
 - `itemCount` ：列表的总项数。必须指定，否则默认无限生成
 - `itemBuilder` ：每个 `item` 的构建函数，返回一个 `Widget`，接收 `context` 和 `index` 参数
 - 示例：左侧分类导航栏组件
@@ -1266,7 +1440,7 @@ class SimpleListView extends StatelessWidget {
           // context：上下文对象
           // index：当前是第几个列表项（从 0 开始）
           // 返回值必须是一个 Widget（列表中显示的每一项）
-          itemBuilder: (context, index) {
+          itemBuilder: (context, index) { // 每个 item 的构建函数，返回一个 Widget，接收 context 和 index 参数
             return Container(
               height: 80, // 每项高度为 80
               decoration: BoxDecoration(
@@ -1435,14 +1609,14 @@ class GridExample extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: GridView.builder(
-          itemCount: items.length,
+          itemCount: items.length, // 网格中一共有多少项（例如 20 项）
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,     // 每行显示3个，也就是3列布局
             crossAxisSpacing: 10,     // 水平间距
             mainAxisSpacing: 10,       // 垂直间距
             childAspectRatio: 1.0,     // 宽高比
           ),
-          itemBuilder: (context, index) {
+          itemBuilder: (context, index) { // 每个 item 的构建函数，返回一个 Widget，接收 context 和 index 参数
             return Container(
               decoration: BoxDecoration(
                 color: Colors.teal[100 * ((index % 8) + 1)],
@@ -1461,7 +1635,6 @@ class GridExample extends StatelessWidget {
     );
   }
 }
-
 ```
 
 ### 3.3.5 `ScrollController`
@@ -2586,6 +2759,280 @@ showDialog(
 ---
 
 📌 **注意：** 弹框不会自动消失，除非你手动调用 `Navigator.pop(context)` 来关闭。
+
+### 3.4.7 `Drawer`
+在 Flutter 中，`Drawer` 是一个用于实现侧边导航菜单的组件，通常与 `Scaffold` 搭配使用。默认情况下，`Drawer` 会从左边滑出，可以放置导航链接、用户信息等内容。
+#### 3.4.7.1 简要说明
+* `Drawer` 通常放在 `Scaffold` 的 `drawer` 属性中；
+* 它默认会覆盖主内容区域的一部分，而不是全屏（即 **不会占满屏幕**）；
+* 可以使用 `ListView` 或 `Column` 构建内部菜单项；
+* 可结合 `Navigator` 进行页面跳转。
+
+#### 3.4.7.2 示例：自适应宽度 Drawer
+```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(title: 'Drawer 示例', home: HomePage());
+  }
+}
+
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final drawerWidth = screenWidth * 0.7;
+
+    return Scaffold(
+      appBar: AppBar(title: Text('自适应宽度 Drawer')),
+      drawer: SizedBox(
+        width: drawerWidth, // 用固定宽度的外容器限制 drawer 的最大弹出宽度
+        child: Drawer(
+          child: SafeArea(
+            child: Column(
+              children: [
+                DrawerHeader(
+                  decoration: BoxDecoration(color: Colors.blue),
+                  child: Center(
+                    child: Text(
+                      '欢迎！',
+                      style: TextStyle(color: Colors.white, fontSize: 24),
+                    ),
+                  ),
+                ),
+                ListTile(
+                  leading: Icon(Icons.home),
+                  title: Text('主页'),
+                  onTap: () {
+                    Navigator.pop(context); // 关闭 drawer
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('你点击了主页')));
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.settings),
+                  title: Text('设置'),
+                  onTap: () {
+                    Navigator.pop(context); // 关闭 drawer
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('你点击了设置')));
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: Center(child: Text('主页面内容')),
+    );
+  }
+}
+```
+
+### 3.4.8 `OverlayEntry` 下拉菜单
+- 示例
+```dart
+import 'dart:async';
+import 'package:flutter/material.dart';
+
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: MultiMenuExample(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class MultiMenuExample extends StatefulWidget {
+  const MultiMenuExample({super.key});
+
+  @override
+  State<MultiMenuExample> createState() => _MultiMenuExampleState();
+}
+
+class _MultiMenuExampleState extends State<MultiMenuExample> {
+  final Map<String, LayerLink> _menuLinks = {
+    'File': LayerLink(),
+    'Edit': LayerLink(),
+    'View': LayerLink(),
+  };
+
+  OverlayEntry? _activeMenu;
+  String? _activeMenuKey;
+  Timer? _hideTimer;
+  bool _hoverEnabled = false;
+  String? _hoveredMenuKey;
+
+  void _showMenu(String key, List<String> items) {
+    if (_activeMenuKey == key) return;
+
+    _removeMenu();
+
+    final overlay = OverlayEntry(
+      builder:
+          (context) => Positioned(
+            width: 150, // 限制整体宽度
+            child: CompositedTransformFollower(
+              link: _menuLinks[key]!,
+              offset: const Offset(0, 40),
+              showWhenUnlinked: false,
+              child: MouseRegion(
+                onEnter: (_) => _cancelHideMenu(),
+                onExit: (_) => _startHideMenu(),
+                child: Material(
+                  elevation: 4,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: items.map(_buildMenuItem).toList(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+    );
+
+    Overlay.of(context).insert(overlay);
+    _activeMenu = overlay;
+    _activeMenuKey = key;
+  }
+
+  void _removeMenu() {
+    _hideTimer?.cancel();
+    _activeMenu?.remove();
+    _activeMenu = null;
+    _activeMenuKey = null;
+  }
+
+  void _startHideMenu() {
+    _hideTimer?.cancel();
+    _hideTimer = Timer(const Duration(milliseconds: 300), _removeMenu);
+  }
+
+  void _cancelHideMenu() {
+    _hideTimer?.cancel();
+  }
+
+  Widget _buildMenuItem(String title) {
+    return InkWell(
+      onTap: () {
+        debugPrint("点击了: $title");
+        _removeMenu();
+      },
+      hoverColor: Colors.blue.withOpacity(0.1),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Text(title),
+      ),
+    );
+  }
+
+  Widget _buildTopMenuButton(String key, List<String> items) {
+    bool isHovered = _hoveredMenuKey == key;
+    return CompositedTransformTarget(
+      link: _menuLinks[key]!,
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            if (_activeMenuKey == key) {
+              _removeMenu();
+              _hoverEnabled = false;
+            } else {
+              _showMenu(key, items);
+              _hoverEnabled = true;
+            }
+          });
+        },
+        child: MouseRegion(
+          onEnter: (_) {
+            if (_hoverEnabled) {
+              _cancelHideMenu();
+              _showMenu(key, items);
+            }
+            setState(() {
+              _hoveredMenuKey = key;
+            });
+          },
+          onExit: (_) {
+            if (_hoverEnabled) {
+              _startHideMenu();
+            }
+            setState(() {
+              _hoveredMenuKey = null;
+            });
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            color: isHovered ? Colors.blue.shade700 : Colors.blue,
+            child: Text(key, style: const TextStyle(color: Colors.white)),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _removeMenu();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("多菜单 Overlay 示例")),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 20, top: 20),
+            child: Row(
+              children: [
+                _buildTopMenuButton("File", [
+                  "New",
+                  "Open Recent",
+                  "Save",
+                  "Exit",
+                ]),
+                const SizedBox(width: 10),
+                _buildTopMenuButton("Edit", [
+                  "Undo",
+                  "Redo",
+                  "Cut",
+                  "Copy",
+                  "Paste",
+                ]),
+                const SizedBox(width: 10),
+                _buildTopMenuButton("View", [
+                  "Zoom In",
+                  "Zoom Out",
+                  "Full Screen",
+                ]),
+              ],
+            ),
+          ),
+          Container(
+            color: Colors.yellow.shade100,
+            height: MediaQuery.of(context).size.height * 0.5,
+          ),
+        ],
+      ),
+    );
+  }
+}
+```
 
 ## 3.5 交互组件
 ### 3.5.1 `GestureDetector`
@@ -4478,6 +4925,106 @@ class MyApp extends StatelessWidget {
 
 你可以用这种方式轻松扩展更多功能，比如添加 `SliverPersistentHeader`（吸顶标签）、动态 Banner、滑动加载更多等。
 
+### 3.6.6 `Image` 
+Flutter 显示图片有多种方式，主要取决于图片来源。这里给你总结几个常用的方法：
+
+#### 3.6.6.1 Flutter 显示图片的几种方式
+
+##### 1. 显示项目内的静态资源图片（Asset Image）
+
+先把图片放到项目的 `assets` 目录（比如 `assets/images`），然后在 `pubspec.yaml` 注册：
+
+```yaml
+flutter:
+  assets:
+    - assets/images/your_image.png
+```
+
+然后代码里用：
+
+```dart
+Image.asset('assets/images/your_image.png')
+```
+
+---
+
+##### 2. 显示网络图片（Network Image）
+
+加载远程图片，传入 URL：
+
+```dart
+Image.network('https://example.com/image.png')
+```
+
+---
+
+##### 3. 显示内存中的图片（Memory Image）
+
+如果你有图片的字节数据，比如网络请求获取的二进制，可以用：
+
+```dart
+Image.memory(Uint8List bytes)
+```
+
+---
+
+##### 4. 显示文件系统里的图片（File Image）
+
+比如图片存储在手机存储中：
+
+```dart
+import 'dart:io';
+
+Image.file(File('path_to_file'))
+```
+
+---
+
+##### 5. 其他用法
+
+* `Image` 还有很多命名构造函数，如 `Image.asset`, `Image.network`, `Image.file`, `Image.memory`。
+* 可以用 `fit` 属性控制图片显示方式，比如：
+
+```dart
+Image.asset(
+  'assets/images/logo.png',
+  fit: BoxFit.cover,  // 填充满容器
+)
+```
+
+---
+
+#### 3.6.6.2 简单示例代码
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(const MyApp());
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('显示图片示例')),
+        body: Column(
+          children: [
+            Image.asset('assets/images/your_image.png'), // 这里填写项目内的图片地址
+            SizedBox(height: 20),
+            Image.network(
+              'https://freechickencoopplans.com/wp-content/uploads/2021/02/word-image-2048x1365.jpeg', // 这里填写在线图片的网络地址
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+---
 # 4. **响应式布局**
 这是个很重要的主题，我们来详细讲讲 Flutter 中的 **响应式布局（Responsive Layout）**，特别是如何使用 `MediaQuery`、`LayoutBuilder` 以及响应式辅助组件来适配不同屏幕大小，比如手机、平板等。
 
