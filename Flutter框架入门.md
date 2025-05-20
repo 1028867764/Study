@@ -2835,7 +2835,133 @@ class HomePage extends StatelessWidget {
 }
 ```
 
-### 3.4.8 `OverlayEntry` 下拉菜单
+### 3.4.8 `Card`
+
+`Card` 是 Flutter 提供的一个内置 Material 组件，用来实现具有 **阴影效果（elevation）** 和 **圆角边框** 的内容容器。它在视觉上模拟了现实生活中的卡片，用于展示精致的内容块，常见于列表、表单、卡片式布局等。
+
+#### 3.4.8.1 主要特点：
+
+* 带有默认的圆角和阴影
+* 遵循 Material Design 风格
+* 可以很方便地包裹内容并带有良好的层次感
+* 通常用于显示一块有意义的独立内容（如：用户信息、图文卡片、商品卡片等）
+
+---
+
+#### 3.4.8.2 Card 与 Container 的区别
+
+| 特性       | `Card`                            | `Container`                      |
+| -------- | --------------------------------- | -------------------------------- |
+| **用途定位** | 用于表现“卡片式”的信息展示，遵循 Material Design | 通用容器，适合构建任意布局结构                  |
+| **阴影**   | 默认带阴影，可通过 `elevation` 设置          | 没有默认阴影，需要结合 `BoxDecoration` 手动设置 |
+| **圆角**   | 默认有圆角，可通过 `shape` 调整              | 没有默认圆角，需要手动用 `BoxDecoration` 设置  |
+| **背景**   | 支持背景色、边框、阴影（不直接支持图片背景）            | 完全可定制，包括背景图、渐变、边框、圆角等            |
+| **风格**   | 更倾向于内容展示和 UI 一致性                  | 更灵活，适合用作布局容器                     |
+| **语义性**  | 语义上表示一个有边界的独立内容区域                 | 不具备语义特性                          |
+
+---
+
+#### 3.4.8.3 什么时候用 Card？
+
+* 你希望快速构建一个符合 Material Design 的信息块（如：用户资料卡、新闻摘要）
+* 想要默认阴影、圆角等美观效果而不手动配置
+
+#### 3.4.8.4 什么时候用 Container？
+
+* 你需要完全控制背景、边框、形状、渐变、尺寸等
+* 用作布局元素，例如包裹其他控件进行对齐、定位等
+
+---
+
+#### 3.4.8.5 示例对比
+
+**Card：**
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(CardDemo());
+
+class CardDemo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Card vs Container',
+      home: Scaffold(
+        appBar: AppBar(title: Text('Column with Cards')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: List.generate(3, (index) {
+              return Card(
+                elevation: 4,
+                color: Colors.blue[100],
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                child: ListTile(
+                  leading: Icon(Icons.star),
+                  title: Text('Card Item ${index + 1}'),
+                  subtitle: Text('This is a card with material effect'),
+                ),
+              );
+            }),
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+**Container：**
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(ContainerDemo());
+
+class ContainerDemo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Card vs Container',
+      home: Scaffold(
+        appBar: AppBar(title: Text('Column with Containers')),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: List.generate(3, (index) {
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.blue[100],
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade400,
+                      blurRadius: 4,
+                      offset: Offset(2, 2),
+                    ),
+                  ],
+                ),
+                child: ListTile(
+                  leading: Icon(Icons.star),
+                  title: Text('Container Item ${index + 1}'),
+                  subtitle: Text('This is a styled container'),
+                ),
+              );
+            }),
+          ),
+        ),
+      ),
+    );
+  }
+}
+```
+
+如你所见，`Card` 是一种语义化更强的“美化容器”，而 `Container` 是一个更底层的万能布局组件。
+
+---
+### 3.4.9 `OverlayEntry` 下拉菜单
 - 示例
 ```dart
 import 'dart:async';
